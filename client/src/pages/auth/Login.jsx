@@ -15,6 +15,7 @@ function Login({setIsLogin}) {
     }
     setIsLogin(true)
   }
+  
   return (
     <div className='  mt-10'>
          <div class=" w-screen flex justify-center items-center ">
