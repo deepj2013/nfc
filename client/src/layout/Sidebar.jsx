@@ -5,18 +5,25 @@ import React, { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GrAchievement } from "react-icons/gr";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { FaRegUser } from "react-icons/fa";
+import { FaChevronRight, FaRegUser } from "react-icons/fa";
 import { FaBuildingUser } from "react-icons/fa6";
 import { RiFileUserFill } from "react-icons/ri";
 
 import { MdSpaceDashboard } from "react-icons/md";
+import { AdminRoutes, GatekeeperRoute } from "../utils/routeByType";
 
 // View Imports
+
+
+
 
 const Sidebar = ({ open, setOpen }) => {
 //   const navigate = useNavigate();
 //   const location = useLocation();
   const [profileToggle,setProfileToggle]=useState(false)
+  const userType=localStorage.getItem('userType');
+
+  console.log(userType);
   // const [open,setOpen]=useState(true)
   const applyTheme = (theme) => {
     if (theme === "dark") {
@@ -42,7 +49,8 @@ const Sidebar = ({ open, setOpen }) => {
 
 
   const [width,setWidth]=useState(window.innerWidth)
-
+  const [role,setRole]=useState(1)
+  const [route,setRoute]=useState(GatekeeperRoute)
   const routeToggle=()=>{
     if(width<1024){
       setOpen(false)
@@ -53,48 +61,26 @@ const Sidebar = ({ open, setOpen }) => {
   }
 
 
-  const route=[
-    {
-      title:'Dashboard',
-      path:'/',
-      icon:<MdSpaceDashboard/>
-      
-    },
 
-    {
-      title:'Add SubAdmin',
-      path:'/subadmin',
-      icon:<FaRegUser />
+  useEffect(() => {
+    if(userType=='admin'){
+      setRoute(AdminRoutes)
+    }
+    else if(userType=='gatekeeper'){
+      setRoute(GatekeeperRoute)
+    }
+  }, [])
+  
 
-      
-    },
 
-    {
-      title:'Add Scheme',
-      path:'/user',
-      icon:<FaBuildingUser />
 
-      
-    },
-
-    {
-      title:'User',
-      path:'/user',
-      icon:<RiFileUserFill />
-
-      
-    },
-    
-
-    
-  ]
 
   return (
-    <div className="bg-red-400">
+    <div className="">
       {/* <div onClick={()=>alert('sjs')}  className="w-screen bg-black opacity-50 absolute z-50"></div> */}
 
       {
-        <nav class=" fixed  shadow mr-64 w-full  z-30  py-3  ">
+        <nav class=" fixed  top-0 bg-white shadow mr-64 w-full  z-30  py-3  ">
           <div class="px-3 lg:px-6 lg:pl-3">
             <div class="flex items-center justify-between ">
               <button onClick={() => setOpen(!open)}>
@@ -163,7 +149,7 @@ const Sidebar = ({ open, setOpen }) => {
       >
         <div
           className={`h-full  overflow-y-auto  duration-300= ${
-            open ? "w-64" : "w-16 px-0"
+            open ? "w-60" : "w-16 px-0"
           }`}
         >
           <div className="  mt-4 p w-full flex justify-between relative">
@@ -182,7 +168,9 @@ const Sidebar = ({ open, setOpen }) => {
                       class={twMerge(`flex items-center p-2 text-gray-900 rounded-lg   group text-sm ` )}
                     >
                         <div className="h-10 w-10 bg-gray-200 rounded-lg text-theme text-xl flex justify-center items-center">{item?.icon}</div>
-                     {open && <span class="ml-3 text-base ">{item.title}</span>}
+                     {open && <span class="ml-3 text-sm  text-grayText">{item.title}</span>}
+                    {open && <FaChevronRight className="absolute right-4" />}
+
                     </p>
                   {/* </NavLink> */}
 

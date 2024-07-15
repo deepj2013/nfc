@@ -1,0 +1,22 @@
+export const users={
+    admin:{
+        username:'admin',
+        password:'123',
+        type:1
+    },
+    user:{
+        username:'user',
+        password:'456',
+        type:2
+    },
+    subadmin:{
+        username:'subadmin',
+        password:'789',
+        type:3
+    },
+    gatekeeper:{
+        username:'gatekeeper',
+        password:'000',
+        type:4
+    }
+}

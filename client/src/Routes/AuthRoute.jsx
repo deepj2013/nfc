@@ -1,11 +1,13 @@
 import React from 'react'
+import { Route, Routes } from 'react-router'
+import Login from '../pages/auth/Login'
 
-function AuthRoute() {
+function AuthRoute({setIsLogin}) {
   return (
-    <div>
-        <h1>AuthRoute</h1>
-        <p>This is the AuthRoute component.</p>
-    </div>
+    <Routes>
+      <Route path="/" element={<Login setIsLogin={setIsLogin} />} />
+      {/* Add more routes for different authentication pages */}
+    </Routes>
   )
 }
 
