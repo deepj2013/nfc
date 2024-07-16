@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { PieChart, Pie, Cell } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const data = [
   { name: "Group A", value: 400 },
@@ -38,7 +38,9 @@ const renderCustomizedLabel = ({
 };
 export default function CircleChart() {
   return (
-    <PieChart width={400} height={400}>
+    <ResponsiveContainer width={'25%'} height={400}>
+
+    <PieChart width={'100%'} height={400}>
       <Pie
         data={data}
         cx={200}
@@ -54,5 +56,6 @@ export default function CircleChart() {
         ))}
       </Pie>
     </PieChart>
+    </ResponsiveContainer>
   );
 }
