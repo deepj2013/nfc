@@ -1,4 +1,4 @@
-import { FaRegUser } from "react-icons/fa";
+import { FaRegUser, FaUser } from "react-icons/fa";
 import { FaBuildingUser } from "react-icons/fa6";
 import { MdSpaceDashboard } from "react-icons/md";
 import { RiFileUserFill } from "react-icons/ri";
@@ -42,6 +42,18 @@ export const GatekeeperRoute = [
     {
         title: 'Dashboard',
         path: '/',
+        // icon: <FaUser className="text-black" />
+
+    },
+    {
+        title: 'Employee',
+        path: '/employee',
+        // icon: <MdSpaceDashboard />
+
+    },
+    {
+        title: 'Role Management',
+        path: '/role',
         // icon: <MdSpaceDashboard />
 
     },

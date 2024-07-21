@@ -19,7 +19,7 @@ export default {
       colors: {
         btnColor: "#6D28D9",
         secondry: "#666476",
-        background: "#FAFAFA",
+        bgColor: "#2e37a40c",
         stroke_Color: "#DBDBDB",
         theme: "#2E37A4",
         grayText:'#727272'
