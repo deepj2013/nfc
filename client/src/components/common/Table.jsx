@@ -2,7 +2,7 @@ import React from 'react'
 
 function Table() {
   return (
-    <div className='mt-10 bg-white'>
+    <div className=' ' >
         <div class="flex flex-col">
       <div class=" overflow-x-auto pb-4">
           <div class="min-w-full inline-block align-middle">
