@@ -1,0 +1,281 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .form-group label {
+            flex: 1 0 200px;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-group input, .form-group select {
+            flex: 2;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        .form-actions button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        .form-actions button.save {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .form-actions button.save:hover {
+            background-color: #218838;
+        }
+        .form-actions button.close {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .form-actions button.close:hover {
+            background-color: #c82333;
+        }
+        .member-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+        }
+        .member-table th, .member-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .member-table th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .member-table td {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="add-member-btn" onclick="toggleForm()">+ Add Member</button>
+        <div class="form-container" id="form-container">
+            <div class="form-group">
+                <label for="corporate-others">Corporate/Others</label>
+                <select id="corporate-others">
+                    <option value="Member">Member</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="member-type">Member Type</label>
+                <select id="member-type">
+                    <option value="">--Select--</option>
+                    <option value="Type1">Type1</option>
+                    <option value="Type2">Type2</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category">
+                    <option value="">--Select--</option>
+                    <option value="Category1">Category1</option>
+                    <option value="Category2">Category2</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="title">Title</label>
+                <select id="title">
+                    <option value="">--Select--</option>
+                    <option value="Mr.">Mr.</option>
+                    <option value="Ms.">Ms.</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="first-name">First Name</label>
+                <input type="text" id="first-name">
+            </div>
+            <div class="form-group">
+                <label for="middle-name">Middle Name</label>
+                <input type="text" id="middle-name">
+            </div>
+            <div class="form-group">
+                <label for="surname">Surname</label>
+                <input type="text" id="surname">
+            </div>
+            <div class="form-group">
+                <label for="father-name">Father Name</label>
+                <input type="text" id="father-name">
+            </div>
+            <div class="form-group">
+                <label for="mobile-no">Mobile No</label>
+                <input type="text" id="mobile-no">
+            </div>
+            <div class="form-group">
+                <label for="email">E-Mail Id</label>
+                <input type="email" id="email">
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="dob">Date Of Birth</label>
+                <input type="date" id="dob">
+            </div>
+            <div class="form-group">
+                <label for="marital-status">Marital Status</label>
+                <select id="marital-status">
+                    <option value="Married">Married</option>
+                    <option value="Single">Single</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="membership-status">Membership Status</label>
+                <select id="membership-status">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="occupation">Occupation</label>
+                <input type="text" id="occupation">
+            </div>
+            <div class="form-group">
+                <label for="organization">Organization Name</label>
+                <input type="text" id="organization">
+            </div>
+            <div class="form-group">
+                <label for="photo">Photo</label>
+                <input type="file" id="photo">
+            </div>
+            <div class="form-actions">
+                <button class="save" onclick="saveMember()">Save</button>
+                <button class="close" onclick="toggleForm()">Close</button>
+            </div>
+        </div>
+        <table class="member-table" id="member-table">
+            <thead>
+                <tr>
+                    <th>Corporate/Others</th>
+                    <th>Member Type</th>
+                    <th>Category</th>
+                    <th>Title</th>
+                    <th>First Name</th>
+                    <th>Middle Name</th>
+                    <th>Surname</th>
+                    <th>Father Name</th>
+                    <th>Mobile No</th>
+                    <th>Email</th>
+                    <th>Gender</th>
+                    <th>Date Of Birth</th>
+                    <th>Marital Status</th>
+                    <th>Membership Status</th>
+                    <th>Occupation</th>
+                    <th>Organization Name</th>
+                </tr>
+            </thead>
+            <tbody id="member-table-body">
+                <!-- Member rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        let members = [];
+
+        function toggleForm() {
+            document.getElementById('form-container').classList.toggle('active');
+        }
+
+        function saveMember() {
+            const member = {
+                corporateOthers: document.getElementById('corporate-others').value,
+                memberType: document.getElementById('member-type').value,
+                category: document.getElementById('category').value,
+                title: document.getElementById('title').value,
+                firstName: document.getElementById('first-name').value,
+                middleName: document.getElementById('middle-name').value,
+                surname: document.getElementById('surname').value,
+                fatherName: document.getElementById('father-name').value,
+                mobileNo: document.getElementById('mobile-no').value,
+                email: document.getElementById('email').value,
+                gender: document.getElementById('gender').value,
+                dob: document.getElementById('dob').value,
+                maritalStatus: document.getElementById('marital-status').value,
+                membershipStatus: document.getElementById('membership-status').value,
+                occupation: document.getElementById('occupation').value,
+                organization: document.getElementById('organization').value
+            };
+
+            members.push(member);
+            renderMembers();
+            toggleForm();
+        }
+
+        function renderMembers() {
+            const tbody = document.getElementById('member-table-body');
+            tbody.innerHTML = '';
+            members.forEach((member, index) => {
+                const row = document
+
+.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.corporateOthers}</td>
+                    <td>${member.memberType}</td>
+                    <td>${member.category}</td>
+                    <td>${member.title}</td>
+                    <td>${member.firstName}</td>
+                    <td>${member.middleName}</td>
+                    <td>${member.surname}</td>
+                    <td>${member.fatherName}</td>
+                    <td>${member.mobileNo}</td>
+                    <td>${member.email}</td>
+                    <td>${member.gender}</td>
+                    <td>${member.dob}</td>
+                    <td>${member.maritalStatus}</td>
+                    <td>${member.membershipStatus}</td>
+                    <td>${member.occupation}</td>
+                    <td>${member.organization}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
+```

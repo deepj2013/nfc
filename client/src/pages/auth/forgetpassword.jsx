@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
-import sideimage from '../../assets/image/login-side-img.png'
 
 function Login({setIsLogin}) {
   const navigate=useNavigate()
@@ -18,10 +17,10 @@ function Login({setIsLogin}) {
   }
   
   return (
-    <div className=''>
+    <div className='  mt-10'>
          <div class=" w-screen flex justify-center items-center ">
 
-          <img className='w-[50%] h-full ' src={sideimage}/>
+          <img className='w-[50%] h-full ' src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh7056AB0WU_qII7iOs4mZG-0Oo8kV2IZow&s'/>
     <div class="grid gap-8 w-[50%] px-10">
       <div
         id="back-div"
