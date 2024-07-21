@@ -5,12 +5,13 @@ import React, { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { GrAchievement } from "react-icons/gr";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { FaChevronRight, FaRegUser } from "react-icons/fa";
+import { FaChevronRight, FaRegUser, FaUser } from "react-icons/fa";
 import { FaBuildingUser } from "react-icons/fa6";
 import { RiFileUserFill } from "react-icons/ri";
 
 import { MdSpaceDashboard } from "react-icons/md";
 import { AdminRoutes, GatekeeperRoute } from "../utils/routeByType";
+import { NavLink } from "react-router-dom";
 
 // View Imports
 
@@ -20,7 +21,7 @@ import { AdminRoutes, GatekeeperRoute } from "../utils/routeByType";
 const Sidebar = ({ open, setOpen }) => {
 //   const navigate = useNavigate();
 //   const location = useLocation();
-  const [profileToggle,setProfileToggle]=useState(false)
+  const [profileToggle,setProfileToggle]=useState(true)
   const userType=localStorage.getItem('userType');
 
   console.log(userType);
@@ -112,7 +113,7 @@ const Sidebar = ({ open, setOpen }) => {
                       /> */}
                     </button>
                   </div>
-                  {profileToggle&&<div
+                  {/* {profileToggle&&<div
                     class="z-50  absolute top-6 right-2 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
                   >
                    
@@ -132,7 +133,7 @@ const Sidebar = ({ open, setOpen }) => {
                         </p>
                       </li>
                     </ul>
-                  </div>}
+                  </div>} */}
                 </div>
               </div>
             </div>
@@ -162,17 +163,19 @@ const Sidebar = ({ open, setOpen }) => {
               route.map((item,ind)=>{
                 return(
                   <li  className="">
-                  {/* <NavLink onClick={() =>routeToggle()} to={item.path}> */}
+                  <NavLink onClick={() =>routeToggle()} to={item.path}>
                     <p
-                      href="/"
+                      // href={item?.path}
                       class={twMerge(`flex items-center p-2 text-gray-900 rounded-lg   group text-sm ` )}
                     >
-                        <div className="h-10 w-10 bg-gray-200 rounded-lg text-theme text-xl flex justify-center items-center">{item?.icon}</div>
+                        <div className="h-10 w-10 bg-bgColor rounded-lg text-theme text-xl flex justify-center items-center">
+                          <FaUser/>
+                        </div>
                      {open && <span class="ml-3 text-sm  text-grayText">{item.title}</span>}
                     {open && <FaChevronRight className="absolute right-4" />}
 
                     </p>
-                  {/* </NavLink> */}
+                  </NavLink>
 
                 </li>
                 )

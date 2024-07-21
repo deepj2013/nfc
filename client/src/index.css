@@ -21,8 +21,9 @@ body{
 }
 
 .h28{
-    @apply text-3xl lg:text-3xl  2xll:text-3xl ;
+    @apply text-3xl lg:text-xl  2xll:text-2xl ;
 }
+
 
 
 @layer components {
