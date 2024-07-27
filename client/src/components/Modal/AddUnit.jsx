@@ -3,7 +3,9 @@ import { FaXmark } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import Input from "../common/Input";
 import Button from "../common/Button";
-const CreateRole = ({ isOpen, onClose, setFeedBackModal }) => {
+import Dropdown from "../common/DropDown";
+
+const AddUnit = ({ isOpen, onClose, setFeedBackModal }) => {
     const navigate = useNavigate()
     return (
         <div
@@ -25,18 +27,25 @@ const CreateRole = ({ isOpen, onClose, setFeedBackModal }) => {
                     className="text-2xl absolute right-2 top-2 text-secondry">
                     <FaXmark />
                 </button>
-                <div className="p-4 flex flex-col items-center">
+                <div className=" flex flex-col items-center">
 
 
-                    <h2 className="text-2xl  w-full font-medium lg:px-10">Role Creation</h2>
+                    <h2 className="text-2xl  w-full font-medium lg:px-8">Add Units</h2>
                     {/* <img className="w-64  h-32 my-6 object-cover" src={TeacherFeedback}/> */}
                     <p className="text-xl mt-4 w-full"></p>
-                    <div className="w-full lg:px-10">
-                        <Input placeholder={'Role'} />
+                    <div className="w-full lg:px-8">
+                        <Input placeholder={'Name'} />
 
-                        <Input placeholder={'Description'} />
+                        <Input placeholder={'Symbol'} />
 
-                        <Button />
+                    
+                        <Input placeholder={'Parent Unit'} />
+
+
+
+
+
+                        <Button name={'Add'} style={'w-full py-2'} />
                     </div>
 
                 </div>
@@ -46,6 +55,6 @@ const CreateRole = ({ isOpen, onClose, setFeedBackModal }) => {
 };
 
 
-export default CreateRole
+export default AddUnit
 
 

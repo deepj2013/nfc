@@ -9,7 +9,7 @@ import AuthRoute from './Routes/AuthRoute';
 import DashboardRoutes from './Routes/DashboardRoutes';
 
 function App() {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
 
   console.log(open);
   return (
