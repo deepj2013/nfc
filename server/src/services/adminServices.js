@@ -1,20 +1,23 @@
+import APIError, { HttpStatusCode } from "../exception/errorHandler.js"
+import { comparePassword, encryptPassword } from "../helpers/passwordEncryption/passwordEncryption.js"
+import UniversalAdmin from "../models/universalAdminModel.js"
+import {getTokenOfUserService, generateTokenService} from "../services/authServices.js"
 
 //#region Admin Signup Service
 export const adminSignUpService = async (name, email, password) => {
     try {
-
       // Hashing Password
         password = await encryptPassword(password)
-
-        //Preparing Object To Insert
+     
+        // Preparing Object To Insert
         let adminObject = {
             name: name,
             email: email,
             password: password,
         }
 
-        let admin = await Admin.create(adminObject)
-        await admin.save()
+        let universaladmin = await UniversalAdmin.create(adminObject)
+        await universaladmin.save()
 
         // Resolve Promise
         return Promise.resolve()
@@ -27,8 +30,7 @@ export const adminSignUpService = async (name, email, password) => {
 //#region Admin Login Service
 export const adminLoginService = async (userId, password) => {
     try {
-
-        //#region User Pipeline
+    //#region User Pipeline
         let userPipeline = [
             {
                 $project: {
@@ -45,21 +47,15 @@ export const adminLoginService = async (userId, password) => {
             }
         ]
         //#endregion
-
-        let result = await Admin.aggregate(userPipeline)
+        let result = await UniversalAdmin.aggregate(userPipeline)
         if (result.length == 0) {
             throw new APIError("UNAUTHORIZED_REQUEST", HttpStatusCode.UNAUTHORIZED_REQUEST, true, 'User not found.');
         }
-
         let userDetails = result[0]
-
         let hashedPassword = userDetails.password
-
         let isPasswordMatched = await comparePassword(password, hashedPassword)
-
         if (isPasswordMatched) {
-
-            // getting Token of User
+         // getting Token of User
             let tokenObj = await getTokenOfUserService(userDetails._id)
 
             if (tokenObj == null || new Date().getTime() > tokenObj.expiresAt) {
