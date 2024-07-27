@@ -5,6 +5,12 @@ import Dashboard from '../pages/dashboard/Dashboard'
 import { twMerge } from 'tailwind-merge'
 import Employee from '../pages/dashboard/Employee/Employee'
 import Role from '../pages/dashboard/Role/Role'
+import Organization from '../pages/dashboard/AddOrganization/Organization'
+import ProductList from '../pages/inventory/ProductList'
+import AddProduct from '../pages/inventory/AddProduct'
+import Category from '../pages/inventory/AddCategory'
+import Inventory from '../pages/inventory/Inventory'
+import Units from '../pages/inventory/Units'
 
 function DashboardRoutes() {
     const [open,setOpen]=useState(true)
@@ -19,7 +25,17 @@ function DashboardRoutes() {
                 <Route path="/employee" element={<Employee />} />
                 <Route path="/role" element={<Role />} />
 
+                <Route path="/Organization" element={<Organization />} />
+                <Route path="/product" element={<ProductList />} />
+                <Route path="/add-product" element={<AddProduct />} />
 
+                <Route path="/category" element={<Category />} />
+
+                <Route path="/inventory" element={<Inventory />} />
+                <Route path="/units" element={<Units />} />
+
+                
+                
                 
             </Routes>
                 </div>
