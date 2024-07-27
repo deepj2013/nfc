@@ -3,12 +3,9 @@ import { adminLoginService, adminSignUpService} from "../services/adminServices.
 
 export const adminSignupController = async (req, res, next) => {
     try {
-        let { name, email, password } = req.body
-        console.log(name, email, password)
-        return { name, email, password }
-        // await adminSignUpService(name, email.toLowerCase(), password)
-
-        // return res.status(200).json({ msg: 'Success' })
+        let { name, email, password } = req.body        
+        await adminSignUpService(name, email.toLowerCase(), password)
+        return res.status(200).json({ msg: 'Success' })
     } catch (error) {
         next(error)
     }
