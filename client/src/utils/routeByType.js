@@ -31,8 +31,6 @@ export const AdminRoutes = [
         title: 'User',
         path: '/user',
         // icon: <RiFileUserFill />
-
-
     },
 
 ]
@@ -86,4 +84,62 @@ export const GatekeeperRoute = [
         // icon: <RiFileUserFill />
 
     },
+]
+
+
+export const universalAdmin=[
+    {
+        title: 'Dashboard',
+        path: '/',
+        // icon: <FaUser className="text-black" />
+
+    },
+    {
+        title: 'Organisation',
+        path: '/Organization',
+        // icon: <FaUser className="text-black" />
+
+    },
+    {
+        title: 'Employee',
+        path: '/employee',
+        type:2,
+        subMenu:[
+            {
+                title: 'Add Employee',
+                path: '/employee',
+            },
+            {
+                title: 'Employee List',
+                path: '/employee',
+            },
+        ]
+    },
+
+
+    {
+        title: 'Inventory',
+        path: '/inventory',
+        type:2,
+        subMenu:[
+            {
+                title: 'Product',
+                path: '/product',
+            },
+            {
+                title: 'Category',
+                path: '/category',
+            },
+            {
+                title: 'Uints',
+                path: '/units',
+            },
+            {
+                title: 'Inventory ',
+                path: '/inventory',
+            },
+        ]
+    },
+    
+   
 ]
