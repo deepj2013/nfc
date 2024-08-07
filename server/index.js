@@ -8,6 +8,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { config } from "./config.js";
 import adminRoutes from "./src/routes/adminRoutes.js"; // Adjust the import path as needed
+import userRoutes from "./src/routes/userRoutes.js"; // Adjust the import path as needed
 
 // Load environment variables from .env file
 dotenv.config();
@@ -86,6 +87,7 @@ mongoose
 
 // Routes
 app.use("/api/admin/", adminRoutes);
+app.use("/api/user/", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");
