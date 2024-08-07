@@ -8,6 +8,7 @@ const UniversalAdminSchema = new mongoose.Schema({
         unique: true,
         dropDups: true
     },
+    userId: Number,
     password: String,
 }, { timestamps: true });
 

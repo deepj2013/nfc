@@ -7,7 +7,6 @@ const menuSchema = new Schema({
         type: Number,
         required: true,
         unique: true,
-        default: () => Math.floor(Math.random() * 1000000)
     },
     menuName: {
         type: String,
@@ -28,7 +27,7 @@ const menuSchema = new Schema({
         default: 0
     },
     subMenus: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Number,
         ref: 'Menu'
     }],
     dateCreated: {

@@ -8,17 +8,18 @@ export const adminSignUpService = async (name, email, password) => {
     try {
       // Hashing Password
         password = await encryptPassword(password)
+        const lastAdmin = await UniversalAdmin.findOne().sort({ userId: -1 }).exec();
+        let userId = lastAdmin ? lastAdmin.userId + 1 : 1;
      
         // Preparing Object To Insert
         let adminObject = {
             name: name,
             email: email,
             password: password,
+            userId: userId
         }
-
         let universaladmin = await UniversalAdmin.create(adminObject)
         await universaladmin.save()
-
         // Resolve Promise
         return Promise.resolve()
     } catch (error) {
