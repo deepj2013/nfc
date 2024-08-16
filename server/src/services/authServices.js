@@ -33,7 +33,7 @@ export const generateTokenService = async (userId) => {
 //#endregion
 //#region Get Token Of User
 export const getTokenOfUserService = async (userId) => {
-    try {
+        try {
         //#region Token Pipeline
         let tokenPipeline = [
             {
