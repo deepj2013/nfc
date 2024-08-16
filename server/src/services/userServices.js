@@ -65,9 +65,12 @@ export const userLoginService = async (email_id, password) => {
             token: tokenObj.token,
             expiresAt: tokenObj.expiresAt,
             userName: user.user_name,
-            roleId: user.role_id
+            roleId: user.role_id,
+            user_id: user.user_id
         }
     } catch (error) {
         throw new APIError(error.name, error.httpCode, error.isOperational, error.message);
     }
 };
+
+
