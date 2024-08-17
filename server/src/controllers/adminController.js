@@ -1,4 +1,4 @@
-import { adminLoginService, adminSignUpService} from "../services/adminServices.js"
+import { adminLoginService, adminSignUpService, createDepartmentService, getAllUserService} from "../services/adminServices.js"
 
 
 export const adminSignupController = async (req, res, next) => {
@@ -22,3 +22,20 @@ export const adminLoginController = async (req, res, next) => {
         next(error)
     }
 }
+
+export const createDepartmentController = async (req, res) => {
+    try {
+      const result = await createDepartmentService(req.body);
+      return res.status(201).json({ msg: "Department created successfully", result });
+    } catch (error) {
+      res.status(error.httpCode || 500).json({ error: error.message });
+    }
+  };
+  export const   getAllUserController  = async (req, res) => {
+    try {
+      const result = await getAllUserService();
+      return res.status(201).json({ msg: "Department created successfully", result });
+    } catch (error) {
+      res.status(error.httpCode || 500).json({ error: error.message });
+    }
+  };

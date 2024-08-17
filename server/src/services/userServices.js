@@ -1,8 +1,8 @@
 import APIError, { HttpStatusCode } from "../exception/errorHandler.js"
 import { comparePassword, encryptPassword } from "../helpers/passwordEncryption/passwordEncryption.js"
 import {getTokenOfUserService, generateTokenService} from "../services/authServices.js"
-import UniversalAdmin from "../models/universalAdminModel.js"
 import User from "../models/userModel.js"
+
 
 export const createUserService = async (userData) => {
     try {

@@ -14,7 +14,8 @@ import {
   createVendorController,
   updateVendorController,
   getAllVendorsController,
-  searchVendorByNameOrIdController
+  searchVendorByNameOrIdController,
+  createInventoryTransactionController
 } from "../controllers/inventoryController.js";
 
 const router = express.Router();
@@ -47,6 +48,8 @@ router.get('/vendors', [auth], getAllVendorsController);
 
 // Route for searching vendors by name or vendor ID
 router.get('/vendors/search/:searchTerm', [auth], searchVendorByNameOrIdController);
+
+router.post('/inventory-transactions', createInventoryTransactionController);
 
 
 

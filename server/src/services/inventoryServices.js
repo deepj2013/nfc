@@ -4,6 +4,10 @@ import Category from "../models/inv_m_categoryModel.js";
 import MeasurementUnit from "../models/inv_m_measurmentModel.js";
 import Product from "../models/inv_productModel.js";
 import Vendor from "../models/inv_vendorModel.js";
+import InventoryTransaction from "../models/inv_transactionalModel.js";
+import Department from "../models/deptartmentModel.js";
+import User from "../models/userModel.js";
+import mongoose from 'mongoose';
 
 export const createInvCategoryservice = async (data) => {
   try {
@@ -719,23 +723,82 @@ export const searchVendorByNameOrIdService = async (searchTerm) => {
 };
 
 
-export const adjustStockLevel = async (
-  productId,
-  quantity,
-  transactionType
-) => {
-  const product = await product.findById(productId);
-  if (!product) {
-    throw new Error("Product not found");
-  }
 
-  if (transactionType === "inward") {
-    product.quantityInStock += quantity;
-  } else if (transactionType === "outward") {
-    if (product.quantityInStock < quantity) {
-      throw new Error("Insufficient stock");
+export const createInventoryTransactionService = async (data) => {
+  try {
+    const { sku, transactionType, quantity, departmentId, createdBy, remarks } = data;
+
+    // Validate required fields
+    if (!sku) {
+      throw new APIError('Validation Error', 400, true, 'SKU is required');
     }
-    product.quantityInStock -= quantity;
+    if (!transactionType || !['inward', 'outward'].includes(transactionType)) {
+      throw new APIError('Validation Error', 400, true, 'Valid transaction type is required (inward or outward)');
+    }
+    if (!quantity || quantity <= 0) {
+      throw new APIError('Validation Error', 400, true, 'Quantity must be greater than zero');
+    }
+    if (!departmentId) {
+      throw new APIError('Validation Error', 400, true, 'Department ID is required');
+    }
+    if (!createdBy) {
+      throw new APIError('Validation Error', 400, true, 'User ID (createdBy) is required');
+    }
+
+    // Find the product by SKU
+    const product = await Product.findOne({ sku });
+    if (!product) {
+      throw new APIError('Not Found', 404, true, 'Product not found');
+    }
+
+    // Check if the department exists
+    const department = await Department.findOne({department_id: departmentId});
+    if (!department) {
+      throw new APIError('Not Found', 404, true, 'Department not found');
+    }
+
+    // Check if the user exists
+    const user = await User.findOne({user_id: createdBy});
+    if (!user) {
+      throw new APIError('Not Found', 404, true, 'User not found');
+    }
+
+    // Calculate the new quantity based on transaction type
+    let newQuantity;
+    if (transactionType === 'inward') {
+      newQuantity = product.quantityInStock + quantity;
+    } else if (transactionType === 'outward') {
+      if (product.quantityInStock < quantity) {
+        throw new APIError('Validation Error', 400, true, 'Insufficient stock for outward transaction');
+      }
+      newQuantity = product.quantityInStock - quantity;
+    }
+
+    // Update the product's quantity in stock
+    product.quantityInStock = newQuantity;
+    await product.save();
+
+    // Create the inventory transaction
+    const inventoryTransaction = new InventoryTransaction({
+      productId: product._id,
+      sku,
+      transactionType,
+      quantity,
+      departmentId,
+      createdBy,
+      remarks,
+    });
+
+    const result = await inventoryTransaction.save();
+
+    // Return the result
+    return result;
+
+  } catch (error) {
+    if (error instanceof APIError) {
+      throw error;
+    } else {
+      throw new APIError('Internal Server Error', 500, true, error.message);
+    }
   }
-  await product.save();
 };
