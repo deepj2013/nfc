@@ -15,7 +15,9 @@ import {
   updateVendorController,
   getAllVendorsController,
   searchVendorByNameOrIdController,
-  createInventoryTransactionController
+  createInventoryTransactionController,
+  getProductHistoryController,
+  getReportController
 } from "../controllers/inventoryController.js";
 
 const router = express.Router();
@@ -51,7 +53,11 @@ router.get('/vendors/search/:searchTerm', [auth], searchVendorByNameOrIdControll
 
 router.post('/inventory-transactions', createInventoryTransactionController);
 
+// Route to get the history of a product
+router.get('/inventory-transactions/history/:sku', getProductHistoryController);
 
+// Route to get reports (weekly, monthly, etc.)
+router.get('/inventory-transactions/reports', getReportController);
 
 
 export default router;

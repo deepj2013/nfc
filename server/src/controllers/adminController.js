@@ -31,6 +31,23 @@ export const createDepartmentController = async (req, res) => {
       res.status(error.httpCode || 500).json({ error: error.message });
     }
   };
+
+  export const getDepartmentController = async (req, res) => {
+    try {
+      const { departmentId } = req.params; // departmentId passed as a URL parameter
+  
+      // Find the department by custom department_id
+      const department = await Department.findOne({ department_id: departmentId });
+      if (!department) {
+        return res.status(404).json({ error: "Department not found" });
+      }
+  
+      return res.status(200).json({ msg: "success", department });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+  
   export const   getAllUserController  = async (req, res) => {
     try {
       const result = await getAllUserService();
