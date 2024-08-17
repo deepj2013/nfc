@@ -13,7 +13,9 @@ import {
   updateVendorService,
   getAllVendorsService,
   searchVendorByNameOrIdService,
-  createInventoryTransactionService
+  createInventoryTransactionService,
+  getProductHistoryService,
+  getReportService
 } from "../services/inventoryServices.js";
 
 
@@ -165,3 +167,24 @@ export const createMeasurementUnitController = async (req, res) => {
     }
   };
 
+// Controller to get product history
+export const getProductHistoryController = async (req, res) => {
+  try {
+    const { sku } = req.params; // SKU passed as a URL parameter
+    const result = await getProductHistoryService(sku);
+    return res.status(200).json({ msg: "success", result });
+  } catch (error) {
+    res.status(error.httpCode || 500).json({ error: error.message });
+  }
+};
+
+// Controller to get reports based on criteria
+export const getReportController = async (req, res) => {
+  try {
+    const { period, sku } = req.query; // Period and SKU passed as query parameters
+    const result = await getReportService({ period, sku });
+    return res.status(200).json({ msg: "success", result });
+  } catch (error) {
+    res.status(error.httpCode || 500).json({ error: error.message });
+  }
+};

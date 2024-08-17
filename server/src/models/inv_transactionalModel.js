@@ -12,6 +12,7 @@ const InventoryTransactionSchema = new Schema({
     type: String,
     required: true,
     trim: true,
+    // Removed the unique: true constraint
   },
   transactionType: {
     type: String,
@@ -40,7 +41,9 @@ const InventoryTransactionSchema = new Schema({
     type: String,
     trim: true,
   },
- 
+  createdBy: {
+    type: Number,
+  },
   updatedBy: {
     type: Number,
   },
@@ -62,4 +65,4 @@ InventoryTransactionSchema.pre('save', function(next) {
 
 // Create and export the Inventory Transaction model
 const InventoryTransaction = mongoose.model('InventoryTransaction', InventoryTransactionSchema);
-export default InventoryTransaction
+export default InventoryTransaction;
