@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+        nav ul li {
+            display: inline;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .section {
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+        .cards, .tiles {
+            display: flex;
+            justify-content: space-around;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .card, .tile {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex: 1 1 200px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem;
+        }
+        .card-icon, .tile i {
+            font-size: 2.5rem;
+            color: #007bff;
+        }
+        .card-content h3, .tile p {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .camera-container, .member-details, .form-container, .chart-container, .checkin-container, .order-container, .sports-container, .admin-container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        textarea {
+            resize: none;
+        }
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem 0;
+            background-color: #333;
+            color: #fff;
+            margin-top: 2rem;
+        }
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            nav ul li {
+                margin: 0.5rem 0;
+            }
+            .cards, .tiles {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .card, .tile {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Club Management System</div>
+            <ul>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#checkin">Check-in</a></li>
+                <li><a href="#restaurant">Restaurant</a></li>
+                <li><a href="#sports">Sports</a></li>
+                <li><a href="#admin">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="dashboard" class="section">
+        <h2>Dashboard</h2>
+        <div class="cards">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-users"></i></div>
+                <div class="card-content">
+                    <h3>Members</h3>
+                    <p>500</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="card-content">
+                    <h3>Today's Check-ins</h3>
+                    <p>120</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-utensils"></i></div>
+                <div class="card-content">
+                    <h3>Orders</h3>
+                    <p>85</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-sport"></i></div>
+                <div class="card-content">
+                    <h3>Sports Bookings</h3>
+                    <p>45</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="checkin" class="section">
+        <h2>Check-in</h2>
+        <div class="checkin-container">
+            <div class="checkin-option">
+                <label for="user-type">Select User Type:</label>
+                <select id="user-type">
+                    <option value="visitor">Visitor</option>
+                    <option value="guest">Guest</option>
+                    <option value="management">Management</option>
+                    <option value="employee">Employee</option>
+                    <option value="staff">Staff</option>
+                </select>
+            </div>
+            <div class="qr-scan">
+                <label for="qr-code">Scan QR Code:</label>
+                <input type="file" id="qr-code" accept="image/*">
+            </div>
+            <button class="btn">Check-in</button>
+        </div>
+    </section>
+
+    <section id="restaurant" class="section">
+        <h2>Restaurant</h2>
+        <div class="order-container">
+            <div class="table-booking">
+                <label for="table-number">Table Number:</label>
+                <input type="number" id="table-number">
+            </div>
+            <div class="order-list">
+                <label for="order">Order:</label>
+                <textarea id="order" rows="5"></textarea>
+            </div>
+            <button class="btn">Place Order</button>
+        </div>
+    </section>
+
+    <section id="sports" class="section">
+        <h2>Sports</h2>
+        <div class="sports-container">
+            <div class="sport-option">
+                <label for="sport-type">Select Sport:</label>
+                <select id="sport-type">
+                    <option value="swimming">Swimming</option>
+                    <option value="basketball">Basketball</option>
+                    <option value="badminton">Badminton</option>
+                    <option value="squash">Squash</option>
+                </select>
+            </div>
+            <div class="qr-scan">
+                <label for="sport-qr-code">Scan QR Code:</label>
+                <input type="file" id="sport-qr-code" accept="image/*">
+            </div>
+            <button class="btn">Book Sport</button>
+        </div>
+    </section>
+
+    <section id="admin" class="section">
+        <h2>Admin Dashboard</h2>
+        <div class="admin-container">
+            <div class="admin-card">
+                <h3>Universal Admin</h3>
+                <p>Access all club activities and reports.</p>
+            </div>
+            <div class="admin-card">
+                <h3>Sub Admin</h3>
+                <p>Manage specific departments and generate reports.</p>
+            </div>
+            <div class="admin-card">
+                <h3>Accounts</h3>
+                <p>Manage financial transactions and billing.</p>
+            </div>
+            <div class="admin-card">
+                <h3>Chairman</h3>
+                <p>Oversee club operations and strategic planning.</p>
+            </div>
+            <div class="admin-card">
+                <h3>Guard</h3>
+                <p>Monitor entry and exit of members and visitors.</p>
+            </div>
+            <div class="admin-card">
+                <h3>Reception</h3>
+                <p>Handle member check-ins and customer service.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Club Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Membership Data Chart
+        var ctx = document.getElementById('membershipChart').getContext('2d');
+        var membershipChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+                datasets: [{
+                    label: 'New Memberships',
+                    data: [10, 20, 30, 40, 50, 60],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Event Participation Chart
+        var ctx2 = document.getElementById('eventChart').getContext('2d');
+        var eventChart = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: ['Event 1', 'Event 2', 'Event 3', 'Event 4', 'Event 5'],
+                datasets: [{
+                    label: 'Participants',
+                    data: [50, 60, 70, 80, 90],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

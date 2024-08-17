@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Dashboard - Club Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+        nav ul li {
+            display: inline;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .section {
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+        .cards {
+            display: flex;
+            justify-content: space-around;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .card {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex: 1 1 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem;
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .card p {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-around;
+            margin-top: 2rem;
+        }
+        .chart-container {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 1rem;
+        }
+        .renewals {
+            margin-top: 2rem;
+        }
+        .renewals table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .renewals th, .renewals td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .renewals th {
+            background-color: #f4f4f4;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem 0;
+            background-color: #333;
+            color: #fff;
+            margin-top: 2rem;
+        }
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            nav ul li {
+                margin: 0.5rem 0;
+            }
+            .cards, .charts {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .card, .chart-container {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Club Management System</div>
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="checkin.html">Check-in</a></li>
+                <li><a href="restaurant.html">Restaurant</a></li>
+                <li><a href="sports.html">Sports</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="dashboard" class="section">
+        <h2>Universal Dashboard</h2>
+        <div class="cards">
+            <div class="card" onclick="showTable('members')">
+                <h3>Total Members</h3>
+                <p id="total-members">150</p>
+            </div>
+            <div class="card">
+                <h3>Total Revenue</h3>
+                <p id="total-revenue-week">Week: $5000</p>
+                <p id="total-revenue-today">Today: $800</p>
+                <p id="total-revenue-month">Month: $20000</p>
+            </div>
+            <div class="card">
+                <h3>Total Sale of Liquor</h3>
+                <p id="total-liquor-sales">120</p>
+            </div>
+            <div class="card">
+                <h3>Sports Events</h3>
+                <p id="total-sports-events">10</p>
+            </div>
+            <div class="card">
+                <h3>Member Subscriptions</h3>
+                <p id="member-subscriptions">80</p>
+            </div>
+        </div>
+
+        <div class="charts">
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="membershipGrowthChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="salesDistributionChart"></canvas>
+            </div>
+        </div>
+
+        <div class="renewals">
+            <h3>Upcoming Renewals</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Member Name</th>
+                        <th>Subscription Type</th>
+                        <th>Renewal Date</th>
+                    </tr>
+                </thead>
+                <tbody id="renewals-table">
+                    <!-- Renewal rows will be dynamically generated -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="members-table" class="hidden">
+            <h3>Member Details</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Member ID</th>
+                        <th>Member Name</th>
+                        <th>Membership Type</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Member details rows will be dynamically generated -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Club Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const members = [
+            { id: 1, name: 'John Doe', type: 'Gold', status: 'Active' },
+            { id: 2, name: 'Jane Smith', type: 'Silver', status: 'Active' },
+            { id: 3, name: 'Sam Johnson', type: 'Bronze', status: 'Inactive' }
+        ];
+
+        const renewals = [
+            { name: 'John Doe', type: 'Gold', renewalDate: '2024-08-01' },
+            { name: 'Jane Smith', type: 'Silver', renewalDate: '2024-08-15' },
+            { name: 'Sam Johnson', type: 'Bronze', renewalDate: '2024-09-01' }
+        ];
+
+        function displayRenewals() {
+            const renewalsTable = document.getElementById('renewals-table');
+            renewals.forEach(renewal => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${renewal.name}</td>
+                    <td>${renewal.type}</td>
+                    <td>${renewal.renewalDate}</td>
+                `;
+                renewalsTable.appendChild(row);
+            });
+        }
+
+        function showTable(type) {
+            if (type === 'members') {
+                const membersTable = document.getElementById('members-table');
+                membersTable.classList.toggle('hidden');
+                const membersTableBody = membersTable.querySelector('tbody');
+                membersTableBody.innerHTML = '';
+                members.forEach(member => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${member.id}</td>
+                        <td>${member.name}</td>
+                        <td>${member.type}</td>
+                        <td>${member.status}</td>
+                    `;
+                    membersTableBody.appendChild(row);
+                });
+            }
+        }
+
+        function createChart(ctx, type, data, options) {
+            return new Chart(ctx, {
+                type: type,
+                data: data,
+                options: options
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayRenewals();
+
+            const revenueChart = createChart(document.getElementById('revenueChart').getContext('2d'), 'line', {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [1200, 1900, 3000, 5000, 2000, 3000, 4500],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    tension: 0.4
+                }]
+            }, {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            });
+
+            const membershipGrowthChart = createChart(document.getElementById('membershipGrowthChart').getContext('2d'), 'bar', {
+                labels: ['Gold', 'Silver', 'Bronze'],
+                datasets: [{
+                    label: 'Membership Growth',
+                    data: [50, 30, 20],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(75, 192, 192, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            }, {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            });
+
+            const salesDistributionChart = createChart(document.getElementById('salesDistributionChart').getContext('2d'), 'pie', {
+                labels: ['Food', 'Beverages', 'Merchandise'],
+                datasets: [{
+                    label: 'Sales Distribution',
+                    data: [40, 30, 30],
+                    backgroundColor: [
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            }, {
+                responsive: true
+            });
+        });
+    </script>
+</body>
+</html>

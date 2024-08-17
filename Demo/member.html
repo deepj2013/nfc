@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .add-employee-btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: background-color 0.3s;
+        }
+        .add-employee-btn:hover {
+            background-color: #0056b3;
+        }
+        .form-container {
+            display: none;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .form-container.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        .form-actions button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        .form-actions button.save {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .form-actions button.save:hover {
+            background-color: #218838;
+        }
+        .form-actions button.close {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .form-actions button.close:hover {
+            background-color: #c82333;
+        }
+        .employee-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .employee-table th, .employee-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .employee-table th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .employee-table td {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="add-employee-btn" onclick="toggleForm()">+ Add Employee</button>
+        <div class="form-container" id="form-container">
+            <div class="form-group">
+                <label for="employee-name">Employee Name</label>
+                <input type="text" id="employee-name">
+            </div>
+            <div class="form-group">
+                <label for="date-of-birth">Date of Birth</label>
+                <input type="date" id="date-of-birth">
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address">
+            </div>
+            <div class="form-group">
+                <label for="designation">Designation</label>
+                <select id="designation">
+                    <option value="">Select</option>
+                    <option value="Software">Software</option>
+                    <option value="Account">Account</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date-of-joining">Date of Joining</label>
+                <input type="date" id="date-of-joining">
+            </div>
+            <div class="form-group">
+                <label for="contact-no">Contact No.</label>
+                <input type="text" id="contact-no">
+            </div>
+            <div class="form-group">
+                <label for="email">Email ID</label>
+                <input type="email" id="email">
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="working-status"> Currently Working Status
+                </label>
+                <label>
+                    <input type="checkbox" id="membership-verification"> Membership Verification
+                </label>
+                <label>
+                    <input type="checkbox" id="membership-edit"> Membership Edit
+                </label>
+                <label>
+                    <input type="checkbox" id="product-edit"> Product Edit
+                </label>
+                <label>
+                    <input type="checkbox" id="swimming-disc"> Swimming Disc
+                </label>
+            </div>
+            <div class="form-actions">
+                <button class="save" onclick="saveEmployee()">Save</button>
+                <button class="close" onclick="toggleForm()">Close</button>
+            </div>
+        </div>
+        <table class="employee-table">
+            <thead>
+                <tr>
+                    <th>Emp ID</th>
+                    <th>Employee Name</th>
+                    <th>Designation</th>
+                    <th>Date of Birth</th>
+                    <th>Date of Joining</th>
+                    <th>Contact No.</th>
+                    <th>Active Status</th>
+                    <th>Login ID</th>
+                    <th>Password</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody id="employee-table-body">
+                <!-- Employee rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        let employees = [
+            { id: 1, name: 'John Doe', designation: 'Software', dob: '1980-01-01', doj: '2010-01-01', contact: '1234567890', status: 'Active', login: 'john.doe', password: 'password' }
+            // Add more employees as needed
+        ];
+
+        function toggleForm() {
+            document.getElementById('form-container').classList.toggle('active');
+        }
+
+        function saveEmployee() {
+            const name = document.getElementById('employee-name').value;
+            const dob = document.getElementById('date-of-birth').value;
+            const address = document.getElementById('address').value;
+            const designation = document.getElementById('designation').value;
+            const doj = document.getElementById('date-of-joining').value;
+            const contact = document.getElementById('contact-no').value;
+            const email = document.getElementById('email').value;
+            const workingStatus = document.getElementById('working-status').checked ? 'Active' : 'Inactive';
+            const login = name.split(' ').join('.').toLowerCase();
+            const password = 'password';
+
+            const newEmployee = {
+                id: employees.length + 1,
+                name,
+                designation,
+                dob,
+                doj,
+                contact,
+                status: workingStatus,
+                login,
+                password
+            };
+
+            employees.push(newEmployee);
+            renderEmployees();
+            toggleForm();
+        }
+
+        function renderEmployees() {
+            const tbody = document.getElementById('employee-table-body');
+            tbody.innerHTML = '';
+            employees.forEach(employee => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${employee.id}</td>
+                    <td>${employee.name}</td>
+                    <td>${employee.designation}</td>
+                    <td>${employee.dob}</td>
+                    <td>${employee.doj}</td>
+                    <td>${employee.contact}</td>
+                    <td>${employee.status}</td>
+                    <td>${employee.login}</td>
+                    <td>${employee.password}</td>
+                    <td><button onclick="deleteEmployee(${employee.id})">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function deleteEmployee(id) {
+            employees = employees.filter(employee => employee.id !== id);
+            renderEmployees();
+        }
+
+        document.addEventListener('DOMContentLoaded', renderEmployees);
+    </script>
+</body>
+</html>

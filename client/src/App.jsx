@@ -14,7 +14,7 @@ function App() {
   return (
     <>
       {
-        isLogin ? <AuthRoute setIsLogin={setIsLogin} /> : <DashboardRoutes />
+        !isLogin ? <AuthRoute setIsLogin={setIsLogin} /> : <DashboardRoutes />
       }
     </>
   )

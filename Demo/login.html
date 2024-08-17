@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Management Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('image.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .container {
+            display: flex;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .left-section {
+            flex: 1;
+            background-image: url('../client/src/assets/image/login-side-img.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .right-section {
+            flex: 1;
+            padding: 2rem;
+        }
+        .right-section h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+        .right-section label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .right-section input, .right-section select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        .right-section button {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .right-section button:hover {
+            background-color: #0056b3;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .left-section {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-section"></div>
+        <div class="right-section">
+            <h2>Login Here</h2>
+            <label for="financial-year">Financial Year</label>
+            <select id="financial-year">
+                <option value="2024-2025">2024-2025</option>
+                <option value="2023-2024">2023-2024</option>
+            </select>
+            <label for="login-id">Login Id</label>
+            <input type="text" id="login-id" placeholder="Enter Login Id">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter Password">
+            <button onclick="login()">Login</button>
+        </div>
+    </div>
+    <script>
+        function login() {
+            const loginId = document.getElementById('login-id').value;
+            const password = document.getElementById('password').value;
+            if (loginId === 'admin' && password === 'admin') {
+                alert('Login successful!');
+                // Redirect to dashboard or another page
+            } else {
+                alert('Invalid login credentials');
+            }
+        }
+    </script>
+</body>
+</html>
