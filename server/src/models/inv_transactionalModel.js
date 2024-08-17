@@ -12,7 +12,6 @@ const InventoryTransactionSchema = new Schema({
     type: String,
     required: true,
     trim: true,
-    unique: true,
   },
   transactionType: {
     type: String,
@@ -24,7 +23,7 @@ const InventoryTransactionSchema = new Schema({
     required: true,
   },
   departmentId: {
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: 'Department', // Reference to the Department collection
     required: true,
   },
@@ -33,7 +32,7 @@ const InventoryTransactionSchema = new Schema({
     default: Date.now,
   },
   createdBy: {
-    type: Schema.Types.ObjectId,
+    type: Number,
     ref: 'User', // Reference to the User collection, assuming you have a user model
     required: true,
   },
@@ -41,13 +40,9 @@ const InventoryTransactionSchema = new Schema({
     type: String,
     trim: true,
   },
-  createdBy: {
+ 
+  updatedBy: {
     type: Number,
-    
-  },
-  updatedAt: {
-    type: Number,
-    
   },
   createdAt: {
     type: Date,
@@ -66,4 +61,5 @@ InventoryTransactionSchema.pre('save', function(next) {
 });
 
 // Create and export the Inventory Transaction model
-module.exports = mongoose.model('InventoryTransaction', InventoryTransactionSchema);
+const InventoryTransaction = mongoose.model('InventoryTransaction', InventoryTransactionSchema);
+export default InventoryTransaction

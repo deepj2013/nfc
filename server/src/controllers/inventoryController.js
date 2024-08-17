@@ -1,5 +1,3 @@
-import { adjustStockLevel } from "../services/inventoryServices.js";
-import category from "../models/inv_m_categoryModel.js";
 import {
   createInvCategoryservice,
   updateInvCategoryservice,
@@ -14,7 +12,8 @@ import {
   createVendorService,
   updateVendorService,
   getAllVendorsService,
-  searchVendorByNameOrIdService
+  searchVendorByNameOrIdService,
+  createInventoryTransactionService
 } from "../services/inventoryServices.js";
 
 
@@ -152,6 +151,15 @@ export const createMeasurementUnitController = async (req, res) => {
       const searchTerm = req.params.searchTerm; // Assuming the search term is passed as a URL parameter
       const result = await searchVendorByNameOrIdService(searchTerm);
       return res.status(200).json({ msg: "success", result });
+    } catch (error) {
+      res.status(error.httpCode || 500).json({ error: error.message });
+    }
+  };
+
+  export const createInventoryTransactionController = async (req, res) => {
+    try {
+      const result = await createInventoryTransactionService(req.body);
+      return res.status(201).json({ msg: "Inventory transaction created successfully", result });
     } catch (error) {
       res.status(error.httpCode || 500).json({ error: error.message });
     }

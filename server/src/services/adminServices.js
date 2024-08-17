@@ -2,6 +2,8 @@ import APIError, { HttpStatusCode } from "../exception/errorHandler.js"
 import { comparePassword, encryptPassword } from "../helpers/passwordEncryption/passwordEncryption.js"
 import UniversalAdmin from "../models/universalAdminModel.js"
 import {getTokenOfUserService, generateTokenService} from "../services/authServices.js"
+import Department from "../models/deptartmentModel.js"
+import User from "../models/userModel.js"
 
 //#region Admin Signup Service
 export const adminSignUpService = async (name, email, password) => {
@@ -80,3 +82,69 @@ export const adminLoginService = async (userId, password) => {
     }
 }
 //#endregion
+
+
+const generateDepartmentId = async () => {
+  const lastDepartment = await Department.findOne().sort({ department_id: -1 }).exec();
+
+  if (!lastDepartment) {
+    return 'DEP001';
+  }
+
+  const lastIdNumber = parseInt(lastDepartment.department_id.substring(3), 10);
+  const newIdNumber = lastIdNumber + 1;
+  return `DEP${String(newIdNumber).padStart(3, '0')}`;
+};
+
+export const createDepartmentService = async (data) => {
+  try {
+    const { departmentName, headOfDepartment, createdBy } = data;
+
+    // Validate required fields
+    if (!departmentName || !headOfDepartment) {
+      throw new APIError('Validation Error', 400, true, 'Department name and head of department are required');
+    }
+
+    // Check if the head of department exists
+    const userExists = await User.findOne({ user_id: headOfDepartment });
+    if (!userExists) {
+      throw new APIError('Not Found', 404, true, 'Head of Department not found');
+    }
+
+    // Generate a new department ID
+    const department_id = await generateDepartmentId();
+
+    // Create a new department
+    const newDepartment = new Department({
+      departmentName,
+      department_id,
+      headOfDepartment,
+      createdBy,
+    });
+
+    const result = await newDepartment.save();
+
+    return result;
+
+  } catch (error) {
+    if (error instanceof APIError) {
+      throw error;
+    } else {
+      throw new APIError('Internal Server Error', 500, true, error.message);
+    }
+  }
+};
+
+export const getAllUserService = async () =>{
+  try {
+    const users = await User.find();
+    return users;
+  } catch (error) {
+    if (error instanceof APIError) {
+      throw error;
+    } else {
+      throw new APIError('Internal Server Error', 500, true, error.message);
+    }
+  }
+  }
+  
