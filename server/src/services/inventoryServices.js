@@ -723,7 +723,6 @@ export const searchVendorByNameOrIdService = async (searchTerm) => {
 };
 
 
-
 export const createInventoryTransactionService = async (data) => {
   try {
     const { sku, transactionType, quantity, departmentId, createdBy, remarks } = data;
@@ -751,14 +750,14 @@ export const createInventoryTransactionService = async (data) => {
       throw new APIError('Not Found', 404, true, 'Product not found');
     }
 
-    // Check if the department exists
-    const department = await Department.findOne({department_id: departmentId});
+    // Check if the department exists by department_id
+    const department = await Department.findOne({ department_id: departmentId });
     if (!department) {
       throw new APIError('Not Found', 404, true, 'Department not found');
     }
 
     // Check if the user exists
-    const user = await User.findOne({user_id: createdBy});
+    const user = await User.findOne({user_id:createdBy});
     if (!user) {
       throw new APIError('Not Found', 404, true, 'User not found');
     }
@@ -784,7 +783,7 @@ export const createInventoryTransactionService = async (data) => {
       sku,
       transactionType,
       quantity,
-      departmentId,
+      departmentId: department._id, // Store the ObjectId, not the custom department_id
       createdBy,
       remarks,
     });
@@ -793,6 +792,135 @@ export const createInventoryTransactionService = async (data) => {
 
     // Return the result
     return result;
+
+  } catch (error) {
+    if (error instanceof APIError) {
+      throw error;
+    } else {
+      throw new APIError('Internal Server Error', 500, true, error.message);
+    }
+  }
+};
+
+export const getProductHistoryService = async (sku) => {
+  try {
+    // Define the aggregation pipeline
+    const pipeline = [
+      // Match transactions with the given SKU
+      { $match: { sku: sku } },
+
+      // Lookup to populate department details
+      {
+        $lookup: {
+          from: 'departments', // Collection name for departments
+          localField: 'departmentId',
+          foreignField: 'department_id',
+          as: 'departmentDetails'
+        }
+      },
+
+      // Unwind the department details array
+      { $unwind: '$departmentDetails' },
+
+      // Lookup to populate user details (createdBy)
+      {
+        $lookup: {
+          from: 'masterusers', // Collection name for users
+          localField: 'createdBy',
+          foreignField: 'user_id',
+          as: 'userDetails'
+        }
+      },
+
+      // Unwind the user details array
+      { $unwind: '$userDetails' },
+
+      // Sort by transactionDate in descending order
+      { $sort: { transactionDate: -1 } },
+
+      // Project the fields we want to return
+      {
+        $project: {
+          _id: 0,
+          productId: 1,
+          sku: 1,
+          transactionType: 1,
+          quantity: 1,
+          transactionDate: 1,
+          remarks: 1,
+          department: '$departmentDetails.departmentName',
+          createdBy: '$userDetails.user_name',
+        }
+      }
+    ];
+
+    // Execute the aggregation pipeline
+    const history = await InventoryTransaction.aggregate(pipeline);
+
+    if (!history.length) {
+      throw new APIError('Not Found', 404, true, 'No transactions found for the given SKU');
+    }
+
+    return history;
+
+  } catch (error) {
+    if (error instanceof APIError) {
+      throw error;
+    } else {
+      throw new APIError('Internal Server Error', 500, true, error.message);
+    }
+  }
+};
+
+// Utility function to create date ranges
+const getDateRange = (period) => {
+  const now = new Date();
+  let startDate;
+  let endDate = now;
+
+  switch (period) {
+    case 'weekly':
+      startDate = new Date(now.setDate(now.getDate() - 7));
+      break;
+    case 'monthly':
+      startDate = new Date(now.setMonth(now.getMonth() - 1));
+      break;
+    case 'yearly':
+      startDate = new Date(now.setFullYear(now.getFullYear() - 1));
+      break;
+    default:
+      throw new APIError('Validation Error', 400, true, 'Invalid period specified');
+  }
+
+  return { startDate, endDate };
+};
+
+// Service to get report based on date range and product
+export const getReportService = async (criteria) => {
+  try {
+    const { period, sku } = criteria;
+    const { startDate, endDate } = getDateRange(period);
+
+    // Find transactions within the date range for the specific SKU
+    const query = {
+      transactionDate: { $gte: startDate, $lte: endDate },
+    };
+
+    if (sku) {
+      query.sku = sku;
+    }
+
+    const report = await InventoryTransaction.find(query)
+      .populate('productId', 'productName')
+      .populate('departmentId', 'departmentName')
+      .populate('createdBy', 'username')
+      .sort({ transactionDate: -1 });
+
+    if (!report.length) {
+      throw new APIError('Not Found', 404, true, 'No transactions found for the specified criteria');
+    }
+
+    return report;
 
   } catch (error) {
     if (error instanceof APIError) {
