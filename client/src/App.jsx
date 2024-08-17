@@ -11,11 +11,10 @@ import DashboardRoutes from './Routes/DashboardRoutes';
 function App() {
   const [isLogin, setIsLogin] = useState(true);
 
-  console.log(open);
   return (
     <>
       {
-        !isLogin ? <AuthRoute setIsLogin={setIsLogin} /> : <DashboardRoutes />
+        isLogin ? <AuthRoute setIsLogin={setIsLogin} /> : <DashboardRoutes />
       }
     </>
   )
