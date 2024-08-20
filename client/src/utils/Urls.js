@@ -1,1 +1,1 @@
-export const BASE_URL="https://api.gmatprep.in/GmatPrepapi/user/"
+export const BASE_URL="http://localhost:5100/api/user/"
