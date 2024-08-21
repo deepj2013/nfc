@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from '../../components/common/Button'
 import { IoAddCircleSharp } from 'react-icons/io5'
 import { FiPrinter } from "react-icons/fi";
@@ -6,34 +6,31 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import { IoFilterSharp } from "react-icons/io5";
 import Table from '../../components/common/Table';
 import AddCategory from '../../components/Modal/AddCategory';
-import { useDispatch } from 'react-redux';
-import { createCategoryServices } from '../../redux/thunk/categoryServices';
+import { useDispatch, useSelector } from 'react-redux';
 import { logger } from '../../utils/Helper';
+import { getcategoryServices } from '../../redux/thunk/categoryServices';
 
 function Category() {
     const [isOpen, setIsOpen] = useState(false)
-    const dispatch=useDispatch()
-    const [formData, setFormData] = useState({
-        "categoryName":null,
-        "description":null,
-        "parentCategoryId":null,
-        "createdBy":null,
-        "updatedBy":null
-    })
+    const dispatch = useDispatch()
 
-    const upadteStateHandler = (e)=>{
-        let {name,value}=e.target
-        setFormData((pre)=>({...pre,[name]:value}))
-    }
-
-    const createHandler =async ()=>{
+    const getHandler = async () => {
         try {
-            let response = await dispatch(createCategoryServices()).unwarp()
+            let response = await dispatch(getcategoryServices()).unwarp()
+            console.log("responsesachin", response)
         } catch (error) {
             logger(error)
         }
     }
 
+    useEffect(() => {
+        getHandler()
+    }, [])
+
+    const { categoryList } = useSelector((state) => state.categoryState);
+
+
+    console.log("categoryListcategoryList", categoryList)
     return (
         <div>
             <div className='mb-6 flex items-center justify-between'>
@@ -97,7 +94,8 @@ function Category() {
                                         </thead>
                                         <tbody class="divide-y divide-gray-300 ">
                                             {
-                                                [1].map((ele, ind) => {
+                                                categoryList.map((ele, ind) => {
+                                                    console.log("ele",ele)
                                                     return (
                                                         <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
                                                             <td class="">
@@ -108,13 +106,12 @@ function Category() {
                                                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{ind + 1} </td>
                                                             <td class=" px-5 py-3">
                                                                 <div class="w-48 flex items-center gap-3">
-                                                                    <img className='h-10 w-10 rounded-full' src="https://www.indianhealthyrecipes.com/wp-content/uploads/2015/10/pizza-recipe-1.jpg" alt="Floyd image" />
                                                                     <div class="data">
-                                                                        <p class="font-normal text-sm text-gray-900">Advertising</p>
+                                                                        <p class="font-normal text-sm text-gray-900">{ele?.categoryName}</p>
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900"> 100 </td>
+                                                            <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{ele?.description}</td>
 
 
 

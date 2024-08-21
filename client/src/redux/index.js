@@ -1,8 +1,12 @@
 // Package Imports
-import { combineReducers } from 'redux';
-import authState from './slice/authSlice';
-import userState from './slice/userSlice';
+import { combineReducers } from "redux";
+import authState from "./slice/authSlice";
+import userState from "./slice/userSlice";
+import categoryState from "./slice/CategorySlice";
+import inventaryState from "./slice/inventarySlice";
 export default combineReducers({
-    authState,
-    userState
- });
+  authState,
+  userState,
+  categoryState,
+  inventaryState,
+});
