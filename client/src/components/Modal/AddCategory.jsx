@@ -4,9 +4,50 @@ import { useNavigate } from "react-router-dom";
 import Input from "../common/Input";
 import Button from "../common/Button";
 import Dropdown from "../common/DropDown";
+import { useDispatch } from "react-redux";
+import {  createCategoryServices } from "../../redux/thunk/categoryServices";
+import { logger } from "../../utils/Helper";
 
 const AddCategory = ({ isOpen, onClose, setFeedBackModal }) => {
     const navigate = useNavigate()
+
+    const dispatch=useDispatch();
+    const [formData, setFormData] = useState({
+        "categoryName":null,
+        "description":null,
+        "parentCategoryId":"",
+        "createdBy":1,
+        "updatedBy":1
+    })
+
+    const { categoryName,
+        description,
+        parentCategoryId,
+        createdBy,
+        updatedBy,}= formData
+
+
+    const upadteStateHandler = (e)=>{
+        let {name,value}=e.target
+        setFormData((pre)=>({...pre,[name]:value}))
+    }
+
+    const createHandler =async ()=>{
+        // alert("this is test")
+        try {
+            console.log("hhh")
+            let response = await dispatch(createCategoryServices(formData)).unwrap()
+            console.log("hhh334")
+           
+            console.log("responsesachin",response)
+        } catch (error) {
+            console.log(error);
+            logger(error)
+        }
+    }
+
+
+
 
     return (
         <div
@@ -35,16 +76,18 @@ const AddCategory = ({ isOpen, onClose, setFeedBackModal }) => {
                     {/* <img className="w-64  h-32 my-6 object-cover" src={TeacherFeedback}/> */}
                     <p className="text-xl mt-4 w-full"></p>
                     <div className="w-full lg:px-10">
-                        <Input placeholder={'Name'} />
+                        <Input placeholder={'Name'} value={categoryName} name={"categoryName"} onChange={upadteStateHandler}/>
 
-                        <Input placeholder={'Slug'} />
+                        <Input placeholder={'Description'} value={description} name={"description"} onChange={upadteStateHandler}/>
 
                         <Dropdown/>
+
+                        
 
 
                         <div className="mt-4">
 
-                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">Logo</label>
+                            {/* <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">Logo</label>
                             <div class="flex items-center justify-center w-full">
                                 <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-28 mb-4 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 ">
                                     <div class="flex flex-col items-center justify-center ">
@@ -56,12 +99,9 @@ const AddCategory = ({ isOpen, onClose, setFeedBackModal }) => {
                                     </div>
                                     <input id="dropzone-file" type="file" class="hidden" />
                                 </label>
-                            </div>
-
+                            </div> */}
                         </div>
-
-
-                        <Button name={'Add'} style={'w-full py-2'} />
+                        <Button name={'Add'} style={'w-full py-2'} onClick={createHandler}/>
                     </div>
 
                 </div>
