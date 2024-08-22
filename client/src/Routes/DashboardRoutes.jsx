@@ -35,8 +35,6 @@ function DashboardRoutes() {
                 <Route path="/inventory" element={<Inventory />} />
                 <Route path="/units" element={<Units />} />
                 <Route path="/vendor" element={<Vendor />} />
-
-                
                 
                 
             </Routes>
