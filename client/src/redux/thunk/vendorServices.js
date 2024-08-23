@@ -77,3 +77,22 @@ export const getAllVendorsServices = createAsyncThunk(
     }
   }
 );
+
+export const createVendersServices = createAsyncThunk(
+  "createVendersServices",
+  async (payload) => {
+    try {
+      console.log("formtest", payload);
+      let url = `${BASE_URL}inv/vendors`;
+      const res = await axios.post(url, payload);
+      console.log("res", res);
+      return res.data;
+    } catch (error) {
+      console.log("res", error);
+
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);

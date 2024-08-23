@@ -42,6 +42,7 @@ onClose()
             logger(error)
         }
     }
+    
     return (
         <div
             className={`fixed w-full inset-0 flex items-center justify-center z-[999] transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"

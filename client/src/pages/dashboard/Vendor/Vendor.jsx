@@ -57,7 +57,7 @@ function Vendor() {
                         name={'Import'} />
                     <Button
                         onClick={()=>{
-                            navigate('/add-product')
+                            navigate('/add-vender')
                         }}
                         rigntIcon={<IoAddCircleSharp className='text-2xl' />}
 
@@ -95,6 +95,7 @@ function Vendor() {
                       <tbody class="divide-y divide-gray-300 ">
                         {
                             allVenderList.map((ele,ind)=>{
+                                console.log("elele",ele)
                                 return(
                                     <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
                                     <td class="">
@@ -103,7 +104,7 @@ function Vendor() {
                                         </div>
                                     </td>
                                     <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{ind+1} </td>
-                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">Pizza</td>
+                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">{ele?.vendorName}</td>
                                     <td class=" px-5 py-3">
                                         <div class="w-48 flex items-center gap-3">
                                             <img className='h-10 w-10 rounded-full' src="https://www.indianhealthyrecipes.com/wp-content/uploads/2015/10/pizza-recipe-1.jpg" alt="Floyd image"/>
