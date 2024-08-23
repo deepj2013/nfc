@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Button from '../../components/common/Button'
 import { IoAddCircleSharp } from 'react-icons/io5'
 import { FiPrinter } from "react-icons/fi";
@@ -6,9 +6,29 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import { IoFilterSharp } from "react-icons/io5";
 import Table from '../../components/common/Table';
 import { useNavigate } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllProductListServices } from '../../redux/thunk/productServices';
+import { logger } from '../../utils/Helper';
 
 function ProductList() {
     const navigate=useNavigate()
+    const dispatch = useDispatch()
+
+    const getHandler = async () => {
+        try {
+            let response = await dispatch(getAllProductListServices()).unwrap()
+        } catch (error) {
+            logger(error)
+        }
+    }
+    useEffect(() => {
+        getHandler()
+    }, [])
+
+
+    const { allProductList } = useSelector((state) => state.inventaryState);
+    // console.log("tytu",allProductList)
+    
     return (
         <div>
             <div className='mb-6 flex items-center justify-between'>

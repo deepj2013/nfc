@@ -12,6 +12,7 @@ import Category from '../pages/inventory/AddCategory'
 import Inventory from '../pages/inventory/Inventory'
 import Units from '../pages/inventory/Units'
 import Vendor from '../pages/dashboard/Vendor/Vendor'
+import AddVender from '../pages/dashboard/Vendor/AddVender'
 
 function DashboardRoutes() {
     const [open,setOpen]=useState(true)
@@ -35,6 +36,9 @@ function DashboardRoutes() {
                 <Route path="/inventory" element={<Inventory />} />
                 <Route path="/units" element={<Units />} />
                 <Route path="/vendor" element={<Vendor />} />
+                <Route path="/add-vender" element={<AddVender />} />
+
+                AddVender
                 
                 
             </Routes>
