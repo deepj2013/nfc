@@ -1,22 +1,22 @@
 import React, { useEffect } from 'react'
-import Button from '../../components/common/Button'
+// import Button from '../../components/common/Button'
 import { IoAddCircleSharp } from 'react-icons/io5'
 import { FiPrinter } from "react-icons/fi";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { IoFilterSharp } from "react-icons/io5";
-import Table from '../../components/common/Table';
+// import Table from '../../components/common/Table';
 import { useNavigate } from 'react-router';
+import Button from '../../../components/common/Button';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllProductListServices } from '../../redux/thunk/productServices';
-import { logger } from '../../utils/Helper';
+import { getAllVendorsServices } from '../../../redux/thunk/vendorServices';
 
-function ProductList() {
+function Vendor() {
     const navigate=useNavigate()
     const dispatch = useDispatch()
 
     const getHandler = async () => {
         try {
-            let response = await dispatch(getAllProductListServices()).unwrap()
+            let response = await dispatch(getAllVendorsServices()).unwrap()
         } catch (error) {
             logger(error)
         }
@@ -26,16 +26,13 @@ function ProductList() {
     }, [])
 
 
-    const { allProductList } = useSelector((state) => state.inventaryState);
-    // console.log("tytu",allProductList)
-    
+    const { allVenderList } = useSelector((state) => state.inventaryState);
+
     return (
         <div>
             <div className='mb-6 flex items-center justify-between'>
-                <p className='font-semibold h28'>Products/Services</p>
+                <p className='font-semibold h28'>All/Vendor</p>
                 <div className='flex gap-4'>
-
-
                     <div className='bg-white shadow-xl px-3.5 text-2xl flex justify-center items-center rounded-xl text-gray-400 hover:bg-theme/10 hover:text-theme'>
                         <IoFilterSharp />
                         <span className='text-lg font-light mx-2'>
@@ -43,7 +40,6 @@ function ProductList() {
                         </span>
 
                     </div>
-
                     <div
                         className='bg-white shadow-xl px-3.5 text-2xl flex justify-center items-center rounded-xl text-gray-400 hover:bg-theme/10 hover:text-theme'>
                         <MdOutlineFileDownload />
@@ -51,26 +47,21 @@ function ProductList() {
                             Tooltip content
                             <div class="tooltip-arrow" data-popper-arrow></div>
                         </div>
-
                     </div>
                     <div className='bg-white shadow-xl px-3.5 text-2xl flex justify-center items-center rounded-xl text-gray-400 hover:bg-theme/10 hover:text-theme'>
                         <FiPrinter />
-
                     </div>
-
-
                     <Button
-                    
                         // rigntIcon={<IoAddCircleSharp className='text-2xl' />}
                         style={'bg-white bg-white text-theme w-[170px]'}
                         name={'Import'} />
                     <Button
                         onClick={()=>{
-                            navigate('/add-product')
+                            navigate('/add-vender')
                         }}
                         rigntIcon={<IoAddCircleSharp className='text-2xl' />}
 
-                        name={'Add Product'} />
+                        name={'Add Vendor'} />
                 </div>
 
             </div>
@@ -103,7 +94,8 @@ function ProductList() {
                       </thead>
                       <tbody class="divide-y divide-gray-300 ">
                         {
-                            [1].map((ele,ind)=>{
+                            allVenderList.map((ele,ind)=>{
+                                console.log("elele",ele)
                                 return(
                                     <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
                                     <td class="">
@@ -112,7 +104,7 @@ function ProductList() {
                                         </div>
                                     </td>
                                     <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{ind+1} </td>
-                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">Pizza</td>
+                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">{ele?.vendorName}</td>
                                     <td class=" px-5 py-3">
                                         <div class="w-48 flex items-center gap-3">
                                             <img className='h-10 w-10 rounded-full' src="https://www.indianhealthyrecipes.com/wp-content/uploads/2015/10/pizza-recipe-1.jpg" alt="Floyd image"/>
@@ -175,4 +167,4 @@ function ProductList() {
     )
 }
 
-export default ProductList
+export default Vendor
