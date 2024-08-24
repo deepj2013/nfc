@@ -4,9 +4,45 @@ import { useNavigate } from "react-router-dom";
 import Input from "../common/Input";
 import Button from "../common/Button";
 import Dropdown from "../common/DropDown";
+import { useDispatch } from "react-redux";
+import { getMeasurementUnitsServices, measurementUnitsServices } from "../../redux/thunk/unitServices";
+import { handleError } from "../../utils/ErrorHandler";
+import { logger } from "../../utils/Helper";
 
 const AddUnit = ({ isOpen, onClose, setFeedBackModal }) => {
     const navigate = useNavigate()
+
+    const dispatch=useDispatch();
+    const [formData, setFormData] = useState({
+  "unitName": "",
+  "abbreviation": "",
+  "conversionFactor": 1,
+  "productId": "",
+  "createdBy": 1,
+  "updatedBy": 1
+    })
+const {unitName,abbreviation,conversionFactor,productId,createdBy,updatedBy,}= formData
+
+
+    const upadteStateHandler = (e)=>{
+        let {name,value}=e.target
+        setFormData((pre)=>({...pre,[name]:value}))
+    }
+
+    const addUnitHandler =async ()=>{
+        // alert("this is test")
+        try {
+            console.log("hhh")
+            let response = await dispatch(measurementUnitsServices(formData)).unwrap();
+            dispatch(getMeasurementUnitsServices())
+onClose()
+            
+        } catch (error) {
+            console.log(error);
+            logger(error)
+        }
+    }
+    
     return (
         <div
             className={`fixed w-full inset-0 flex items-center justify-center z-[999] transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -34,18 +70,18 @@ const AddUnit = ({ isOpen, onClose, setFeedBackModal }) => {
                     {/* <img className="w-64  h-32 my-6 object-cover" src={TeacherFeedback}/> */}
                     <p className="text-xl mt-4 w-full"></p>
                     <div className="w-full lg:px-8">
-                        <Input placeholder={'Name'} />
+                        <Input placeholder={'Name'} value={unitName} name={"unitName"} onChange={upadteStateHandler}/>
 
-                        <Input placeholder={'Symbol'} />
+                        <Input placeholder={'Symbol'} value={abbreviation} name={"abbreviation"} onChange={upadteStateHandler}/>
 
                     
-                        <Input placeholder={'Parent Unit'} />
+                        <Input placeholder={'Parent Unit'} value={conversionFactor} name={"conversionFactor"} onChange={upadteStateHandler}/>
 
 
 
 
 
-                        <Button name={'Add'} style={'w-full py-2'} />
+                        <Button name={'Add'} style={'w-full py-2'} onClick={addUnitHandler}/>
                     </div>
 
                 </div>

@@ -6,6 +6,8 @@ function AuthRoute({setIsLogin}) {
   return (
     <Routes>
       <Route path="/" element={<Login setIsLogin={setIsLogin} />} />
+      <Route path="/club-control" element={<Login setIsLogin={setIsLogin} />} />
+
       {/* Add more routes for different authentication pages */}
     </Routes>
   )
