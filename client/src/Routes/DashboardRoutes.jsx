@@ -23,6 +23,7 @@ function DashboardRoutes() {
                 <Sidebar open={open} setOpen={setOpen} />
                 <div className={twMerge('pt-24 px-2 lg:px-8', open ? 'ml-60' : 'ml-20')}>
                 <Routes>
+               
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/employee" element={<Employee />} />
                 <Route path="/role" element={<Role />} />
