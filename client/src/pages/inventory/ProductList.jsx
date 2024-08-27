@@ -27,7 +27,7 @@ function ProductList() {
 
 
     const { allProductList } = useSelector((state) => state.inventaryState);
-    // console.log("tytu",allProductList)
+    console.log("tytu",allProductList)
     
     return (
         <div>

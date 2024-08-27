@@ -23,7 +23,7 @@ const dispatch=useDispatch();
   },
 
   "paymentTerms": "",
-  "createdBy": null
+  "createdBy": ""
 }
     )
 const {vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paymentTerms,createdBy}= formData
@@ -43,7 +43,7 @@ const {vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paym
     const addVenderHandler =async ()=>{
         alert("this is test")
         try {
-            console.log("hhh")
+            console.log("hhh",formData)
             let response = await dispatch(createVendersServices(formData)).unwrap();
             dispatch(getAllVendorsServices())
             navigate('/vendor')
@@ -125,9 +125,19 @@ const {vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paym
                 />
 
                 <FormInput
+                type={"date"}
                     width={'w-[30%]'}
                     placeholder={'Created By'}
-                    value={createdBy} name={"createdBy"} onChange={upadteStateHandler}
+                    // value={createdBy}
+                    name={"createdBy"} onChange={(e) => {
+                            const selectedDate = e.target.value;
+                            console.log("sachinTime",selectedDate)
+                            const timestamp = selectedDate ? new Date(selectedDate).getTime() : null;
+                            setFormData({
+                                ...formData,
+                                createdBy: timestamp,
+                            });
+                      }}
                 />
                 
                 
@@ -164,17 +174,17 @@ const {vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paym
                 {/* <Dropdown placeholder={'Tax'} width={'w-[30%]'} /> */}
 
 
-                <div class="w-full">
+                {/* <div class="w-full">
                     <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">           
                      Your Message
                     </label>
                     <textarea rows="6"
                         class="appearance-none block w-full  text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"></textarea>
-                </div>
+                </div> */}
 
                 <div className='w-full'>
                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">           
-                     Upload Product Image
+                     {/* Upload Product Image */}
                     </label>
                 {/* <Dropzone/> */}
                 </div>
@@ -193,11 +203,12 @@ export default AddVender
 
 
 
-const FormInput = ({ width, showButton, placeholder,name,onChange,value }) => {
+const FormInput = ({ width, showButton, placeholder,name,onChange,value,type,id }) => {
     return (
         <div class={twMerge("mb-5 relative", width)}>
             <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">{placeholder}</label>
-            <input onChange={onChange} value={value}  name={name} type="email" id="email" class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5    dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={placeholder} required />
+            <input onChange={onChange}
+             value={value}  name={name} type={type ? type : "text"} id={id?id:"text"} class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5    dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={placeholder} required />
             {showButton && <button className='text-sm bg-theme text-white absolute top-[34px] p-1.5 right-2 rounded-lg '>
                 Genrate Code
             </button>}
