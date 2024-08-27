@@ -7,7 +7,7 @@ import Vendor from "../models/inv_vendorModel.js";
 import InventoryTransaction from "../models/inv_transactionalModel.js";
 import Department from "../models/deptartmentModel.js";
 import User from "../models/userModel.js";
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 export const createInvCategoryservice = async (data) => {
   try {
@@ -205,135 +205,192 @@ export const getAllCategoriesService = async () => {
 };
 
 export const createMeasurementUnitService = async (data) => {
-    try {
-      const { unitName, abbreviation, conversionFactor, productId, createdBy, updatedBy } = data;
-  
-      // Validate required fields
-      if (!unitName) {
-        throw new APIError('Validation Error', 400, true, 'Unit name is required');
-      }
-      if (!abbreviation) {
-        throw new APIError('Validation Error', 400, true, 'Abbreviation is required');
-      }
-  
-      // Check if a measurement unit with the same unitName and abbreviation already exists
-      const existingMeasurementUnit = await MeasurementUnit.findOne({ unitName, abbreviation });
-      if (existingMeasurementUnit) {
-        throw new APIError('Validation Error', 400, true, 'Measurement unit with the same name and abbreviation already exists');
-      }
-  
-      // Handle productId - if it's an empty string, set it to null
-      let validProductId = productId === "" ? null : productId;
-  
-      // Validate productId if it's provided (i.e., not null)
-      if (validProductId && !mongoose.Types.ObjectId.isValid(validProductId)) {
-        throw new APIError('Validation Error', 400, true, 'Invalid product ID');
-      }
-  
-      // Get the current highest measuremntunitId
-      const lastMeasurementUnit = await MeasurementUnit.findOne().sort({ measuremntunitId: -1 });
-      const nextMeasuremntunitId = lastMeasurementUnit ? lastMeasurementUnit.measuremntunitId + 1 : 1;
-  
-      // Create a new measurement unit
-      const newMeasurementUnit = new MeasurementUnit({
+  try {
+    const {
+      unitName,
+      abbreviation,
+      conversionFactor,
+      productId,
+      createdBy,
+      updatedBy,
+    } = data;
+
+    // Validate required fields
+    if (!unitName) {
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Unit name is required"
+      );
+    }
+    if (!abbreviation) {
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Abbreviation is required"
+      );
+    }
+
+    // Check if a measurement unit with the same unitName and abbreviation already exists
+    const existingMeasurementUnit = await MeasurementUnit.findOne({
+      unitName,
+      abbreviation,
+    });
+    if (existingMeasurementUnit) {
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Measurement unit with the same name and abbreviation already exists"
+      );
+    }
+
+    // Handle productId - if it's an empty string, set it to null
+    let validProductId = productId === "" ? null : productId;
+
+    // Validate productId if it's provided (i.e., not null)
+    if (validProductId && !mongoose.Types.ObjectId.isValid(validProductId)) {
+      throw new APIError("Validation Error", 400, true, "Invalid product ID");
+    }
+
+    // Get the current highest measuremntunitId
+    const lastMeasurementUnit = await MeasurementUnit.findOne().sort({
+      measuremntunitId: -1,
+    });
+    const nextMeasuremntunitId = lastMeasurementUnit
+      ? lastMeasurementUnit.measuremntunitId + 1
+      : 1;
+
+    // Create a new measurement unit
+    const newMeasurementUnit = new MeasurementUnit({
+      unitName,
+      abbreviation,
+      conversionFactor,
+      productId: validProductId,
+      measuremntunitId: nextMeasuremntunitId,
+      createdBy,
+      updatedBy,
+    });
+
+    // Save the measurement unit to the database
+    const result = await newMeasurementUnit.save();
+
+    // Return the result
+    return result;
+  } catch (error) {
+    if (error instanceof APIError) {
+      throw error;
+    } else {
+      throw new APIError("Internal Server Error", 500, true, error.message);
+    }
+  }
+};
+export const updateMeasurementUnitService = async (measurementUnitId, data) => {
+  try {
+    const { unitName, abbreviation, conversionFactor, productId, updatedBy } =
+      data;
+
+    // Validate required fields
+    if (!measurementUnitId || !Number.isInteger(measurementUnitId)) {
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Invalid or missing measurement unit ID"
+      );
+    }
+    if (!updatedBy) {
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Updated by is required"
+      );
+    }
+
+    // Find the existing measurement unit
+    const existingMeasurementUnit = await MeasurementUnit.findOne({
+      measuremntunitId: measurementUnitId,
+    });
+    if (!existingMeasurementUnit) {
+      throw new APIError("Not Found", 404, true, "Measurement unit not found");
+    }
+
+    let updateFields = {};
+
+    // Check if unitName and abbreviation already exist
+    if (unitName && unitName !== existingMeasurementUnit.unitName) {
+      const duplicateUnit = await MeasurementUnit.findOne({
         unitName,
         abbreviation,
-        conversionFactor,
-        productId: validProductId,
-        measuremntunitId: nextMeasuremntunitId,
-        createdBy,
-        updatedBy
       });
-  
-      // Save the measurement unit to the database
-      const result = await newMeasurementUnit.save();
-  
-      // Return the result
-      return result;
-  
-    } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
-      } else {
-        throw new APIError('Internal Server Error', 500, true, error.message);
+      if (duplicateUnit) {
+        throw new APIError(
+          "Validation Error",
+          400,
+          true,
+          "Measurement unit with the same name and abbreviation already exists"
+        );
       }
+      updateFields.unitName = unitName;
     }
-  };
-export const updateMeasurementUnitService = async (measurementUnitId, data) => {
-    try {
-      const { unitName, abbreviation, conversionFactor, productId, updatedBy } = data;
-  
-      // Validate required fields
-      if (!measurementUnitId || !Number.isInteger(measurementUnitId)) {
-        throw new APIError("Validation Error", 400, true, "Invalid or missing measurement unit ID");
+
+    // Update fields if provided
+    if (abbreviation && abbreviation !== existingMeasurementUnit.abbreviation) {
+      const duplicateUnit = await MeasurementUnit.findOne({
+        unitName,
+        abbreviation,
+      });
+      if (duplicateUnit) {
+        throw new APIError(
+          "Validation Error",
+          400,
+          true,
+          "Measurement unit with the same name and abbreviation already exists"
+        );
       }
-      if (!updatedBy) {
-        throw new APIError("Validation Error", 400, true, "Updated by is required");
-      }
-  
-      // Find the existing measurement unit
-      const existingMeasurementUnit = await MeasurementUnit.findOne({ measuremntunitId: measurementUnitId });
-      if (!existingMeasurementUnit) {
-        throw new APIError("Not Found", 404, true, "Measurement unit not found");
-      }
-  
-      let updateFields = {};
-  
-      // Check if unitName and abbreviation already exist
-      if (unitName && unitName !== existingMeasurementUnit.unitName) {
-        const duplicateUnit = await MeasurementUnit.findOne({ unitName, abbreviation });
-        if (duplicateUnit) {
-          throw new APIError("Validation Error", 400, true, "Measurement unit with the same name and abbreviation already exists");
-        }
-        updateFields.unitName = unitName;
-      }
-  
-      // Update fields if provided
-      if (abbreviation && abbreviation !== existingMeasurementUnit.abbreviation) {
-        const duplicateUnit = await MeasurementUnit.findOne({ unitName, abbreviation });
-        if (duplicateUnit) {
-          throw new APIError("Validation Error", 400, true, "Measurement unit with the same name and abbreviation already exists");
-        }
-        updateFields.abbreviation = abbreviation;
-      }
-  
-      if (conversionFactor !== undefined) {
-        updateFields.conversionFactor = conversionFactor;
-      }
-  
-      // Handle productId - if it's an empty string, set it to null
-      let validProductId = productId === "" ? null : productId;
-  
-      // Validate productId if it's provided (i.e., not null)
-      if (validProductId && !mongoose.Types.ObjectId.isValid(validProductId)) {
-        throw new APIError("Validation Error", 400, true, "Invalid product ID");
-      }
-  
-      if (validProductId !== undefined) {
-        updateFields.productId = validProductId;
-      }
-  
-      // Update the updatedBy and updatedAt fields
-      updateFields.updatedBy = updatedBy;
-      updateFields.updatedAt = Date.now();
-  
-      // Perform the update operation
-      const result = await MeasurementUnit.findOneAndUpdate(
-        { measuremntunitId: measurementUnitId },
-        { $set: updateFields },
-        { new: true } // Return the updated document
-      );
-  
-      // Return the updated measurement unit
-      return result;
-    } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
-      } else {
-        throw new APIError("Internal Server Error", 500, true, error.message);
-      }
+      updateFields.abbreviation = abbreviation;
     }
-  };
+
+    if (conversionFactor !== undefined) {
+      updateFields.conversionFactor = conversionFactor;
+    }
+
+    // Handle productId - if it's an empty string, set it to null
+    let validProductId = productId === "" ? null : productId;
+
+    // Validate productId if it's provided (i.e., not null)
+    if (validProductId && !mongoose.Types.ObjectId.isValid(validProductId)) {
+      throw new APIError("Validation Error", 400, true, "Invalid product ID");
+    }
+
+    if (validProductId !== undefined) {
+      updateFields.productId = validProductId;
+    }
+
+    // Update the updatedBy and updatedAt fields
+    updateFields.updatedBy = updatedBy;
+    updateFields.updatedAt = Date.now();
+
+    // Perform the update operation
+    const result = await MeasurementUnit.findOneAndUpdate(
+      { measuremntunitId: measurementUnitId },
+      { $set: updateFields },
+      { new: true } // Return the updated document
+    );
+
+    // Return the updated measurement unit
+    return result;
+  } catch (error) {
+    if (error instanceof APIError) {
+      throw error;
+    } else {
+      throw new APIError("Internal Server Error", 500, true, error.message);
+    }
+  }
+};
 
 export const getAllMeasurementUnitsService = async () => {
   try {
@@ -346,8 +403,6 @@ export const getAllMeasurementUnitsService = async () => {
     throw new APIError("Internal Server Error", 500, true, error.message);
   }
 };
-
-
 
 // Utility function to generate SKU code
 const generateSKU = async () => {
@@ -362,50 +417,89 @@ const generateSKU = async () => {
     nextSkuNumber = parseInt(lastSku, 10) + 1;
   }
 
-  const sku = `NFC${String(nextSkuNumber).padStart(5, '0')}`;
+  const sku = `NFC${String(nextSkuNumber).padStart(5, "0")}`;
   return sku;
 };
 
 export const createProductService = async (data) => {
   try {
-    const { productName, description, categoryId, price, quantityInStock, unitOfMeasure, vendorId, createdBy } = data;
+    const {
+      productName,
+      description,
+      categoryId,
+      price,
+      quantityInStock,
+      unitOfMeasure,
+      vendorId,
+      createdBy,
+    } = data;
 
     // Validate required fields
     if (!productName) {
-      throw new APIError('Validation Error', 400, true, 'Product name is required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Product name is required"
+      );
     }
     if (!categoryId || !Number.isInteger(categoryId)) {
-      throw new APIError('Validation Error', 400, true, 'Invalid or missing category ID');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Invalid or missing category ID"
+      );
     }
     if (!price) {
-      throw new APIError('Validation Error', 400, true, 'Price is required');
+      throw new APIError("Validation Error", 400, true, "Price is required");
     }
     if (!quantityInStock && quantityInStock !== 0) {
-      throw new APIError('Validation Error', 400, true, 'Quantity in stock is required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Quantity in stock is required"
+      );
     }
     if (!unitOfMeasure) {
-      throw new APIError('Validation Error', 400, true, 'Unit of measure is required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Unit of measure is required"
+      );
     }
-    if (!vendorId || typeof vendorId !== 'string') {
-      throw new APIError('Validation Error', 400, true, 'Invalid or missing vendor ID');
+    if (!vendorId || typeof vendorId !== "string") {
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Invalid or missing vendor ID"
+      );
     }
 
     // Check if the categoryId exists in the Category collection
     const categoryExists = await Category.findOne({ category_id: categoryId });
     if (!categoryExists) {
-      throw new APIError('Validation Error', 400, true, 'Category not found');
+      throw new APIError("Validation Error", 400, true, "Category not found");
     }
 
     // Check if the vendorId exists in the Vendor collection
     const vendorExists = await Vendor.findOne({ vendor: vendorId });
     if (!vendorExists) {
-      throw new APIError('Validation Error', 400, true, 'Vendor not found');
+      throw new APIError("Validation Error", 400, true, "Vendor not found");
     }
-
     // Check if a product with the same name already exists
     const existingProduct = await Product.findOne({ productName });
+    console.log(existingProduct, "opop");
     if (existingProduct) {
-      throw new APIError('Validation Error', 400, true, 'Product with the same name already exists');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Product with the same name already exists"
+      );
     }
 
     // Generate SKU code (assuming you have this utility function)
@@ -421,7 +515,7 @@ export const createProductService = async (data) => {
       quantityInStock,
       unitOfMeasure,
       vendorId,
-      createdBy
+      createdBy,
     });
 
     // Save the product to the database
@@ -429,32 +523,45 @@ export const createProductService = async (data) => {
 
     // Return the result
     return result;
-
   } catch (error) {
     if (error instanceof APIError) {
       throw error;
     } else {
-      throw new APIError('Internal Server Error', 500, true, error.message);
+      throw new APIError("Internal Server Error", 500, true, error.message);
     }
   }
 };
 
 export const updateProductService = async (sku, data) => {
   try {
-    const { productName, description, categoryId, price, quantityInStock, unitOfMeasure, vendorId, updatedBy } = data;
+    const {
+      productName,
+      description,
+      categoryId,
+      price,
+      quantityInStock,
+      unitOfMeasure,
+      vendorId,
+      updatedBy,
+    } = data;
 
     // Validate required fields
     if (!sku) {
-      throw new APIError('Validation Error', 400, true, 'SKU is required');
+      throw new APIError("Validation Error", 400, true, "SKU is required");
     }
     if (!updatedBy) {
-      throw new APIError('Validation Error', 400, true, 'Updated by is required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Updated by is required"
+      );
     }
 
     // Find the existing product by SKU
     const existingProduct = await Product.findOne({ sku });
     if (!existingProduct) {
-      throw new APIError('Not Found', 404, true, 'Product not found');
+      throw new APIError("Not Found", 404, true, "Product not found");
     }
 
     let updateFields = {};
@@ -463,23 +570,30 @@ export const updateProductService = async (sku, data) => {
     if (productName && productName !== existingProduct.productName) {
       const duplicateProduct = await Product.findOne({ productName });
       if (duplicateProduct) {
-        throw new APIError('Validation Error', 400, true, 'Product with the same name already exists');
+        throw new APIError(
+          "Validation Error",
+          400,
+          true,
+          "Product with the same name already exists"
+        );
       }
       updateFields.productName = productName;
     }
 
     // Update fields if provided
     if (description !== undefined) updateFields.description = description;
-    if (categoryId && Number.isInteger(categoryId)) updateFields.categoryId = categoryId;
+    if (categoryId && Number.isInteger(categoryId))
+      updateFields.categoryId = categoryId;
     if (price !== undefined) updateFields.price = price;
-    if (quantityInStock !== undefined) updateFields.quantityInStock = quantityInStock;
+    if (quantityInStock !== undefined)
+      updateFields.quantityInStock = quantityInStock;
     if (unitOfMeasure !== undefined) updateFields.unitOfMeasure = unitOfMeasure;
 
     // Check and update vendorId if provided
-    if (vendorId && typeof vendorId === 'string') {
+    if (vendorId && typeof vendorId === "string") {
       const vendorExists = await Vendor.findOne({ vendor: vendorId });
       if (!vendorExists) {
-        throw new APIError('Validation Error', 400, true, 'Vendor not found');
+        throw new APIError("Validation Error", 400, true, "Vendor not found");
       }
       updateFields.vendorId = vendorId;
     }
@@ -497,12 +611,11 @@ export const updateProductService = async (sku, data) => {
 
     // Return the updated product
     return result;
-
   } catch (error) {
     if (error instanceof APIError) {
       throw error;
     } else {
-      throw new APIError('Internal Server Error', 500, true, error.message);
+      throw new APIError("Internal Server Error", 500, true, error.message);
     }
   }
 };
@@ -515,7 +628,7 @@ export const getAllProductsService = async () => {
     // Return the list of products
     return products;
   } catch (error) {
-    throw new APIError('Internal Server Error', 500, true, error.message);
+    throw new APIError("Internal Server Error", 500, true, error.message);
   }
 };
 
@@ -524,18 +637,17 @@ export const searchProductsByNameOrSkuService = async (searchTerm) => {
     // Search products by name or SKU matching the searchTerm
     const products = await Product.find({
       $or: [
-        { productName: { $regex: new RegExp(searchTerm, 'i') } },
-        { sku: { $regex: new RegExp(searchTerm, 'i') } }
-      ]
+        { productName: { $regex: new RegExp(searchTerm, "i") } },
+        { sku: { $regex: new RegExp(searchTerm, "i") } },
+      ],
     });
 
     // Return the matching products
     return products;
   } catch (error) {
-    throw new APIError('Internal Server Error', 500, true, error.message);
+    throw new APIError("Internal Server Error", 500, true, error.message);
   }
 };
-
 
 // Utility function to generate a unique vendor ID
 const generateUniqueVendorId = async () => {
@@ -559,41 +671,76 @@ const generateUniqueVendorId = async () => {
 
 export const createVendorService = async (data) => {
   try {
-    const { vendorName, contactPerson, contactEmail, contactPhone, gstNumber, address, paymentTerms, createdBy } = data;
+    const {
+      vendorName,
+      contactPerson,
+      contactEmail,
+      contactPhone,
+      gstNumber,
+      address,
+      paymentTerms,
+      createdBy,
+    } = data;
 
     // Validate required fields
     if (!vendorName) {
-      throw new APIError('Validation Error', 400, true, 'Vendor name is required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Vendor name is required"
+      );
     }
     if (!contactPerson) {
-      throw new APIError('Validation Error', 400, true, 'Contact person is required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Contact person is required"
+      );
     }
     if (!contactEmail) {
-      throw new APIError('Validation Error', 400, true, 'Contact email is required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Contact email is required"
+      );
     }
     if (!contactPhone) {
-      throw new APIError('Validation Error', 400, true, 'Contact phone is required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Contact phone is required"
+      );
     }
     if (!paymentTerms) {
-      throw new APIError('Validation Error', 400, true, 'Payment terms are required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Payment terms are required"
+      );
     }
 
     // Check for duplicate Vendor based on mobile number, email ID, and GST number
     const duplicateVendor = await Vendor.findOne({
-      $or: [
-        { contactPhone },
-        { contactEmail },
-        { gstNumber }
-      ]
+      $or: [{ contactPhone }, { contactEmail }, { gstNumber }],
     });
 
     if (duplicateVendor) {
-      throw new APIError('Validation Error', 400, true, 'Vendor with the same contact phone, email, or GST number already exists');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Vendor with the same contact phone, email, or GST number already exists"
+      );
     }
 
     // Generate unique vendor ID
     const vendor = await generateUniqueVendorId();
-    
+
     // Create a new vendor
     const newVendor = new Vendor({
       vendorName,
@@ -604,7 +751,7 @@ export const createVendorService = async (data) => {
       gstNumber,
       address, // Address can be null
       paymentTerms,
-      createdBy
+      createdBy,
     });
 
     // Save the vendor to the database
@@ -612,32 +759,50 @@ export const createVendorService = async (data) => {
 
     // Return the result
     return result;
-
   } catch (error) {
     if (error instanceof APIError) {
       throw error;
     } else {
-      throw new APIError('Internal Server Error', 500, true, error.message);
+      throw new APIError("Internal Server Error", 500, true, error.message);
     }
   }
 };
 
 export const updateVendorService = async (vendorId, data) => {
   try {
-    const { vendorName, contactPerson, contactEmail, contactPhone, gstNumber, address, paymentTerms, updatedBy } = data;
+    const {
+      vendorName,
+      contactPerson,
+      contactEmail,
+      contactPhone,
+      gstNumber,
+      address,
+      paymentTerms,
+      updatedBy,
+    } = data;
 
     // Validate required fields
     if (!vendorId) {
-      throw new APIError('Validation Error', 400, true, 'Vendor ID is required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Vendor ID is required"
+      );
     }
     if (!updatedBy) {
-      throw new APIError('Validation Error', 400, true, 'Updated by is required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Updated by is required"
+      );
     }
 
     // Find the existing vendor by custom vendorId (e.g., VENXXXXX)
     const existingVendor = await Vendor.findOne({ vendor: vendorId });
     if (!existingVendor) {
-      throw new APIError('Not Found', 404, true, 'Vendor not found');
+      throw new APIError("Not Found", 404, true, "Vendor not found");
     }
 
     let updateFields = {};
@@ -646,21 +811,36 @@ export const updateVendorService = async (vendorId, data) => {
     if (contactPhone && contactPhone !== existingVendor.contactPhone) {
       const duplicateVendor = await Vendor.findOne({ contactPhone });
       if (duplicateVendor) {
-        throw new APIError('Validation Error', 400, true, 'Contact phone already exists');
+        throw new APIError(
+          "Validation Error",
+          400,
+          true,
+          "Contact phone already exists"
+        );
       }
       updateFields.contactPhone = contactPhone;
     }
     if (contactEmail && contactEmail !== existingVendor.contactEmail) {
       const duplicateVendor = await Vendor.findOne({ contactEmail });
       if (duplicateVendor) {
-        throw new APIError('Validation Error', 400, true, 'Contact email already exists');
+        throw new APIError(
+          "Validation Error",
+          400,
+          true,
+          "Contact email already exists"
+        );
       }
       updateFields.contactEmail = contactEmail;
     }
     if (gstNumber && gstNumber !== existingVendor.gstNumber) {
       const duplicateVendor = await Vendor.findOne({ gstNumber });
       if (duplicateVendor) {
-        throw new APIError('Validation Error', 400, true, 'GST number already exists');
+        throw new APIError(
+          "Validation Error",
+          400,
+          true,
+          "GST number already exists"
+        );
       }
       updateFields.gstNumber = gstNumber;
     }
@@ -684,12 +864,11 @@ export const updateVendorService = async (vendorId, data) => {
 
     // Return the updated vendor
     return result;
-
   } catch (error) {
     if (error instanceof APIError) {
       throw error;
     } else {
-      throw new APIError('Internal Server Error', 500, true, error.message);
+      throw new APIError("Internal Server Error", 500, true, error.message);
     }
   }
 };
@@ -701,7 +880,7 @@ export const getAllVendorsService = async () => {
     // Return the list of vendors
     return vendors;
   } catch (error) {
-    throw new APIError('Internal Server Error', 500, true, error.message);
+    throw new APIError("Internal Server Error", 500, true, error.message);
   }
 };
 
@@ -710,65 +889,92 @@ export const searchVendorByNameOrIdService = async (searchTerm) => {
     // Search vendors by name or vendor ID matching the searchTerm
     const vendors = await Vendor.find({
       $or: [
-        { vendorName: { $regex: new RegExp(searchTerm, 'i') } },
-        { vendor: { $regex: new RegExp(searchTerm, 'i') } }
-      ]
+        { vendorName: { $regex: new RegExp(searchTerm, "i") } },
+        { vendor: { $regex: new RegExp(searchTerm, "i") } },
+      ],
     });
 
     // Return the matching vendors
     return vendors;
   } catch (error) {
-    throw new APIError('Internal Server Error', 500, true, error.message);
+    throw new APIError("Internal Server Error", 500, true, error.message);
   }
 };
 
-
 export const createInventoryTransactionService = async (data) => {
   try {
-    const { sku, transactionType, quantity, departmentId, createdBy, remarks } = data;
+    const { sku, transactionType, quantity, departmentId, createdBy, remarks } =
+      data;
 
     // Validate required fields
     if (!sku) {
-      throw new APIError('Validation Error', 400, true, 'SKU is required');
+      throw new APIError("Validation Error", 400, true, "SKU is required");
     }
-    if (!transactionType || !['inward', 'outward'].includes(transactionType)) {
-      throw new APIError('Validation Error', 400, true, 'Valid transaction type is required (inward or outward)');
+    if (!transactionType || !["inward", "outward"].includes(transactionType)) {
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Valid transaction type is required (inward or outward)"
+      );
     }
     if (!quantity || quantity <= 0) {
-      throw new APIError('Validation Error', 400, true, 'Quantity must be greater than zero');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Quantity must be greater than zero"
+      );
     }
     if (!departmentId) {
-      throw new APIError('Validation Error', 400, true, 'Department ID is required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Department ID is required"
+      );
     }
     if (!createdBy) {
-      throw new APIError('Validation Error', 400, true, 'User ID (createdBy) is required');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "User ID (createdBy) is required"
+      );
     }
 
     // Find the product by SKU
     const product = await Product.findOne({ sku });
     if (!product) {
-      throw new APIError('Not Found', 404, true, 'Product not found');
+      throw new APIError("Not Found", 404, true, "Product not found");
     }
 
     // Check if the department exists by department_id
-    const department = await Department.findOne({ department_id: departmentId });
+    const department = await Department.findOne({
+      department_id: departmentId,
+    });
     if (!department) {
-      throw new APIError('Not Found', 404, true, 'Department not found');
+      throw new APIError("Not Found", 404, true, "Department not found");
     }
 
     // Check if the user exists
-    const user = await User.findOne({user_id:createdBy});
+    const user = await User.findOne({ user_id: createdBy });
     if (!user) {
-      throw new APIError('Not Found', 404, true, 'User not found');
+      throw new APIError("Not Found", 404, true, "User not found");
     }
 
     // Calculate the new quantity based on transaction type
     let newQuantity;
-    if (transactionType === 'inward') {
+    if (transactionType === "inward") {
       newQuantity = product.quantityInStock + quantity;
-    } else if (transactionType === 'outward') {
+    } else if (transactionType === "outward") {
       if (product.quantityInStock < quantity) {
-        throw new APIError('Validation Error', 400, true, 'Insufficient stock for outward transaction');
+        throw new APIError(
+          "Validation Error",
+          400,
+          true,
+          "Insufficient stock for outward transaction"
+        );
       }
       newQuantity = product.quantityInStock - quantity;
     }
@@ -792,12 +998,11 @@ export const createInventoryTransactionService = async (data) => {
 
     // Return the result
     return result;
-
   } catch (error) {
     if (error instanceof APIError) {
       throw error;
     } else {
-      throw new APIError('Internal Server Error', 500, true, error.message);
+      throw new APIError("Internal Server Error", 500, true, error.message);
     }
   }
 };
@@ -812,28 +1017,28 @@ export const getProductHistoryService = async (sku) => {
       // Lookup to populate department details
       {
         $lookup: {
-          from: 'departments', // Collection name for departments
-          localField: 'departmentId',
-          foreignField: 'department_id',
-          as: 'departmentDetails'
-        }
+          from: "departments", // Collection name for departments
+          localField: "departmentId",
+          foreignField: "department_id",
+          as: "departmentDetails",
+        },
       },
 
       // Unwind the department details array
-      { $unwind: '$departmentDetails' },
+      { $unwind: "$departmentDetails" },
 
       // Lookup to populate user details (createdBy)
       {
         $lookup: {
-          from: 'masterusers', // Collection name for users
-          localField: 'createdBy',
-          foreignField: 'user_id',
-          as: 'userDetails'
-        }
+          from: "masterusers", // Collection name for users
+          localField: "createdBy",
+          foreignField: "user_id",
+          as: "userDetails",
+        },
       },
 
       // Unwind the user details array
-      { $unwind: '$userDetails' },
+      { $unwind: "$userDetails" },
 
       // Sort by transactionDate in descending order
       { $sort: { transactionDate: -1 } },
@@ -848,26 +1053,30 @@ export const getProductHistoryService = async (sku) => {
           quantity: 1,
           transactionDate: 1,
           remarks: 1,
-          department: '$departmentDetails.departmentName',
-          createdBy: '$userDetails.user_name',
-        }
-      }
+          department: "$departmentDetails.departmentName",
+          createdBy: "$userDetails.user_name",
+        },
+      },
     ];
 
     // Execute the aggregation pipeline
     const history = await InventoryTransaction.aggregate(pipeline);
 
     if (!history.length) {
-      throw new APIError('Not Found', 404, true, 'No transactions found for the given SKU');
+      throw new APIError(
+        "Not Found",
+        404,
+        true,
+        "No transactions found for the given SKU"
+      );
     }
 
     return history;
-
   } catch (error) {
     if (error instanceof APIError) {
       throw error;
     } else {
-      throw new APIError('Internal Server Error', 500, true, error.message);
+      throw new APIError("Internal Server Error", 500, true, error.message);
     }
   }
 };
@@ -879,17 +1088,22 @@ const getDateRange = (period) => {
   let endDate = now;
 
   switch (period) {
-    case 'weekly':
+    case "weekly":
       startDate = new Date(now.setDate(now.getDate() - 7));
       break;
-    case 'monthly':
+    case "monthly":
       startDate = new Date(now.setMonth(now.getMonth() - 1));
       break;
-    case 'yearly':
+    case "yearly":
       startDate = new Date(now.setFullYear(now.getFullYear() - 1));
       break;
     default:
-      throw new APIError('Validation Error', 400, true, 'Invalid period specified');
+      throw new APIError(
+        "Validation Error",
+        400,
+        true,
+        "Invalid period specified"
+      );
   }
 
   return { startDate, endDate };
@@ -911,22 +1125,26 @@ export const getReportService = async (criteria) => {
     }
 
     const report = await InventoryTransaction.find(query)
-      .populate('productId', 'productName')
-      .populate('departmentId', 'departmentName')
-      .populate('createdBy', 'username')
+      .populate("productId", "productName")
+      .populate("departmentId", "departmentName")
+      .populate("createdBy", "username")
       .sort({ transactionDate: -1 });
 
     if (!report.length) {
-      throw new APIError('Not Found', 404, true, 'No transactions found for the specified criteria');
+      throw new APIError(
+        "Not Found",
+        404,
+        true,
+        "No transactions found for the specified criteria"
+      );
     }
 
     return report;
-
   } catch (error) {
     if (error instanceof APIError) {
       throw error;
     } else {
-      throw new APIError('Internal Server Error', 500, true, error.message);
+      throw new APIError("Internal Server Error", 500, true, error.message);
     }
   }
 };

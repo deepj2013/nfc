@@ -82,10 +82,10 @@ export const createProductsServices = createAsyncThunk(
   "createProductsServices",
   async (payload) => {
     try {
-      console.log("formtest", payload);
+      console.log("formtest123", payload);
       let url = `${BASE_URL}inv/products`;
       const res = await axios.post(url, payload);
-      console.log("res", res);
+      console.log("res123", res);
       return res.data;
     } catch (error) {
       console.log("res", error);
