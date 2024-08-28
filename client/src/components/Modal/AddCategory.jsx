@@ -1,93 +1,152 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaXmark } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import Input from "../common/Input";
 import Button from "../common/Button";
 import Dropdown from "../common/DropDown";
 import { useDispatch } from "react-redux";
-import {  createCategoryServices } from "../../redux/thunk/categoryServices";
+import {
+  UpdateCategoryServices,
+  createCategoryServices,
+} from "../../redux/thunk/categoryServices";
 import { logger } from "../../utils/Helper";
+import moment from "moment";
+let initialState = {
+  categoryName: null,
+  description: null,
+  parentCategoryId: "",
+  updatedBy:"",
 
-const AddCategory = ({ isOpen, onClose, setFeedBackModal }) => {
-    const navigate = useNavigate()
+};
+const AddCategory = ({ isOpen, onClose, setFeedBackModal, selectedItem,type,setType}) => {
+  const navigate = useNavigate();
 
-    const dispatch=useDispatch();
-    const [formData, setFormData] = useState({
-        "categoryName":null,
-        "description":null,
-        "parentCategoryId":"",
-        "createdBy":1,
-        "updatedBy":1
-    })
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState(initialState);
+  const { categoryName, description, parentCategoryId, updatedBy } =
+    formData;
 
-    const { categoryName,
-        description,
-        parentCategoryId,
-        createdBy,
-        updatedBy,}= formData
+  const upadteStateHandler = (e) => {
+    let { name, value } = e.target;
+    setFormData((pre) => ({ ...pre, [name]: value }));
+  };
 
-
-    const upadteStateHandler = (e)=>{
-        let {name,value}=e.target
-        setFormData((pre)=>({...pre,[name]:value}))
+  const createHandler = async () => {
+    // alert("this is test")
+    try {
+      let response = await dispatch(createCategoryServices(formData)).unwrap();
+    } catch (error) {
+      console.log(error);
+      logger(error);
     }
+  };
 
-    const createHandler =async ()=>{
-        // alert("this is test")
-        try {
-            console.log("hhh")
-            let response = await dispatch(createCategoryServices(formData)).unwrap()
-            console.log("hhh334")
-           
-            console.log("responsesachin",response)
-        } catch (error) {
-            console.log(error);
-            logger(error)
-        }
+  useEffect(() => {
+    if (selectedItem!== null && type==="edit") {
+      setFormData((pre) => ({
+        ...pre,
+        categoryName: selectedItem?.categoryName,
+        description: selectedItem?.description,
+        parentCategoryId: selectedItem?._id,
+        updatedBy:moment(selectedItem?.updatedAt).format("YYYY-MM-DD")
+      }));
+    } else {
+      setFormData((prev)=>(
+        {...prev,
+         categoryName:"",
+        description:"",
+        parentCategoryId:"",
+        updatedBy:""
+      }));
     }
+  }, [isOpen]);
 
+  const updateHandler = async () => {
+    let payload =
+        {
+ category_id:selectedItem?.category_id,
+  categoryName: categoryName,
+  description: description,
+  parentCategoryId: selectedItem?._id,
+  updatedBy:12345
+    }
+    try {
+      let response = await dispatch(UpdateCategoryServices(payload)).unwrap();
+      console.log("responseresponse",response)
+    } catch (error) {
+      console.log(error);
+      logger(error);
+    }
+  };
 
-
-
-    return (
-        <div
-            className={`fixed w-full inset-0 flex items-center justify-center z-[999] transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-                }`}
+  return (
+    <div
+      className={`fixed w-full inset-0 flex items-center justify-center z-[999] transition-opacity duration-300 ${
+        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
+    >
+      <div
+        className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ${
+          isOpen ? "opacity-100" : "opacity-0"
+        }`}
+        // onClick={onClose}
+      ></div>
+      <div
+        className={`bg-white  overflow-scroll w-[95vw] lg:w-[500px] py-4 rounded-lg h-[95vh] lg:h-auto  shadow-xl transform transition-transform duration-300 ${
+          isOpen ? "translate-y-0" : "translate-y-full"
+        }`}
+        style={{ minHeight: "100px" }}
+      >
+        <button
+          onClick={()=>{
+            setFormData(initialState)
+            onClose()
+          }}
+          className="text-2xl absolute right-2 top-2 text-secondry"
         >
-            <div
-                className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"
-                    }`}
-            // onClick={onClose}
-            ></div>
-            <div
-                className={`bg-white  overflow-scroll w-[95vw] lg:w-[500px] py-4 rounded-lg h-[95vh] lg:h-auto  shadow-xl transform transition-transform duration-300 ${isOpen ? "translate-y-0" : "translate-y-full"
-                    }`}
-                style={{ minHeight: "100px" }}
-            >
-                <button
-                    onClick={onClose}
-                    className="text-2xl absolute right-2 top-2 text-secondry">
-                    <FaXmark />
-                </button>
-                <div className=" flex flex-col items-center">
+          <FaXmark />
+        </button>
+        <div className=" flex flex-col items-center">
+          <h2 className="text-2xl  w-full font-medium lg:px-10">
+            {`${type ==="add"?"Add":"Edit"} Category`}
+          </h2>
+          {/* <img className="w-64  h-32 my-6 object-cover" src={TeacherFeedback}/> */}
+          <p className="text-xl mt-4 w-full"></p>
+          <div className="w-full lg:px-10">
+            <Input
+              placeholder={"Name"}
+              value={categoryName}
+              name={"categoryName"}
+              onChange={upadteStateHandler}
+            />
 
+            <Input
+              placeholder={"Description"}
+              value={description}
+              name={"description"}
+              onChange={upadteStateHandler}
+            />
 
-                    <h2 className="text-2xl  w-full font-medium lg:px-10">Add Category</h2>
-                    {/* <img className="w-64  h-32 my-6 object-cover" src={TeacherFeedback}/> */}
-                    <p className="text-xl mt-4 w-full"></p>
-                    <div className="w-full lg:px-10">
-                        <Input placeholder={'Name'} value={categoryName} name={"categoryName"} onChange={upadteStateHandler}/>
+            {/* <Input
+              placeholder={"Parent Category Id"}
+              value={parentCategoryId}
+              name={"parentCategoryId"}
+              onChange={upadteStateHandler}
+            /> */}
+            
+            <Input
+            type={"date"}
+              placeholder={"updatedBy"}
+            //   value={updatedBy}
+              name="updatedBy"
+              value={updatedBy}
+              onChange={upadteStateHandler}
+            />
 
-                        <Input placeholder={'Description'} value={description} name={"description"} onChange={upadteStateHandler}/>
+            {/* <Dropdown /> */}
 
-                        <Dropdown/>
-
-                        
-
-
-                        <div className="mt-4">
-
-                            {/* <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">Logo</label>
+            <div className="mt-4">
+              {/* <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">Logo</label>
                             <div class="flex items-center justify-center w-full">
                                 <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-28 mb-4 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 ">
                                     <div class="flex flex-col items-center justify-center ">
@@ -100,17 +159,17 @@ const AddCategory = ({ isOpen, onClose, setFeedBackModal }) => {
                                     <input id="dropzone-file" type="file" class="hidden" />
                                 </label>
                             </div> */}
-                        </div>
-                        <Button name={'Add'} style={'w-full py-2'} onClick={createHandler}/>
-                    </div>
-
-                </div>
             </div>
+            <Button
+              name={"Add"}
+              style={"w-full py-2"}
+              onClick={selectedItem ? updateHandler : createHandler}
+            />
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
-
-export default AddCategory
-
-
+export default AddCategory;

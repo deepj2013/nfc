@@ -13,6 +13,8 @@ import Inventory from '../pages/inventory/Inventory'
 import Units from '../pages/inventory/Units'
 import Vendor from '../pages/dashboard/Vendor/Vendor'
 import AddVender from '../pages/dashboard/Vendor/AddVender'
+import Member from '../pages/member/Member'
+import AddMember from '../pages/member/AddMember'
 
 function DashboardRoutes() {
     const [open,setOpen]=useState(true)
@@ -38,8 +40,15 @@ function DashboardRoutes() {
                 <Route path="/units" element={<Units />} />
                 <Route path="/vendor" element={<Vendor />} />
                 <Route path="/add-vender" element={<AddVender />} />
+                <Route path="/member" element={<Member />} />
+                <Route path="/add-member" element={<AddMember />} />
 
-                AddVender
+                
+
+                
+                
+
+                
                 
                 
             </Routes>

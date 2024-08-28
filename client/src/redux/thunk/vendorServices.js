@@ -96,3 +96,61 @@ export const createVendersServices = createAsyncThunk(
     }
   }
 );
+
+export const updateVendorsServices = createAsyncThunk(
+  "updateVendorsServices",
+  async (payload) => {
+    try {
+      console.log("formtest", payload);
+      let url = `${BASE_URL}inv/vendors`;
+      const res = await axios.post(url, payload);
+      console.log("res", res);
+      return res.data;
+    } catch (error) {
+      console.log("res", error);
+
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);
+
+export const createMemberServices = createAsyncThunk(
+  "createMemberServices",
+  async (payload) => {
+    try {
+      console.log("formtest", payload);
+      let url = `${BASE_URL}user/membercategory`;
+      const res = await axios.post(url, payload);
+      console.log("res", res);
+      return res.data;
+    } catch (error) {
+      console.log("res", error);
+
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);
+
+export const getMemberCategoryServices = createAsyncThunk(
+  "getMemberCategoryServices",
+  async () => {
+    try {
+      let url = `${BASE_URL}user/membercategory`;
+
+      const res = await axios.get(url);
+      console.log("lkjhbghjk");
+
+      return res.data;
+    } catch (error) {
+      console.log("lkjhbghjk", error);
+
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);

@@ -122,6 +122,10 @@ export const universalAdmin = [
         title: "vendor ",
         path: "/vendor",
       },
+      {
+        title: "member",
+        path: "/member",
+      },
       ,
     ],
   },

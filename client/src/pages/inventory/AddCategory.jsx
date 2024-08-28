@@ -12,12 +12,13 @@ import { getcategoryServices } from '../../redux/thunk/categoryServices';
 
 function Category() {
     const [isOpen, setIsOpen] = useState(false);
-    const [update,setUpdate] = useState({})
-    const dispatch = useDispatch()
+    const [selectedItem,setSelectedItem] = useState(null);
+    const [type,setType] = useState("")
+    const dispatch = useDispatch();
 
     const getHandler = async () => {
         try {
-            let response = await dispatch(getcategoryServices()).unwarp()
+            let response = await dispatch(getcategoryServices()).unwarp();
             // console.log("responsesachin", response)
         } catch (error) {
             logger(error)
@@ -63,12 +64,16 @@ function Category() {
 
 
                     <Button
-                        onClick={() => setIsOpen(true)}
+                        onClick={() => {
+                            // setSelectedItem(null)
+                                setIsOpen(true),
+                                setType("add")        
+                        }
+                        }
                         rigntIcon={<IoAddCircleSharp className='text-sm' />}
 
                         name={'Add Cat'} />
                 </div>
-
             </div>
 
             <div>
@@ -114,13 +119,12 @@ function Category() {
                                                             </td>
                                                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{ele?.description}</td>
 
-
-
                                                             <td class="flex p-5 items-center gap-0.5">
                                                                 <button class="p-2  rounded-full bg-white group transition-all duration-500 hover:bg-indigo-600 flex item-center"
                                                                 onClick={() => {
-                                                                    setUpdate(item)
-                                                                    setIsOpen(true)
+                                                                       setSelectedItem(ele)
+                                                                    setIsOpen(true),
+                                                                    setType("edit")
                                                                 }}
                                                             
                                                                 >
@@ -154,11 +158,8 @@ function Category() {
                 </div>
             </div>
 
-            <AddCategory isOpen={isOpen} onClose={() => {
-                return (
-                    setIsOpen(false)
-                )
-            }} />
+            <AddCategory selectedItem={selectedItem} 
+            isOpen={isOpen} onClose={()=>setIsOpen(false)} setType={setType} type={type}/>
         </div>
     )
 }
