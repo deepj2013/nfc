@@ -51,13 +51,13 @@ router.get('/vendors', [auth], getAllVendorsController);
 // Route for searching vendors by name or vendor ID
 router.get('/vendors/search/:searchTerm', [auth], searchVendorByNameOrIdController);
 
-router.post('/inventory-transactions', createInventoryTransactionController);
+router.post('/inventory-transactions', [auth], createInventoryTransactionController);
 
 // Route to get the history of a product
-router.get('/inventory-transactions/history/:sku', getProductHistoryController);
+router.get('/inventory-transactions/history/:sku', [auth],  getProductHistoryController);
 
 // Route to get reports (weekly, monthly, etc.)
-router.get('/inventory-transactions/reports', getReportController);
+router.get('/inventory-transactions/reports',[auth] ,  getReportController);
 
 
 export default router;
