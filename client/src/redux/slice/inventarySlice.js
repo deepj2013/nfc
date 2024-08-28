@@ -1,6 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getMeasurementUnitsServices } from "../thunk/unitServices";
-import { getAllVendorsServices } from "../thunk/vendorServices";
+import {
+  getAllVendorsServices,
+  getMemberCategoryServices,
+} from "../thunk/vendorServices";
 import { getAllProductListServices } from "../thunk/productServices";
 
 const initialState = {
@@ -8,6 +11,7 @@ const initialState = {
   unitList: [],
   allVenderList: [],
   allProductList: [],
+  memberList: [],
 };
 
 const inventarySlice = createSlice({
@@ -53,6 +57,19 @@ const inventarySlice = createSlice({
       };
     });
     builder.addCase(getAllProductListServices.rejected, (state, action) => {
+      return { ...state, loading: false, error: "Something went wrong" };
+    });
+    builder.addCase(getMemberCategoryServices.pending, (state) => {
+      return { ...state, loading: true };
+    });
+    builder.addCase(getMemberCategoryServices.fulfilled, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        memberList: action?.payload?.result,
+      };
+    });
+    builder.addCase(getMemberCategoryServices.rejected, (state, action) => {
       return { ...state, loading: false, error: "Something went wrong" };
     });
   },

@@ -18,6 +18,21 @@ export const createCategoryServices = createAsyncThunk(
     }
   }
 );
+export const UpdateCategoryServices = createAsyncThunk(
+  "UpdateCategoryServices",
+  async (payload) => {
+    console.log("pay", payload);
+    try {
+      let url = `${BASE_URL}inv/updatecategory`;
+      const res = await axios.post(url, payload);
+      return res.data;
+    } catch (error) {
+      console.log("thiserror", error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);
 
 export const updateCategoryServices = createAsyncThunk(
   "updateCategoryServices",
