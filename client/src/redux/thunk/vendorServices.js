@@ -121,8 +121,28 @@ export const createMemberServices = createAsyncThunk(
   async (payload) => {
     try {
       console.log("formtest", payload);
-      let url = `${BASE_URL}user/membercategory`;
+      let url = `${BASE_URL}membercategory`;
       const res = await axios.post(url, payload);
+      console.log("res", res);
+      return res.data;
+    } catch (error) {
+      console.log("res", error);
+
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);
+
+export const UpdateMemberServices = createAsyncThunk(
+  "UpdateMemberServices",
+  async (id, payload) => {
+    try {
+      debugger;
+      console.log("formtest", id, payload);
+      let url = `${BASE_URL}membercategory/${id}`;
+      const res = await axios.put(url, payload);
       console.log("res", res);
       return res.data;
     } catch (error) {
@@ -139,7 +159,7 @@ export const getMemberCategoryServices = createAsyncThunk(
   "getMemberCategoryServices",
   async () => {
     try {
-      let url = `${BASE_URL}user/membercategory`;
+      let url = `${BASE_URL}membercategory`;
 
       const res = await axios.get(url);
       console.log("lkjhbghjk");

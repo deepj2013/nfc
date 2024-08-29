@@ -5,13 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getMeasurementUnitsServices, measurementUnitsServices, measurementUpdateUnitServices } from "../../redux/thunk/unitServices";
 import { handleError } from "../../utils/ErrorHandler";
-import { logger } from "../../utils/Helper";
+import { errorToast, logger } from "../../utils/Helper";
 import moment from "moment";
 import Input from "../../components/common/Input";
 import Button from "../../components/common/Button";
-import { createMemberServices } from "../../redux/thunk/vendorServices";
+import { UpdateMemberServices, createMemberServices, getMemberCategoryServices } from "../../redux/thunk/vendorServices";
 
 const AddMember = ({ isOpen, onClose, setFeedBackModal,selectedItem,type }) => {
+    console.log("ghjkl",selectedItem)
     const navigate = useNavigate()
 
     const dispatch=useDispatch();
@@ -29,11 +30,29 @@ const {memberCategory,status,createdBy,updatedBy,}= formData
         setFormData((pre)=>({...pre,[name]:value}))
     }
 
+    const validation=()=>{
+    if(!memberCategory){
+        errorToast("memberCategory can't be empaty")
+        return false
+    }
+    return true
+}
+
     const addMemberHandler =async ()=>{
-        // alert("this is test")
+        if(!validation()){
+            return
+        }
+        if(!memberCategory){
+             toast.success("Pls", {
+            position: "top-right",
+            autoClose: 1000,
+          });
+        }
         try {
-            // console.log("hhh")
+
+            console.log("hhh")
             let response = await dispatch(createMemberServices(formData)).unwrap();
+            
             dispatch(getMeasurementUnitsServices())
             onClose()
             
@@ -47,19 +66,13 @@ const {memberCategory,status,createdBy,updatedBy,}= formData
     if (selectedItem!== null && type==="edit") {
       setFormData((pre) => ({
         ...pre,
-        unitName: selectedItem?.unitName,
-        abbreviation: selectedItem?.abbreviation,
-        conversionFactor: selectedItem?.conversionFactor,
-        productId:selectedItem?.productId,
-        updatedBy:moment(selectedItem?.updatedAt).format("YYYY-MM-DD")
+        memberCategory: selectedItem?.memberCategory,
+        
       }));
     } else {
       setFormData((prev)=>(
         {...prev,
-         unitName:"",
-        abbreviation:"",
-        parentCategoryId:"",
-        updatedBy:""
+         memberCategory:"",
       }));
     }
   }, [isOpen]);
@@ -67,17 +80,19 @@ const {memberCategory,status,createdBy,updatedBy,}= formData
   
 
   const updateMemberHandler = async () => {
+    debugger
     let payload =
         {
- unitName:unitName,
-  abbreviation: abbreviation,
-  conversionFactor: conversionFactor,
-  productId:productId,
+ memberCategory:memberCategory,
   updatedBy:12345
     }
     try {
-      let response = await dispatch(measurementUpdateUnitServices(payload)).unwrap();
-      console.log("responserespons567",response)
+      let response = await dispatch(UpdateMemberServices(selectedItem?.memberCategoryId,payload)).unwrap();
+      console.log("responserespons567",response.result)
+      if(response.msg==="success"){
+        dispatch(getMemberCategoryServices())
+        onClose()
+      }
     } catch (error) {
       console.log(error);
       logger(error);

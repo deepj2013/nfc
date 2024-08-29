@@ -21,12 +21,12 @@ function Member() {
 
   const dispatch = useDispatch();
 
-  const getHandler = async () => {
-
+  const getMemberHandler = async () => {
     try {
-
+      console.log(
+        'avi'
+      )
       let response = await dispatch(getMemberCategoryServices()).unwrap();
-
       console.log("refff",response)
     } catch (error) {
       logger(error);
@@ -34,10 +34,11 @@ function Member() {
   };
 
   useEffect(() => {
-    getHandler();
+    getMemberHandler();
   }, []);
 
-  const { unitList } = useSelector((state) => state.inventaryState);
+  const { unitList,memberList } = useSelector((state) => state.inventaryState);
+  console.log("memberListmemberList",memberList)
 
   return (
     <div>
@@ -78,21 +79,22 @@ function Member() {
                           class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                         >
                           {" "}
-                          Id{" "}
+                          memberCategoryId
+{" "}
                         </th>
                         <th
                           scope="col"
                           class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                         >
                           {" "}
-                          Unit Name{" "}
+                          memberCategory{" "}
                         </th>
                         <th
                           scope="col"
                           class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
                         >
                           {" "}
-                          Short Name{" "}
+                          Status{" "}
                         </th>
                         <th
                           scope="col"
@@ -104,7 +106,7 @@ function Member() {
                       </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-300 ">
-                      {unitList.map((ele, ind) => {
+                      {memberList.map((ele, ind) => {
                         return (
                           <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
                             <td class="">
@@ -117,15 +119,17 @@ function Member() {
                               </div>
                             </td>
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                              {ind + 1}{" "}
+                              {/* {ind + 1}{" "} */}
+                              {ele?.memberCategoryId}
+
                             </td>
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
-                              {ele?.unitName}
+                              {ele?.memberCategory}
                             </td>
 
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               {" "}
-                              {ele?.abbreviation}
+                              {ele?.status? "Active":"InActive"}
                             </td>
 
                             <td class="flex p-5 items-center gap-0.5">
@@ -206,6 +210,7 @@ function Member() {
         onClose={() => {
           setIsOpen(false);
         }}
+        
       />
     </div>
   );
