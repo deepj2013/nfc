@@ -63,6 +63,7 @@ const inventarySlice = createSlice({
       return { ...state, loading: true };
     });
     builder.addCase(getMemberCategoryServices.fulfilled, (state, action) => {
+      console.log("set", action.payload);
       return {
         ...state,
         loading: false,

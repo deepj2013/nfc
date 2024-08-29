@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { twMerge } from 'tailwind-merge'
 import { createVendersServices, updateVendorsServices } from '../../../redux/thunk/vendorServices';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { logger } from '../../../utils/Helper';
+import { errorToast, logger, successToast } from '../../../utils/Helper';
 import moment from "moment"
 function AddVender() {
     const { state } = useLocation();
@@ -26,13 +26,60 @@ const dispatch=useDispatch();
   },
   "paymentTerms": "",
   "createdBy": "",
-  updatedBy:"",
+  "updatedBy":"",
   
 }
     )
 const {vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paymentTerms,createdBy,updatedBy}= formData
 
 
+const validation=()=>{
+    if(!vendorName){
+        errorToast("Vendor name can't be empaty")
+        return false
+    }
+    if(!contactPerson){
+        errorToast("contactPerson can't be empaty")
+        return false
+    }
+    if(!contactEmail){
+        errorToast("Contact Email can't be empaty")
+        return false
+    }
+    if(!contactPhone){
+        errorToast("Contact Phone can't be empaty")
+        return false
+    }
+    if(!gstNumber){
+        errorToast("gstNumber can't be empaty")
+        return false
+    }
+    if(!address.street){
+        errorToast("Street can't be empaty")
+        return false
+    }
+    if(!address.city){
+        errorToast("city can't be empaty")
+        return false
+    }
+    if(!address.state){
+        errorToast("state can't be empaty")
+        return false
+    }
+    if(!address.postalCode){
+        errorToast("postalCode can't be empaty")
+        return false
+    }
+    if(!address.country){
+        errorToast("country can't be empaty")
+        return false
+    }
+    if(!paymentTerms){
+        errorToast("paymentTerms can't be empaty")
+        return false
+    }
+    return true
+}
     const upadteStateHandler = (e)=>{
         let {name,value}=e.target
         setFormData((pre)=>({...pre,[name]:value}))
@@ -44,6 +91,9 @@ const {vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paym
         setFormData((pre)=>({...pre,address:{...pre.address,[name]:value}}))
     }
     const addVenderHandler =async ()=>{
+        if(!validation()){
+            return
+        }
         // alert("this is test")
         try {
             const dataa={vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paymentTerms,createdBy,updatedBy}
