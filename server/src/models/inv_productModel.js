@@ -18,6 +18,7 @@ const ProductSchema = new Schema({
     type: String,
     unique: true,
     trim: true,
+    sparse: true,
   },
   description: {
     type: String,

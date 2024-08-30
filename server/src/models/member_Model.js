@@ -89,7 +89,7 @@ const memberTransactionHistorySchema = new Schema({
     member_id: {  type: mongoose.Schema.Types.ObjectId, ref: 'master_member', required: true},
     memberId: { type: String, ref: 'master_member', required: true },
     transactionDate: { type: Date, required: true, default: Date.now },
-    amount: { type: Number, required: true },
+    amount: { type: Number, required: true, default: 0},
     transactionType: { type: String, required: true },  // Credit, Debit,
     remarks: { type: String, required: true},
     description : { type: String, required: true},
