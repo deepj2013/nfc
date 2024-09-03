@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import { adminLoginServices } from "../../redux/thunk/adminServices";
+import { adminLoginServices, superAdminLoginServices } from "../../redux/thunk/adminServices";
 import { errorLog } from "../../services/ErrorHandlerServices";
 import { setStorageValue } from "../../services/LocalStorageServices";
 
-function Login({ setIsLogin }) {
+function SuperLogin({ setIsLogin }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [username, setusername] = useState("");
@@ -13,12 +13,12 @@ function Login({ setIsLogin }) {
   const loginHander = async () => {
     try {
       let payload = {
-        email_id: username,
+        userId: username,
         password: password,
       };
-      console.log("resporty", payload);
-      let response = await dispatch(adminLoginServices(payload)).unwrap();
-      console.log("res",response)
+    //   console.log("resporty", payload);
+      let response = await dispatch(superAdminLoginServices(payload)).unwrap();
+      console.log("res909",response)
       if (response.msg === "Success") {
         setStorageValue('token', response?.result?.token);
         setIsLogin(true);
@@ -128,4 +128,4 @@ function Login({ setIsLogin }) {
   );
 }
 
-export default Login;
+export default SuperLogin;

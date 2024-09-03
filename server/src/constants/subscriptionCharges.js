@@ -1,4 +1,4 @@
-export const CATEGORY_CHARGES = {
+const CATEGORY_CHARGES = {
     RESIDENT: {
         monthlyCharge: 875.00,
         subscriptionFee12Monthly: 10500.00,
@@ -63,3 +63,5 @@ export const CATEGORY_CHARGES = {
         discount: 1600.00
     }
 };
+
+export default CATEGORY_CHARGES;

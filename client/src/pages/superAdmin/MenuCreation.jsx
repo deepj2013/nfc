@@ -7,97 +7,89 @@ import {
   getAllProductListServices,
 } from "../../redux/thunk/productServices";
 import { logger } from "../../utils/Helper";
-import moment from 'moment';
+import moment from "moment";
+import { menuCreationServices } from "../../redux/thunk/adminServices";
 
-function AddProduct() {
+function MenuCreation() {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    productName: "",
-    description: "",
-    categoryId: null,
-    price: null,
-    quantityInStock: null,
-    unitOfMeasure: "",
-    vendorId: "",
-    createdBy: null,
-    errors:{}
+    menuName: "",
+    menuDescription: "",
+    isActive: 1,
+    parentMenuId: 0,
+    subMenus: [],
+    createdBy: 1,
+    updatedBy: 1,
+    routeUrl: "#",
+    menuOrder: 1,
+    iconClass: "fa-mainmenu",
+    errors: {},
   });
   const {
-    productName,
-    description,
-    categoryId,
-    price,
-    quantityInStock,
-    unitOfMeasure,
-    vendorId,
+    menuName,
+    menuDescription,
+    isActive,
+    parentMenuId,
+    subMenus,
     createdBy,
-    errors
+    updatedBy,
+    routeUrl,
+    menuOrder,
+    iconClass,
+    errors,
   } = formData;
 
   const upadteStateHandler = (e) => {
     let { name, value } = e.target;
     setFormData((pre) => ({ ...pre, [name]: value }));
   };
-  
-  
 
-  const dropDownChange=(item)=>{
-    setFormData((pre)=>({...pre,categoryId:item?.category_id
-}))
-  }
+  //   const dropDownChange = (item) => {
+  //     setFormData((pre) => ({ ...pre, categoryId: item?.category_id }));
+  //   };
 
-  const dropDownChangeVender=(item)=>{
-    setFormData((pre)=>({...pre,vendorId:item?.vendor
-}))
-  }
+  //   const dropDownChangeVender = (item) => {
+  //     setFormData((pre) => ({ ...pre, vendorId: item?.vendor }));
+  //   };
 
   const handleValidation = () => {
     let error = {};
     let formIsValid = true;
 
-    if (!productName || !productName.trim()) {
-      error.productNameError = " * Product name can't be empty";
+    if (!menuName || !menuName.trim()) {
+      error.menuNameError = " * Menu Name can't be empty";
       formIsValid = false;
     }
 
-    if (!description || !description.trim()) {
-      error.descriptionError = " * Description can't be empty";
+    if (!menuDescription || !menuDescription.trim()) {
+      error.menuDescriptionError = " * Menu Description can't be empty";
       formIsValid = false;
     }
 
-    if (!price || !price.trim()) {
-      error.priceError = " * Price can't be empty";
-      formIsValid = false;
-    }
-    if (!quantityInStock || !quantityInStock.trim()) {
-      error.quantityInStockError = " * Quantity In Stock can't be empty";
-      formIsValid = false;
-    }
-    if (!unitOfMeasure || !unitOfMeasure.trim()) {
-      error.unitOfMeasureError = " * Unit Of Measure can't be empty";
-      formIsValid = false;
-    }
-    
+    // if (!menuOrder || !menuOrder.trim()) {
+    //   error.menuOrderError = " * Menu Order can't be empty";
+    //   formIsValid = false;
+    // }
+
     // Add more validation checks as needed
     setFormData((prev) => ({ ...prev, errors: error }));
     return formIsValid;
   };
 
-
-  const addProductHandler = async (e) => {
+  const menuCreateHandler = async (e) => {
+    alert("hello");
     e.preventDefault();
     let formIsValid = handleValidation();
     if (formIsValid) {
-    try {
-      delete[formData.errors]
-      let response = await dispatch(createProductsServices(formData)).unwrap();
-      dispatch(getAllProductListServices());
-      navigate("/product");
-    }
-    catch (error) {
-      console.log(error);
-      logger(error);
-    }
+      try {
+        delete [formData.errors];
+        let response = await dispatch(menuCreationServices(formData)).unwrap();
+        // dispatch(getAllProductListServices());
+        navigate("/menu-creation-list");
+      } catch (error) {
+        console.log(error);
+        logger(error);
+      }
     }
   };
 
@@ -114,74 +106,66 @@ function AddProduct() {
   }, []);
 
   const { categoryList } = useSelector((state) => state.categoryState);
-    const { allVenderList } = useSelector((state) => state.inventaryState);
-    // console.log("78909",allVenderList,categoryList)
-    
-  
-
+  const { allVenderList } = useSelector((state) => state.inventaryState);
+  // console.log("78909",allVenderList,categoryList)
 
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <p className="font-semibold h28">Add Products / Services</p>
+        <p className="font-semibold h28">Add Menu/Creation </p>
         <div className="flex gap-4"></div>
       </div>
 
       <div className="flex bg-white p-4 rounded-lg  w-full border justify-between flex-wrap">
         <FormInput
-        errors={errors.productNameError}
+          errors={errors.menuNameError}
           width={"w-[30%]"}
-          placeholder={"Product Name"}
-          value={productName}
-          name={"productName"}
+          placeholder={"Menu Name"}
+          value={menuName}
+          name={"menuName"}
           onChange={upadteStateHandler}
         />
         <FormInput
-        errors={errors.descriptionError}
+          errors={errors.menuDescriptionError}
           width={"w-[30%]"}
-          placeholder={"Description"}
-          value={description}
-          name={"description"}
+          placeholder={"menuDescription"}
+          value={menuDescription}
+          name={"menuDescription"}
           onChange={upadteStateHandler}
         />
-        {/* <FormInput
-                    width={'w-[30%]'}
-                    placeholder={'Category Id'}
-                    value={categoryId} name={"categoryId"} onChange={upadteStateHandler}
 
-                /> */}
-        <Dropdown
+        {/* <Dropdown
           width={"w-[30%]"}
           data={categoryList}
           placeholder={"Category Id"}
           // name={"categoryId"}
-          onChange={(val)=>dropDownChange(val)}
-        />
+          onChange={(val) => dropDownChange(val)}
+        /> */}
 
-        <FormInput
-        errors={errors.priceError}
+        {/* <FormInput
+          errors={errors.menuOrderError}
           width={"w-[30%]"}
           placeholder={"price"}
           value={price}
           name={"price"}
           onChange={upadteStateHandler}
-        />
-        <FormInput
-        errors={errors.quantityInStockError}
+        /> */}
+        {/* <FormInput
+          errors={errors.quantityInStockError}
           width={"w-[30%]"}
           placeholder={"Quantity In Stock"}
           value={quantityInStock}
           name={"quantityInStock"}
           onChange={upadteStateHandler}
-        />
-        <FormInput
-        errors={errors.unitOfMeasureError}
+        /> */}
+        {/* <FormInput
+          errors={errors.unitOfMeasureError}
           width={"w-[30%]"}
           placeholder={"Unit Of Measure"}
           value={unitOfMeasure}
           name={"unitOfMeasure"}
           onChange={upadteStateHandler}
-        />
+        /> */}
         {/* <FormInput
           width={"w-[30%]"}
           placeholder={"Vendor Id"}
@@ -189,30 +173,32 @@ function AddProduct() {
           name={"vendorId"}
           onChange={upadteStateHandler}
         /> */}
-        <Dropdown
+        {/* <Dropdown
           width={"w-[30%]"}
           data={allVenderList}
           placeholder={"Vendor Id"}
           // name={"categoryId"}
-          onChange={(val)=>dropDownChangeVender(val)}
-        />
-        <FormInput
-        errors={errors.createdByError}
-        type={"date"}
+          onChange={(val) => dropDownChangeVender(val)}
+        /> */}
+        {/* <FormInput
+          errors={errors.createdByError}
+          type={"date"}
           width={"w-[30%]"}
           placeholder={"Created By"}
           // value={createdBy}
           name={"createdBy"}
           onChange={(e) => {
-                            const selectedDate = e.target.value;
-                            console.log("sachinTime",selectedDate)
-                            const timestamp = selectedDate ? new Date(selectedDate).getTime() : null;
-                            setFormData({
-                                ...formData,
-                                createdBy: timestamp,
-                            });
-                      }}
-        />
+            const selectedDate = e.target.value;
+            console.log("sachinTime", selectedDate);
+            const timestamp = selectedDate
+              ? new Date(selectedDate).getTime()
+              : null;
+            setFormData({
+              ...formData,
+              createdBy: timestamp,
+            });
+          }}
+        /> */}
         {/* <FormInput
                     placeholder={'Product Code (SKU)'}
                     width={'w-[30%]'} showButton={true} />
@@ -264,7 +250,7 @@ function AddProduct() {
         </div>
 
         <button
-          onClick={(e)=>addProductHandler(e)}
+          onClick={(e) => menuCreateHandler(e)}
           type="submit"
           class="text-white mt-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
@@ -275,7 +261,7 @@ function AddProduct() {
   );
 }
 
-export default AddProduct;
+export default MenuCreation;
 
 const FormInput = ({
   width,
@@ -285,7 +271,7 @@ const FormInput = ({
   onChange,
   value,
   type,
-  errors
+  errors,
 }) => {
   return (
     <div class={twMerge("mb-5 relative", width)}>
@@ -296,7 +282,7 @@ const FormInput = ({
         onChange={onChange}
         value={value}
         name={name}
-        type= {type ? type : "text"}
+        type={type ? type : "text"}
         id="email"
         class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5    dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder={placeholder}
@@ -313,8 +299,8 @@ const FormInput = ({
   );
 };
 
-const Dropdown = ({ width, placeholder, data,onChange}) => {
-    const [selectedVal,setSelectedVal] = useState("select")
+const Dropdown = ({ width, placeholder, data, onChange }) => {
+  const [selectedVal, setSelectedVal] = useState("select");
   return (
     <div class={twMerge(" text-gray-900 dark:text-gray-100 ", width)}>
       <div class="relative w-full group">
@@ -332,12 +318,12 @@ const Dropdown = ({ width, placeholder, data,onChange}) => {
           {data?.map((ele, ind) => {
             return (
               <div
-              onClick={()=>{
-                onChange(ele);
-                setSelectedVal(ele?.categoryName || ele?.vendor)
-            }
-            }
-              class=" w-full block cursor-pointer  text-black  hover:text-link px-3 py-2 rounded-md">
+                onClick={() => {
+                  onChange(ele);
+                  setSelectedVal(ele?.categoryName || ele?.vendor);
+                }}
+                class=" w-full block cursor-pointer  text-black  hover:text-link px-3 py-2 rounded-md"
+              >
                 {ele?.categoryName || ele?.vendor}
               </div>
             );
@@ -347,7 +333,3 @@ const Dropdown = ({ width, placeholder, data,onChange}) => {
     </div>
   );
 };
-
-
-
-
