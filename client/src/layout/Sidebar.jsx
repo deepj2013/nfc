@@ -1,7 +1,6 @@
 // Package Imports
 import React, { useEffect, useState } from "react";
 
-
 import { twMerge } from "tailwind-merge";
 import { GrAchievement } from "react-icons/gr";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -10,20 +9,21 @@ import { FaBuildingUser } from "react-icons/fa6";
 import { RiFileUserFill } from "react-icons/ri";
 
 import { MdSpaceDashboard } from "react-icons/md";
-import { AdminRoutes, GatekeeperRoute, universalAdmin } from "../utils/routeByType";
+import {
+  AdminRoutes,
+  GatekeeperRoute,
+  universalAdmin,
+} from "../utils/routeByType";
 import { NavLink } from "react-router-dom";
 
 // View Imports
 
-
-
-
 const Sidebar = ({ open, setOpen }) => {
   //   const navigate = useNavigate();
   //   const location = useLocation();
-  const [profileToggle, setProfileToggle] = useState(true)
-  const userType = localStorage.getItem('userType');
-  const [active, setActive] = useState(null)
+  const [profileToggle, setProfileToggle] = useState(true);
+  const userType = localStorage.getItem("userType");
+  const [active, setActive] = useState(null);
   console.log(userType);
   // const [open,setOpen]=useState(true)
   const applyTheme = (theme) => {
@@ -33,7 +33,6 @@ const Sidebar = ({ open, setOpen }) => {
       document.documentElement.classList.remove("dark");
     }
   };
-
 
   const toggleTheme = () => {
     const currentTheme = document.documentElement.classList.contains("dark")
@@ -48,20 +47,17 @@ const Sidebar = ({ open, setOpen }) => {
   // Access the pathname from location
   var currentPathname = location.pathname;
 
-
-  const [width, setWidth] = useState(window.innerWidth)
-  const [role, setRole] = useState(1)
-  const [route, setRoute] = useState(universalAdmin)
+  const [width, setWidth] = useState(window.innerWidth);
+  const [role, setRole] = useState(1);
+  const [route, setRoute] = useState(AdminRoutes);
+  // console.log("rakeshho",route)
   const routeToggle = () => {
     if (width < 1024) {
-      setOpen(false)
+      setOpen(false);
+    } else {
+      console.log("pom");
     }
-    else {
-      console.log('pom');
-    }
-  }
-
-
+  };
 
   // useEffect(() => {
   //   if(userType=='admin'){
@@ -71,10 +67,6 @@ const Sidebar = ({ open, setOpen }) => {
   //     setRoute(GatekeeperRoute)
   //   }
   // }, [])
-
-
-
-
 
   return (
     <div className="">
@@ -103,7 +95,6 @@ const Sidebar = ({ open, setOpen }) => {
                       onClick={() => setProfileToggle(!profileToggle)}
                       type="button"
                       class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-
                     >
                       <span class="sr-only">Open user menu</span>
                       {/* <img
@@ -143,83 +134,90 @@ const Sidebar = ({ open, setOpen }) => {
 
       <aside
         id="logo-sidebar"
-        class={`fixed   top-0  bg-white shadow left-0 z-[999] ${open ? "w-60" : "w-16 "
-          } duration-500 h-screen top-20 rounded-e-[40px]  overflow-hidden    border-gray-200 lg:translate-x-0 `}
+        class={`fixed   top-0  bg-white shadow left-0 z-[999] ${
+          open ? "w-60" : "w-16 "
+        } duration-500 h-screen top-20 rounded-e-[40px]  overflow-hidden    border-gray-200 lg:translate-x-0 `}
         aria-label="Sidebar"
       >
         <div
-          className={`h-full  overflow-y-auto  duration-300= ${open ? "w-60" : "w-16 px-0"
-            }`}
+          className={`h-full  overflow-y-auto  duration-300= ${
+            open ? "w-60" : "w-16 px-0"
+          }`}
         >
-          <div className="  mt-4 p w-full flex justify-between relative">
-
-
-          </div>
-          <ul class={twMerge("space-y-2  font-normal group  ", !open ? 'px-0' : 'px-4')}>
-
-            {
-              route.map((item, ind) => {
-                if (item?.type) {
-                  return (
-                    <div onClick={()=>{
-                      setActive(ind)
+          <div className="  mt-4 p w-full flex justify-between relative"></div>
+          <ul
+            class={twMerge(
+              "space-y-2  font-normal group  ",
+              !open ? "px-0" : "px-4"
+            )}
+          >
+            {route.map((item, ind) => {
+              if (item?.type) {
+                return (
+                  <div
+                    onClick={() => {
+                      setActive(ind);
                       // if(!active){
                       //   setActive(ind)
                       // }
                       // else{
                       //   setActive(null)
                       // }
-                    }}   className="cursor-pointer ">
-                      <li className="flex items-center">
-                        <div className="h-10 w-10 bg-bgColor rounded-lg text-theme text-xl flex justify-center items-center">
-                          <FaUser />
-                        </div>
-                        {open && <span class="ml-3 text-sm  text-grayText">{item.title}</span>}
-                        {open && <FaChevronRight className="absolute right-4" />}
-
-                      </li>
-                      {active == ind &&
-                        item?.subMenu?.map((ele, ind) => {
-                          return (
-                            <NavLink to={ele?.path}>
+                    }}
+                    className="cursor-pointer "
+                  >
+                    <li className="flex items-center">
+                      <div className="h-10 w-10 bg-bgColor rounded-lg text-theme text-xl flex justify-center items-center">
+                        <FaUser />
+                      </div>
+                      {open && (
+                        <span class="ml-3 text-sm  text-grayText">
+                          {item.title}
+                        </span>
+                      )}
+                      {open && <FaChevronRight className="absolute right-4" />}
+                    </li>
+                    {active == ind &&
+                      item?.subMenu?.map((ele, ind) => {
+                        return (
+                          <NavLink to={ele?.path}>
                             <div className="w-full flex items-center gap-2 ml-14 text-center py-1 mt-1  text-theme">
                               <FaCircle className="text-[6px] font-semibold " />
 
                               <p className="text-sm">{ele?.title}</p>
                             </div>
-                            </NavLink>
-
-                          )
-                        })
-                      }
-                    </div>
-
-                  )
-                }
-                else {
-
-                  return (
-                    <li className="">
-                      <NavLink onClick={() => routeToggle()} to={item.path}>
-                        <p
-                          // href={item?.path}
-                          class={twMerge(`flex items-center p-2 text-gray-900 rounded-lg   group text-sm `)}
-                        >
-                          <div className="h-10 w-10 bg-bgColor rounded-lg text-theme text-xl flex justify-center items-center">
-                            <FaUser />
-                          </div>
-                          {open && <span class="ml-3 text-sm  text-grayText">{item.title}</span>}
-                          {open && <FaChevronRight className="absolute right-4" />}
-
-                        </p>
-                      </NavLink>
-
-                    </li>
-                  )
-                }
-              })
-            }
-
+                          </NavLink>
+                        );
+                      })}
+                  </div>
+                );
+              } else {
+                return (
+                  <li className="">
+                    <NavLink onClick={() => routeToggle()} to={item.path}>
+                      <p
+                        // href={item?.path}
+                        class={twMerge(
+                          `flex items-center p-2 text-gray-900 rounded-lg   group text-sm `
+                        )}
+                      >
+                        <div className="h-10 w-10 bg-bgColor rounded-lg text-theme text-xl flex justify-center items-center">
+                          <FaUser />
+                        </div>
+                        {open && (
+                          <span class="ml-3 text-sm  text-grayText">
+                            {item.title}
+                          </span>
+                        )}
+                        {open && (
+                          <FaChevronRight className="absolute right-4" />
+                        )}
+                      </p>
+                    </NavLink>
+                  </li>
+                );
+              }
+            })}
           </ul>
 
           {false && (

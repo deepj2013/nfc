@@ -4,7 +4,7 @@ export const logger = (log) => {
   console.log(log);
 };
 
-export let tempToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmMwODg0MDkxMzZjMGRkZTg5MGJiNTkiLCJ0b2tlbkV4cGlyeVRpbWUiOjE3MjQ5MDc3MzcwNTIsImlhdCI6MTcyNDgyMTMzN30.xEA9Ufc33dYe_lDp9BgeP-xHiYI-JTzfPI7465Tdo2M`;
+export let tempToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmMwODZjOWI0MzFmMjJkMmU4ODVhODgiLCJ0b2tlbkV4cGlyeVRpbWUiOjE3MjUzMzk5MDU5ODgsImlhdCI6MTcyNTI1MzUwNX0.bF2iViOsKuzSJAkYxzG4vTH-81DRJ3CgGvYYXBSS5Sc`;
 
 export const successToast = (msg) => {
   return toast.success(msg);

@@ -27,6 +27,19 @@ export const AdminRoutes = [
     path: "/user",
     // icon: <RiFileUserFill />
   },
+
+  {
+    title: "Menu",
+    path: "/menus",
+    type: 2,
+    // icon: <RiFileUserFill />
+    subMenu: [
+      {
+        title: "MenuCreationList",
+        path: "/menu-creation-list",
+      },
+    ],
+  },
 ];
 
 export const GatekeeperRoute = [

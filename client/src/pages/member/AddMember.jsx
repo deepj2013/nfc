@@ -80,7 +80,8 @@ const {memberCategory,status,createdBy,updatedBy,}= formData
   
 
   const updateMemberHandler = async () => {
-    debugger
+
+    // debugger
     let payload =
         {
  memberCategory:memberCategory,

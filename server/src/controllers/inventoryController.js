@@ -83,11 +83,14 @@ export const createMeasurementUnitController = async (req, res) => {
   };
 
   export const createProductController = async (req, res) => {
+    // return res.status(200).json({msg: "success hello"})
     try {
+      console.log("product controllers")
       const result = await createProductService(req.body);
       return res.status(201).json({ msg: "Product created successfully", result });
     } catch (error) {
-      res.status(error.httpCode || 500).json({ error: error.message });
+      console.log(error);
+      res.status(error.httpCode || 500).json({ msg: "Error in create Product", error: error.message });
     }
   };
   

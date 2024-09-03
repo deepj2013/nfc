@@ -17,7 +17,9 @@ function ProductList() {
     const getHandler = async () => {
         try {
             let response = await dispatch(getAllProductListServices()).unwrap()
+            console.log("hemender",response)
         } catch (error) {
+            console.log("hemender",error)
             logger(error)
         }
     }
@@ -27,7 +29,7 @@ function ProductList() {
 
 
     const { allProductList } = useSelector((state) => state.inventaryState);
-    console.log("tytu",allProductList)
+    console.log("tytused",allProductList)
     
     return (
         <div>
@@ -51,7 +53,6 @@ function ProductList() {
                             Tooltip content
                             <div class="tooltip-arrow" data-popper-arrow></div>
                         </div>
-
                     </div>
                     <div className='bg-white shadow-xl px-3.5 text-2xl flex justify-center items-center rounded-xl text-gray-400 hover:bg-theme/10 hover:text-theme'>
                         <FiPrinter />
@@ -90,20 +91,21 @@ function ProductList() {
                                   </div>
                               </th>
                               <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"> Id </th>
-                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"> Item </th>
-                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"> Code </th>
-                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"> Category </th>
-                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"> Unit </th>
-                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"> Quantity </th>
-                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"> Sales Price </th>
-                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"> Purchase Price </th>
+                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"> productName </th>
+                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"> description </th>
+                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"> quantityInStock</th>
+                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"> reorderLevel</th>
+                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize">sku</th>
+                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"> price </th>
+                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize">unitOfMeasure</th>
+                              <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize">vendorId</th>
                               <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"> Action</th>
 
                           </tr>
                       </thead>
                       <tbody class="divide-y divide-gray-300 ">
                         {
-                            [1].map((ele,ind)=>{
+                            allProductList.map((ele,ind)=>{
                                 return(
                                     <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
                                     <td class="">
@@ -112,35 +114,34 @@ function ProductList() {
                                         </div>
                                     </td>
                                     <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{ind+1} </td>
-                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">Pizza</td>
+                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">{ele?.productName}</td>
                                     <td class=" px-5 py-3">
-                                        <div class="w-48 flex items-center gap-3">
-                                            <img className='h-10 w-10 rounded-full' src="https://www.indianhealthyrecipes.com/wp-content/uploads/2015/10/pizza-recipe-1.jpg" alt="Floyd image"/>
                                             <div class="data">
-                                                <p class="font-normal text-sm text-gray-900">Pizza</p>
+                                                <p class="font-normal text-sm text-gray-900">{ele?.description}</p>
                                             </div>
-                                        </div>
                                     </td>
-                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900"> Food </td>
-                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900"> 10 </td>
-                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900"> 100 </td>
+                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{ele?.quantityInStock}</td>
+                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{ele?.reorderLevel}</td>
+                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{ele?.sku}</td>
                                     <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                                         <div class="py-1.5 px-2.5 bg-emerald-50 rounded-full flex justify-center w-20 items-center gap-1">
                                             <svg width="5" height="6" viewBox="0 0 5 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <circle cx="2.5" cy="3" r="2.5" fill="#059669"></circle>
                                             </svg>
-                                            <span class="font-medium text-xs text-emerald-600 ">$200</span>
+                                            <span class="font-medium text-xs text-emerald-600 ">{ele?.price}</span>
                                         </div>
                                     </td>
+                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                                        <div class="py-1.5 px-2.5 bg-emerald-50 rounded-full flex justify-center w-20 items-center gap-1">
+                                            <svg width="5" height="6" viewBox="0 0 5 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <circle cx="2.5" cy="3" r="2.5" fill="#059669"></circle>
+                                            </svg>
+                                            <span class="font-medium text-xs text-emerald-600 ">{ele?.unitOfMeasure
+}</span>
+                                        </div>
+                                    </td>
+                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">{ele?.vendorId}</td>
 
-                                    <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                                        <div class="py-1.5 px-2.5 bg-emerald-50 rounded-full flex justify-center w-20 items-center gap-1">
-                                            <svg width="5" height="6" viewBox="0 0 5 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <circle cx="2.5" cy="3" r="2.5" fill="#059669"></circle>
-                                            </svg>
-                                            <span class="font-medium text-xs text-emerald-600 ">$100</span>
-                                        </div>
-                                    </td>
                                     <td class="flex p-5 items-center gap-0.5">
                                         <button class="p-2  rounded-full bg-white group transition-all duration-500 hover:bg-indigo-600 flex item-center">
                                             <svg class="cursor-pointer" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

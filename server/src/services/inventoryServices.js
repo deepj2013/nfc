@@ -433,7 +433,7 @@ export const createProductService = async (data) => {
       vendorId,
       createdBy,
     } = data;
-
+ 
     // Validate required fields
     if (!productName) {
       throw new APIError(
@@ -524,8 +524,10 @@ export const createProductService = async (data) => {
     // Return the result
     return result;
   } catch (error) {
+    console.log(error);
     if (error instanceof APIError) {
-      throw error;
+
+      throw new APIError("Internal Server Error", 500, true, error.message);;
     } else {
       throw new APIError("Internal Server Error", 500, true, error.message);
     }

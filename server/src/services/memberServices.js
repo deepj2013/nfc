@@ -15,7 +15,7 @@ import {
   MemberTransactionHistory,
 } from "../models/member_Model.js";
 import mongoose from "mongoose";
-import { CATEGORY_CHARGES } from "../constants/subscriptionCharges.js";
+// import { CATEGORY_CHARGES } from "../constants/subscriptionCharges.js";
 
 export const createMemberCategory = async (data) => {
   let sequenceId = 1;
@@ -141,18 +141,27 @@ const calculateValidUpToAndDuration = () => {
 // Helper function to calculate total amount
 const calculateTotalAmount = (category, months) => {
   const chargeDetails = CATEGORY_CHARGES[category];
+  console.log(chargeDetails, "in calculateTotalAmount");
   if (!chargeDetails) {
     throw new Error(`Invalid category: ${category}`);
   }
 
-  const { monthly } = chargeDetails;
-  const subscriptionFee = monthly * months;
+  const { monthlyCharge } = chargeDetails;
+  const subscriptionFee = monthlyCharge * months;
   const annualFee = category === "CORPORATE" ? 2000 : 1000;
   const totalBeforeGST = subscriptionFee + annualFee;
   const gst = totalBeforeGST * 0.18;
   const totalAmount = totalBeforeGST + gst;
 
-  return totalAmount, gst, totalBeforeGST, annualFee, subscriptionFee;
+  return {
+    totalAmount,
+    gst,
+    totalBeforeGST,
+    annualFee,
+    subscriptionFee,
+    monthlyCharge,
+    months,
+  };
 };
 
 // Helper function to create a wallet and initial transaction
@@ -167,9 +176,19 @@ const createWalletAndInitialTransaction = async (member, session) => {
   });
   await wallet.save({ session });
 
-  // Calculate validUpTo, duration, and total amount
   const { duration, months } = calculateValidUpToAndDuration();
-  const totalAmount = calculateTotalAmount(member.memberCategory, months);
+  const {
+    totalAmount,
+    gst,
+    totalBeforeGST,
+    annualFee,
+    subscriptionFee,
+    monthlyCharge,
+  } = calculateTotalAmount(member.memberCategory, months);
+
+  // Create a detailed description
+  const description = `Subscription charge for ${months} month(s): Single month payment: ₹${monthlyCharge}, Total subscription fee: ₹${subscriptionFee}, Annual fee: ₹${annualFee}, Amount before GST: ₹${totalBeforeGST}, GST (18%): ₹${gst}, Total amount: ₹${totalAmount}`;
+
   // Create an initial transaction with narration and duration for the calculated months
   const transaction = new MemberTransactionHistory({
     member_id: member._id,
@@ -178,7 +197,8 @@ const createWalletAndInitialTransaction = async (member, session) => {
     amount: totalAmount, // Example amount for subscription charge
     transactionType: "Debit",
     remarks: `Subscription charge for ${duration}`,
-    narration: "Subscription charge Registration",
+    narration: "Registration Charges",
+    description: description,
   });
   await transaction.save({ session });
 };

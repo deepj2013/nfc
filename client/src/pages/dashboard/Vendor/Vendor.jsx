@@ -97,7 +97,7 @@ function Vendor() {
                       <tbody class="divide-y divide-gray-300 ">
                         {
                             allVenderList.map((ele,ind)=>{
-                                console.log("elele",ele)
+                                // console.log("elele",ele)
                                 return(
                                     <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
                                     <td class="">
