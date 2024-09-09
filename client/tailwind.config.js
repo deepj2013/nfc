@@ -1,13 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: "class",
   theme: {
     extend: {
-    
       fontFamily: {
         urbanist: ["Urbanist", "sans-serif"],
         inter: ["Inter", "sans-serif"],
@@ -22,16 +18,13 @@ export default {
         bgColor: "#2e37a40c",
         stroke_Color: "#DBDBDB",
         theme: "#2E37A4",
-        grayText:'#727272'
-
-    
+        grayText: "#727272",
       },
       screens: {
-        '2xll': '1500px',
-        '3xxl':'1600px'
+        "2xll": "1500px",
+        "3xxl": "1600px",
       },
     },
   },
-  plugins: [
-  ],}
-
+  plugins: [],
+};

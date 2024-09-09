@@ -14,8 +14,8 @@ import {
   Wallet,
   MemberTransactionHistory,
 } from "../models/member_Model.js";
-import CATEGORY_CHARGES from "../constants/subscriptionCharges.js"
 import mongoose from "mongoose";
+// import { CATEGORY_CHARGES } from "../constants/subscriptionCharges.js";
 
 export const createMemberCategory = async (data) => {
   let sequenceId = 1;
@@ -50,7 +50,6 @@ export const getMemberCategories = async () => {
   }
 };
 
-
 export const updateMemberCategory = async (id, data) => {
   try {
     const updatedMemberCategory = await MemberCategory.findOneAndUpdate(
@@ -77,160 +76,196 @@ export const toggleMemberCategoryStatus = async (id, status) => {
   }
 };
 
-
-
 // Helper function to generate memberId
 const generateMemberId = async (category, dateOfMembership) => {
-    let prefix;
-    const randomNumber = Math.floor(10000 + Math.random() * 90000); // Generate a random 5-digit number
+  let prefix;
+  const randomNumber = Math.floor(10000 + Math.random() * 90000); // Generate a random 5-digit number
 
-    switch (category) {
-        case 'RESIDENT':
-            prefix = 'MM';
-            break;
-        case 'ASSOCIATE':
-            prefix = 'MA';
-            break;
-        case 'SENIOR CITIZEN RESIDENT':
-            prefix = 'MMS';
-            break;
-        case 'SENIOR CITIZEN ASSOCIATE':
-            prefix = 'MAS';
-            break;
-        case 'SENIOR CITIZEN CORPORATE':
-            prefix = 'MCS';
-            break;
-        case 'CORPORATE':
-            prefix = 'MC';
-            break;
-        default:
-            prefix = 'MM'; // Default to RESIDENT if category not recognized
-    }
+  switch (category) {
+    case "RESIDENT":
+      prefix = "MM";
+      break;
+    case "ASSOCIATE":
+      prefix = "MA";
+      break;
+    case "SENIOR CITIZEN RESIDENT":
+      prefix = "MMS";
+      break;
+    case "SENIOR CITIZEN ASSOCIATE":
+      prefix = "MAS";
+      break;
+    case "SENIOR CITIZEN CORPORATE":
+      prefix = "MCS";
+      break;
+    case "CORPORATE":
+      prefix = "MC";
+      break;
+    default:
+      prefix = "MM"; // Default to RESIDENT if category not recognized
+  }
 
-    const memberId = `${prefix}${randomNumber}`;
-    const existingMember = await MemberData.findOne({ memberId });
+  const memberId = `${prefix}${randomNumber}`;
+  const existingMember = await MemberData.findOne({ memberId });
 
-    if (existingMember) {
-        // Recursively generate a new ID if a conflict is found
-        return await generateMemberId(category, dateOfMembership);
-    }
+  if (existingMember) {
+    // Recursively generate a new ID if a conflict is found
+    return await generateMemberId(category, dateOfMembership);
+  }
 
-    return memberId;
+  return memberId;
 };
-
 
 // Helper function to calculate ValidUpTo and duration in months
 const calculateValidUpToAndDuration = () => {
   const now = new Date();
-  const nextMarch = new Date(`March 31, ${now.getMonth() > 2 ? now.getFullYear() + 1 : now.getFullYear()}`);
-  
-  const validUpTo = Math.floor(nextMarch.getTime()); // Convert to UNIX timestamp
-  
-  // Calculate duration in months
-  const months = (nextMarch.getFullYear() - now.getFullYear()) * 12 + (nextMarch.getMonth() - now.getMonth());
+  const nextMarch = new Date(
+    `March 31, ${
+      now.getMonth() > 2 ? now.getFullYear() + 1 : now.getFullYear()
+    }`
+  );
 
-  return { validUpTo, duration: `${months} Month${months > 1 ? 's' : ''}`, months };
+  const validUpTo = Math.floor(nextMarch.getTime()); // Convert to UNIX timestamp
+
+  // Calculate duration in months
+  const months =
+    (nextMarch.getFullYear() - now.getFullYear()) * 12 +
+    (nextMarch.getMonth() - now.getMonth());
+
+  return {
+    validUpTo,
+    duration: `${months} Month${months > 1 ? "s" : ""}`,
+    months,
+  };
 };
 
 // Helper function to calculate total amount
 const calculateTotalAmount = (category, months) => {
   const chargeDetails = CATEGORY_CHARGES[category];
-  console.log(chargeDetails, "in calculateTotalAmount")
+  console.log(chargeDetails, "in calculateTotalAmount");
   if (!chargeDetails) {
-      throw new Error(`Invalid category: ${category}`);
+    throw new Error(`Invalid category: ${category}`);
   }
 
   const { monthlyCharge } = chargeDetails;
   const subscriptionFee = monthlyCharge * months;
-  const annualFee = category === 'CORPORATE' ? 2000 : 1000;
+  const annualFee = category === "CORPORATE" ? 2000 : 1000;
   const totalBeforeGST = subscriptionFee + annualFee;
   const gst = totalBeforeGST * 0.18;
   const totalAmount = totalBeforeGST + gst;
 
-  return { totalAmount, gst, totalBeforeGST, annualFee, subscriptionFee, monthlyCharge, months };
+  return {
+    totalAmount,
+    gst,
+    totalBeforeGST,
+    annualFee,
+    subscriptionFee,
+    monthlyCharge,
+    months,
+  };
 };
 
 // Helper function to create a wallet and initial transaction
 const createWalletAndInitialTransaction = async (member, session) => {
   // Create a wallet for the member
   const wallet = new Wallet({
-      member_id: member._id,
-      memberId: member.memberId,
-      balance: 0,
-      createdBy: member.createdBy,
-      updatedBy: member.updatedBy,
+    member_id: member._id,
+    memberId: member.memberId,
+    balance: 0,
+    createdBy: member.createdBy,
+    updatedBy: member.updatedBy,
   });
   await wallet.save({ session });
 
-
   const { duration, months } = calculateValidUpToAndDuration();
-    const { totalAmount, gst, totalBeforeGST, annualFee, subscriptionFee, monthlyCharge } = calculateTotalAmount(member.memberCategory, months);
+  const {
+    totalAmount,
+    gst,
+    totalBeforeGST,
+    annualFee,
+    subscriptionFee,
+    monthlyCharge,
+  } = calculateTotalAmount(member.memberCategory, months);
 
-    // Create a detailed description
-    const description = `Subscription charge for ${months} month(s): Single month payment: ₹${monthlyCharge}, Total subscription fee: ₹${subscriptionFee}, Annual fee: ₹${annualFee}, Amount before GST: ₹${totalBeforeGST}, GST (18%): ₹${gst}, Total amount: ₹${totalAmount}`;
-
+  // Create a detailed description
+  const description = `Subscription charge for ${months} month(s): Single month payment: ₹${monthlyCharge}, Total subscription fee: ₹${subscriptionFee}, Annual fee: ₹${annualFee}, Amount before GST: ₹${totalBeforeGST}, GST (18%): ₹${gst}, Total amount: ₹${totalAmount}`;
 
   // Create an initial transaction with narration and duration for the calculated months
-    const transaction = new MemberTransactionHistory({
-        member_id: member._id,
-        memberId: member.memberId,
-        transactionDate: new Date(),
-        amount: totalAmount, // Example amount for subscription charge
-        transactionType: 'Debit',
-        remarks: `Subscription charge for ${duration}`,
-        narration: 'Registration Charges',
-        description: description ,
-    });
-    await transaction.save({ session });
+  const transaction = new MemberTransactionHistory({
+    member_id: member._id,
+    memberId: member.memberId,
+    transactionDate: new Date(),
+    amount: totalAmount, // Example amount for subscription charge
+    transactionType: "Debit",
+    remarks: `Subscription charge for ${duration}`,
+    narration: "Registration Charges",
+    description: description,
+  });
+  await transaction.save({ session });
 };
 
 // Create Member
 export const createMember = async (data) => {
-    const session = await mongoose.startSession();
-    session.startTransaction();
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-    try {
-        // Validate mobileNumber and emailId uniqueness for members
-        const existingMemberWithMobile = await MemberData.findOne({ mobileNumber: data.mobileNumber });
-        if (existingMemberWithMobile) {
-            throw new APIError("Mobile number already exists for another member.", 400, true, "Mobile number conflict");
-        }
-
-        const existingMemberWithEmail = await MemberData.findOne({ emailId: data.emailId });
-        if (existingMemberWithEmail) {
-            throw new APIError("Email ID already exists for another member.", 400, true, "Email ID conflict");
-        }
-
-        // Set the dateOfMembership to the current date in UNIX format
-        data.dateOfMembership = Math.floor(Date.now()); // UNIX timestamp
-
-        // Generate the memberId
-        data.memberId = await generateMemberId(data.memberCategory, data.dateOfMembership);
-
-        // Set ValidUpTo to the next March 31st and calculate duration
-        const { validUpTo } = calculateValidUpToAndDuration();
-        data.validUpTo = validUpTo;
-
-        const member = new MemberData(data);
-        const savedMember = await member.save({ session });
-
-        // Create wallet and initial transaction
-        await createWalletAndInitialTransaction(savedMember, session);
-
-        await session.commitTransaction();
-        session.endSession();
-
-        return savedMember;
-    } catch (error) {
-        await session.abortTransaction();
-        session.endSession();
-        if (error instanceof APIError) {
-            throw error; // Re-throw APIError to be handled by middleware
-        }
-        throw new APIError("Internal Server Error", 500, true, error.message);
+  try {
+    // Validate mobileNumber and emailId uniqueness for members
+    const existingMemberWithMobile = await MemberData.findOne({
+      mobileNumber: data.mobileNumber,
+    });
+    if (existingMemberWithMobile) {
+      throw new APIError(
+        "Mobile number already exists for another member.",
+        400,
+        true,
+        "Mobile number conflict"
+      );
     }
-};
 
+    const existingMemberWithEmail = await MemberData.findOne({
+      emailId: data.emailId,
+    });
+    if (existingMemberWithEmail) {
+      throw new APIError(
+        "Email ID already exists for another member.",
+        400,
+        true,
+        "Email ID conflict"
+      );
+    }
+
+    // Set the dateOfMembership to the current date in UNIX format
+    data.dateOfMembership = Math.floor(Date.now()); // UNIX timestamp
+
+    // Generate the memberId
+    data.memberId = await generateMemberId(
+      data.memberCategory,
+      data.dateOfMembership
+    );
+
+    // Set ValidUpTo to the next March 31st and calculate duration
+    const { validUpTo } = calculateValidUpToAndDuration();
+    data.validUpTo = validUpTo;
+
+    const member = new MemberData(data);
+    const savedMember = await member.save({ session });
+
+    // Create wallet and initial transaction
+    await createWalletAndInitialTransaction(savedMember, session);
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return savedMember;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    if (error instanceof APIError) {
+      throw error; // Re-throw APIError to be handled by middleware
+    }
+    throw new APIError("Internal Server Error", 500, true, error.message);
+  }
+};
 
 // Create Dependent
 export const createDependent = async (memberId, dependentData) => {

@@ -1,10 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { twMerge } from 'tailwind-merge'
-import { createVendersServices } from '../../../redux/thunk/vendorServices';
-import { useNavigate } from 'react-router';
-import { logger } from '../../../utils/Helper';
+import { createVendersServices, updateVendorsServices } from '../../../redux/thunk/vendorServices';
+import { useLocation, useNavigate, useParams } from 'react-router';
+import { errorToast, logger, successToast } from '../../../utils/Helper';
+import moment from "moment"
 function AddVender() {
+    const { state } = useLocation();
+    console.log("ppp",state?.item?.updatedAt)
     const navigate=useNavigate();
 const dispatch=useDispatch();
     const [formData, setFormData] = useState(
@@ -21,14 +24,62 @@ const dispatch=useDispatch();
     "postalCode": "",
     "country": ""
   },
-
   "paymentTerms": "",
-  "createdBy": ""
+  "createdBy": "",
+  "updatedBy":"",
+  
 }
     )
-const {vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paymentTerms,createdBy}= formData
+const {vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paymentTerms,createdBy,updatedBy}= formData
 
 
+const validation=()=>{
+    if(!vendorName){
+        errorToast("Vendor name can't be empaty")
+        return false
+    }
+    if(!contactPerson){
+        errorToast("contactPerson can't be empaty")
+        return false
+    }
+    if(!contactEmail){
+        errorToast("Contact Email can't be empaty")
+        return false
+    }
+    if(!contactPhone){
+        errorToast("Contact Phone can't be empaty")
+        return false
+    }
+    if(!gstNumber){
+        errorToast("gstNumber can't be empaty")
+        return false
+    }
+    if(!address.street){
+        errorToast("Street can't be empaty")
+        return false
+    }
+    if(!address.city){
+        errorToast("city can't be empaty")
+        return false
+    }
+    if(!address.state){
+        errorToast("state can't be empaty")
+        return false
+    }
+    if(!address.postalCode){
+        errorToast("postalCode can't be empaty")
+        return false
+    }
+    if(!address.country){
+        errorToast("country can't be empaty")
+        return false
+    }
+    if(!paymentTerms){
+        errorToast("paymentTerms can't be empaty")
+        return false
+    }
+    return true
+}
     const upadteStateHandler = (e)=>{
         let {name,value}=e.target
         setFormData((pre)=>({...pre,[name]:value}))
@@ -39,11 +90,13 @@ const {vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paym
         let {name,value}=e.target
         setFormData((pre)=>({...pre,address:{...pre.address,[name]:value}}))
     }
-
     const addVenderHandler =async ()=>{
-        alert("this is test")
+        if(!validation()){
+            return
+        }
+        // alert("this is test")
         try {
-            console.log("hhh",formData)
+            const dataa={vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paymentTerms,createdBy,updatedBy}
             let response = await dispatch(createVendersServices(formData)).unwrap();
             dispatch(getAllVendorsServices())
             navigate('/vendor')
@@ -53,6 +106,73 @@ const {vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paym
             logger(error)
         }
     }
+
+    const updateVenderHandler = async () => {
+    let payload =
+        {
+  vendorName: vendorName,
+  contactPerson: contactPerson,
+  contactEmail: contactEmail,
+  contactPhone: contactPhone,
+  gstNumber: gstNumber,
+  address: {
+    street: address.street,
+    city: address.city,
+    state: address.state,
+    postalCode:address.postalCode,
+    country: address.country,
+  },
+  paymentTerms:paymentTerms,
+  updatedBy:createdBy
+    }
+    try {
+      let response = await dispatch(updateVendorsServices(payload)).unwrap();
+    //   console.log("responserespons567",response)
+    } catch (error) {
+      console.log(error);
+      logger(error);
+    }
+  };
+
+  useEffect(() => {
+    if (state.type==="edit") {
+      setFormData((pre) => ({
+        ...pre,
+        vendorName: state?.item?.vendorName,
+  contactPerson: state?.item?.contactPerson,
+  contactEmail: state?.item?.contactEmail,
+  contactPhone: state?.item?.contactPhone,
+  gstNumber: state?.item?.gstNumber,
+  address: {
+    street: state?.item?.address?.street,
+    city: state?.item?.address?.city,
+    state: state?.item?.address?.state,
+    postalCode: state?.item?.address?.postalCode,
+    country: state?.item?.address?.country,
+  },
+  paymentTerms: state?.item?.paymentTerms,
+updatedBy:moment(state?.item?.updatedAt).format("YYYY-MM-DD")
+      }));
+    } else {
+      setFormData((prev)=>(
+        {...prev,
+        vendorName: "",
+  contactPerson: "",
+  contactEmail: "",
+  contactPhone: "",
+  gstNumber: "",
+  address: {
+    street: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "",
+  },
+  paymentTerms: "",
+  updatedBy:""
+      }));
+    }
+  }, []);
 
     return (
         <div>
@@ -127,17 +247,10 @@ const {vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paym
                 <FormInput
                 type={"date"}
                     width={'w-[30%]'}
-                    placeholder={'Created By'}
-                    // value={createdBy}
-                    name={"createdBy"} onChange={(e) => {
-                            const selectedDate = e.target.value;
-                            console.log("sachinTime",selectedDate)
-                            const timestamp = selectedDate ? new Date(selectedDate).getTime() : null;
-                            setFormData({
-                                ...formData,
-                                createdBy: timestamp,
-                            });
-                      }}
+                    placeholder={state?.type==="edit" ? "Updated By":'Created By'}
+                    value={updatedBy}
+                    name="updatedBy" 
+                    onChange={upadteStateHandler}
                 />
                 
                 
@@ -188,13 +301,8 @@ const {vendorName,contactPerson,contactEmail,contactPhone,gstNumber,address,paym
                     </label>
                 {/* <Dropzone/> */}
                 </div>
-
-                <button onClick={addVenderHandler} type="submit" class="text-white mt-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+                <button onClick={state.type? updateVenderHandler:addVenderHandler} type="submit" class="text-white mt-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
             </div>
-
-
-
-
         </div>
     )
 }

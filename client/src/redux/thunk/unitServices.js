@@ -47,12 +47,28 @@ export const getUnitservices = createAsyncThunk(
     }
   }
 );
+
 export const measurementUnitsServices = createAsyncThunk(
   "measurementUnitsServices",
   async (payload) => {
     try {
       let url = `${BASE_URL}inv/measurement-units`;
       const res = await axios.post(url, payload);
+      return res.data;
+    } catch (error) {
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);
+
+export const measurementUpdateUnitServices = createAsyncThunk(
+  "measurementUpdateUnitServices",
+  async (payload) => {
+    try {
+      let url = `${BASE_URL}inv/measurement-units/2`;
+      const res = await axios.put(url, payload);
       return res.data;
     } catch (error) {
       //   console.log(error);
