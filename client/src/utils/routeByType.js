@@ -27,6 +27,19 @@ export const AdminRoutes = [
     path: "/user",
     // icon: <RiFileUserFill />
   },
+
+  {
+    title: "Menu",
+    path: "/menus",
+    type: 2,
+    // icon: <RiFileUserFill />
+    subMenu: [
+      {
+        title: "MenuCreationList",
+        path: "/menu-creation-list",
+      },
+    ],
+  },
 ];
 
 export const GatekeeperRoute = [
@@ -121,6 +134,10 @@ export const universalAdmin = [
       {
         title: "vendor ",
         path: "/vendor",
+      },
+      {
+        title: "member",
+        path: "/member",
       },
       ,
     ],

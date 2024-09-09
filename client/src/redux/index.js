@@ -4,9 +4,11 @@ import authState from "./slice/authSlice";
 import userState from "./slice/userSlice";
 import categoryState from "./slice/CategorySlice";
 import inventaryState from "./slice/inventarySlice";
+import adminState from "./slice/adminSlice";
 export default combineReducers({
   authState,
   userState,
   categoryState,
   inventaryState,
+  adminState,
 });

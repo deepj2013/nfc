@@ -7,6 +7,7 @@ export const handleError = (err) => {
   } else if (err?.response?.data?.errors) {
     console.log(err);
     err?.response?.data?.errors.map((d, i) => {
+      console.log(d);
       // toast.error(d.msg);
     });
   } else {
