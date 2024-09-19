@@ -9,13 +9,19 @@ import {
 import { logger } from "../../utils/Helper";
 import moment from "moment";
 import { menuCreationServices } from "../../redux/thunk/adminServices";
+import ModalWrapper from "../../layout/ModalWrapper";
+import { FaXmark, FaTrash } from "react-icons/fa6";
 
-function MenuCreation() {
+function MenuCreation({ isOpen, onClose }) {
+  const data = [
+    { isActive: "active", code: 1 },
+    { isActive: "inactive", code: 0 },
+  ];
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     menuName: "",
     menuDescription: "",
-    isActive: 1,
+    isActive: null,
     parentMenuId: 0,
     subMenus: [],
     createdBy: 1,
@@ -24,6 +30,8 @@ function MenuCreation() {
     menuOrder: 1,
     iconClass: "fa-mainmenu",
     errors: {},
+    submenuType: "",
+    submenuRef: "",
   });
   const {
     menuName,
@@ -37,6 +45,8 @@ function MenuCreation() {
     menuOrder,
     iconClass,
     errors,
+    submenuType,
+    submenuRef,
   } = formData;
 
   const upadteStateHandler = (e) => {
@@ -44,9 +54,10 @@ function MenuCreation() {
     setFormData((pre) => ({ ...pre, [name]: value }));
   };
 
-  //   const dropDownChange = (item) => {
-  //     setFormData((pre) => ({ ...pre, categoryId: item?.category_id }));
-  //   };
+  const dropDownChange = (item) => {
+    console.log("::::", item);
+    setFormData((pre) => ({ ...pre, isActive: item?.code }));
+  };
 
   //   const dropDownChangeVender = (item) => {
   //     setFormData((pre) => ({ ...pre, vendorId: item?.vendor }));
@@ -82,8 +93,24 @@ function MenuCreation() {
     let formIsValid = handleValidation();
     if (formIsValid) {
       try {
-        delete [formData.errors];
-        let response = await dispatch(menuCreationServices(formData)).unwrap();
+        const payload = {
+          menuName,
+          menuDescription,
+          isActive,
+          parentMenuId,
+          subMenus,
+          createdBy,
+          updatedBy,
+          routeUrl,
+          menuOrder,
+          iconClass,
+          errors,
+          submenuType,
+          submenuRef,
+        };
+        // console.log("hgjklsachin", payload);
+
+        let response = await dispatch(menuCreationServices(payload)).unwrap();
         // dispatch(getAllProductListServices());
         navigate("/menu-creation-list");
       } catch (error) {
@@ -105,159 +132,333 @@ function MenuCreation() {
     getHandler();
   }, []);
 
-  const { categoryList } = useSelector((state) => state.categoryState);
+  const addSubmenu = () => {
+    if (!submenuType || !submenuRef) {
+      alert("Both Type and Ref fields are required");
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      subMenus: [
+        ...prev.subMenus,
+        { type: Number(submenuType), ref: submenuRef }, // Add the new submenu object
+      ],
+      submenuType: "", // Reset the type input field
+      submenuRef: "", // Reset the ref input field
+    }));
+  };
+
+  const removeSubmenu = (indexToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      subMenus: prev.subMenus.filter((_, index) => index !== indexToRemove), // Remove the submenu at the selected index
+    }));
+  };
   const { allVenderList } = useSelector((state) => state.inventaryState);
-  // console.log("78909",allVenderList,categoryList)
 
   return (
-    <div>
-      <div className="mb-6 flex items-center justify-between">
-        <p className="font-semibold h28">Add Menu/Creation </p>
-        <div className="flex gap-4"></div>
-      </div>
-
-      <div className="flex bg-white p-4 rounded-lg  w-full border justify-between flex-wrap">
-        <FormInput
-          errors={errors.menuNameError}
-          width={"w-[30%]"}
-          placeholder={"Menu Name"}
-          value={menuName}
-          name={"menuName"}
-          onChange={upadteStateHandler}
-        />
-        <FormInput
-          errors={errors.menuDescriptionError}
-          width={"w-[30%]"}
-          placeholder={"menuDescription"}
-          value={menuDescription}
-          name={"menuDescription"}
-          onChange={upadteStateHandler}
-        />
-
-        {/* <Dropdown
-          width={"w-[30%]"}
-          data={categoryList}
-          placeholder={"Category Id"}
-          // name={"categoryId"}
-          onChange={(val) => dropDownChange(val)}
-        /> */}
-
-        {/* <FormInput
-          errors={errors.menuOrderError}
-          width={"w-[30%]"}
-          placeholder={"price"}
-          value={price}
-          name={"price"}
-          onChange={upadteStateHandler}
-        /> */}
-        {/* <FormInput
-          errors={errors.quantityInStockError}
-          width={"w-[30%]"}
-          placeholder={"Quantity In Stock"}
-          value={quantityInStock}
-          name={"quantityInStock"}
-          onChange={upadteStateHandler}
-        /> */}
-        {/* <FormInput
-          errors={errors.unitOfMeasureError}
-          width={"w-[30%]"}
-          placeholder={"Unit Of Measure"}
-          value={unitOfMeasure}
-          name={"unitOfMeasure"}
-          onChange={upadteStateHandler}
-        /> */}
-        {/* <FormInput
-          width={"w-[30%]"}
-          placeholder={"Vendor Id"}
-          value={vendorId}
-          name={"vendorId"}
-          onChange={upadteStateHandler}
-        /> */}
-        {/* <Dropdown
-          width={"w-[30%]"}
-          data={allVenderList}
-          placeholder={"Vendor Id"}
-          // name={"categoryId"}
-          onChange={(val) => dropDownChangeVender(val)}
-        /> */}
-        {/* <FormInput
-          errors={errors.createdByError}
-          type={"date"}
-          width={"w-[30%]"}
-          placeholder={"Created By"}
-          // value={createdBy}
-          name={"createdBy"}
-          onChange={(e) => {
-            const selectedDate = e.target.value;
-            console.log("sachinTime", selectedDate);
-            const timestamp = selectedDate
-              ? new Date(selectedDate).getTime()
-              : null;
-            setFormData({
-              ...formData,
-              createdBy: timestamp,
-            });
-          }}
-        /> */}
-        {/* <FormInput
-                    placeholder={'Product Code (SKU)'}
-                    width={'w-[30%]'} showButton={true} />
-                <FormInput
-                    placeholder={'Category'}
-                    width={'w-[30%]'} />
-                <FormInput
-                    placeholder={'Selling Price'}
-                    width={'w-[30%]'} />
-                <FormInput
-                    placeholder={'Purchase Price'}
-                    width={'w-[30%]'} />
-
-                <FormInput
-                    placeholder={'Quantity'}
-                    width={'w-[30%]'} /> */}
-
-        {/* <Dropdown placeholder={'Units'} width={'w-[30%]'} /> */}
-        {/* <Dropdown placeholder={'Discount Type'} width={'w-[30%]'} /> */}
-
-        {/* <FormInput
-                    showButton={true}
-                    placeholder={'Generate Barcode'}
-                    width={'w-[30%]'} />
-
-                <FormInput
-
-                    placeholder={'Alert Quantity'}
-                    width={'w-[30%]'} /> */}
-
-        {/* <Dropdown placeholder={'Tax'} width={'w-[30%]'} /> */}
-
-        {/* <div class="w-full">
-                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">           
-                     Your Message
-                    </label>
-                    <textarea rows="6"
-                        class="appearance-none block w-full  text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"></textarea>
-                </div> */}
-
-        <div className="w-full">
-          <label
-            for="email"
-            class="block mb-2 text-sm font-medium text-gray-900 "
-          >
-            {/* Upload Product Image */}
-          </label>
-          {/* <Dropzone/> */}
+    <ModalWrapper isOpen={isOpen}>
+      <div className="flex bg-white p-4 rounded-lg  w-full border justify-between flex-wrap overflow-scroll">
+        <div className="w-full mb-6 flex items-center justify-between">
+          <p className="font-semibold h28">Add Menu/Creation </p>
+          <div className="">
+            <button
+              onClick={() => {
+                onClose();
+              }}
+              className="text-2xl right-2 top-2 text-secondry"
+            >
+              {/* kjhgf */}
+              <FaXmark />
+            </button>
+          </div>
         </div>
+        <div className="bg-white  w-full">
+          <FormInput
+            errors={errors.menuNameError}
+            width={"w-[100%]"}
+            placeholder={"Menu Name"}
+            value={menuName}
+            name={"menuName"}
+            onChange={upadteStateHandler}
+          />
+          <FormInput
+            errors={errors.menuDescriptionError}
+            width={"w-[100%]"}
+            placeholder={"Menu Description"}
+            value={menuDescription}
+            name={"menuDescription"}
+            onChange={upadteStateHandler}
+          />
 
+          <Dropdown
+            width={"w-[100%]"}
+            data={data}
+            placeholder={"Active"}
+            onChange={(val) => dropDownChange(val)}
+          />
+          {/* <div className="mt-5">
+            <label class="block mb-2 text-sm font-medium text-gray-900 ">
+              Submenu Name
+            </label>
+            <div className=" bg-white border rounded-lg p-3">
+              <div className=" bg-white">
+                <input
+                  width={"w-[30%]"}
+                  placeholder={"Submenu Type"}
+                  name={"submenuType"}
+                  value={submenuType}
+                  onChange={upadteStateHandler}
+                />
+
+                <input
+                  width={"w-[30%]"}
+                  placeholder={"Submenu Ref"}
+                  name={"submenuRef"}
+                  value={submenuRef}
+                  onChange={upadteStateHandler}
+                />
+
+                <button
+                  onClick={addSubmenu}
+                  type="button"
+                  class="text-white px-2 py-1 bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full sm:w-auto  text-center dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-700"
+                >
+                  + Add
+                </button>
+              </div>
+              <div className="w-full mt-4">
+                <ul>
+                  {subMenus?.map((submenu, index) => (
+                    <li key={index} className="p-2 border-b">
+                      {submenu.type}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div> */}
+          {/* <div className="mt-5">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Submenu Name
+            </label>
+            <div className="bg-white border rounded-lg p-3">
+              <div className="bg-white">
+                <input
+                  width={"w-[30%]"}
+                  placeholder={"Submenu Type"}
+                  name={"submenuType"}
+                  value={submenuType}
+                  onChange={upadteStateHandler}
+                />
+
+                <input
+                  width={"w-[30%]"}
+                  placeholder={"Submenu Ref"}
+                  name={"submenuRef"}
+                  value={submenuRef}
+                  onChange={upadteStateHandler}
+                />
+
+                <button
+                  onClick={addSubmenu}
+                  type="button"
+                  className="text-white px-2 py-1 bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full sm:w-auto text-center"
+                >
+                  + Add
+                </button>
+              </div>
+
+              <div className="w-full mt-4">
+                {subMenus?.map((submenu, index) => (
+                  <div key={index} className="p-2 border-b">
+                    <input
+                      placeholder="Submenu Type"
+                      value={submenu.type}
+                      onChange={(e) => {
+                        const updatedSubMenus = [...subMenus];
+                        updatedSubMenus[index].type = e.target.value;
+                        setFormData((prev) => ({
+                          ...prev,
+                          subMenus: updatedSubMenus,
+                        }));
+                      }}
+                      className="mr-2 border border-gray-300 p-2 rounded"
+                    />
+                    <input
+                      placeholder="Submenu Ref"
+                      value={submenu.ref}
+                      onChange={(e) => {
+                        const updatedSubMenus = [...subMenus];
+                        updatedSubMenus[index].ref = e.target.value;
+                        setFormData((prev) => ({
+                          ...prev,
+                          subMenus: updatedSubMenus,
+                        }));
+                      }}
+                      className="border border-gray-300 p-2 rounded"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div> */}
+          {/* <div className="mt-5">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Submenu Name
+            </label>
+            <div className="bg-white border rounded-lg p-3">
+              
+              <div className="w-full mt-4">
+                {subMenus?.map((submenu, index) => (
+                  <div key={index} className="p-2 border-b flex space-x-2">
+                    <input
+                      placeholder="Submenu Type"
+                      value={submenu.type}
+                      onChange={(e) => {
+                        const updatedSubMenus = [...subMenus];
+                        updatedSubMenus[index].type = e.target.value;
+                        setFormData((prev) => ({
+                          ...prev,
+                          subMenus: updatedSubMenus,
+                        }));
+                      }}
+                      className="mr-2 border border-gray-300 p-2 rounded w-[45%]"
+                    />
+                    <input
+                      placeholder="Submenu Ref"
+                      value={submenu.ref}
+                      onChange={(e) => {
+                        const updatedSubMenus = [...subMenus];
+                        updatedSubMenus[index].ref = e.target.value;
+                        setFormData((prev) => ({
+                          ...prev,
+                          subMenus: updatedSubMenus,
+                        }));
+                      }}
+                      className="border border-gray-300 p-2 rounded w-[45%]"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              
+              <div className="bg-white flex mt-4">
+                <input
+                  
+                  placeholder={"Submenu Type"}
+                  name={"submenuType"}
+                  value={submenuType}
+                  onChange={upadteStateHandler}
+                  className="w-[40%] mr-2 border border-gray-300 p-2 rounded"
+                />
+
+                <input
+                  
+                  placeholder={"Submenu Ref"}
+                  name={"submenuRef"}
+                  value={submenuRef}
+                  onChange={upadteStateHandler}
+                  className="w-[40%] mr-2 border border-gray-300 p-2 rounded"
+                />
+
+                <button
+                  onClick={addSubmenu}
+                  type="button"
+                  className="text-white px-2 py-1 bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm"
+                >
+                  + Add
+                </button>
+              </div>
+            </div>
+          </div> */}
+          <div className="mt-5 overflow-scroll">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Submenu Name
+            </label>
+            <div className="bg-white border rounded-lg p-3">
+              {/* Render dynamic submenu inputs */}
+              <div className="w-full mt-4">
+                {subMenus?.map((submenu, index) => (
+                  <div
+                    key={index}
+                    className="p-2 border-b flex space-x-2 items-center"
+                  >
+                    <input
+                      placeholder="Submenu Type"
+                      value={submenu.type}
+                      onChange={(e) => {
+                        const updatedSubMenus = [...subMenus];
+                        updatedSubMenus[index].type = e.target.value;
+                        setFormData((prev) => ({
+                          ...prev,
+                          subMenus: updatedSubMenus,
+                        }));
+                      }}
+                      className=" mr-2 border border-gray-300 p-2 rounded w-[40%]"
+                    />
+                    <input
+                      placeholder="Submenu Ref"
+                      value={submenu.ref}
+                      onChange={(e) => {
+                        const updatedSubMenus = [...subMenus];
+                        updatedSubMenus[index].ref = e.target.value;
+                        setFormData((prev) => ({
+                          ...prev,
+                          subMenus: updatedSubMenus,
+                        }));
+                      }}
+                      className="border border-gray-300 p-2 rounded w-[40%]"
+                    />
+                    <button
+                      onClick={() => removeSubmenu(index)} // Call remove function on click
+                      className="text-red-600 w-4 hover:text-red-800"
+                    >
+                      <FaTrash /> {/* Trash icon for deletion */}
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Inputs for new submenu type and ref */}
+              <div className="bg-white flex mt-4">
+                <input
+                  placeholder={"Submenu Type"}
+                  name={"submenuType"}
+                  value={submenuType}
+                  onChange={upadteStateHandler}
+                  className="w-[45%] mr-2 border border-gray-300 p-2 rounded"
+                />
+
+                <input
+                  placeholder={"Submenu Ref"}
+                  name={"submenuRef"}
+                  value={submenuRef}
+                  onChange={upadteStateHandler}
+                  className="w-[45%] mr-2 border border-gray-300 p-2 rounded"
+                />
+
+                <button
+                  onClick={addSubmenu}
+                  type="button"
+                  className="text-white w-auto px-2 py-1 bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm"
+                >
+                  + Add
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
         <button
           onClick={(e) => menuCreateHandler(e)}
           type="submit"
-          class="text-white mt-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          class="text-white mt-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-[100%] px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Submit
         </button>
       </div>
-    </div>
+    </ModalWrapper>
   );
 }
 
@@ -301,6 +502,7 @@ const FormInput = ({
 
 const Dropdown = ({ width, placeholder, data, onChange }) => {
   const [selectedVal, setSelectedVal] = useState("select");
+  console.log("se", selectedVal);
   return (
     <div class={twMerge(" text-gray-900 dark:text-gray-100 ", width)}>
       <div class="relative w-full group">
@@ -320,11 +522,11 @@ const Dropdown = ({ width, placeholder, data, onChange }) => {
               <div
                 onClick={() => {
                   onChange(ele);
-                  setSelectedVal(ele?.categoryName || ele?.vendor);
+                  setSelectedVal(ele?.isActive);
                 }}
                 class=" w-full block cursor-pointer  text-black  hover:text-link px-3 py-2 rounded-md"
               >
-                {ele?.categoryName || ele?.vendor}
+                {ele?.isActive}
               </div>
             );
           })}

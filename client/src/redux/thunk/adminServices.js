@@ -57,10 +57,8 @@ export const getAllMenuServices = createAsyncThunk(
     try {
       let url = `${BASE_URL_SUPER_ADMIN}getallmenu`;
       const res = await axios.get(url);
-      console.log("lkjjjj", res);
       return res.data;
     } catch (error) {
-      console.log("lkjjjj", error);
       handleError(error);
       throw error;
     }
