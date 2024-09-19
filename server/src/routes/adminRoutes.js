@@ -11,6 +11,7 @@ const router = express.Router()
 
 router.post('/signup',adminSignupController )
 router.post('/signin', adminLoginController)
+
 // Create Organisation
 router.post('/organisations',[adminAuth], createOrganisationController);
 // Update Organisation by ID
@@ -23,10 +24,12 @@ router.get('/organisations/search',[adminAuth], searchOrganisationsController);
 
 router.post('/createmenu',[adminAuth] , createMenuController )
 router.get('/getallmenu',[adminAuth] , getAllMenusController )
+
 router.post('/createrole',[adminAuth] , createRoleController )
 router.get('/getrole',[adminAuth] , getRoleController )
 router.post('/accesscontrol',[adminAuth], createAccessController);
 router.post('/getmenubyrole', [adminAuth], getMenusByRoleController)
+
 router.post('/createusers', [adminAuth], createUserController)
 router.get('/getusers', [adminAuth], getAllUserController)
 router.post('/departments',[adminAuth] ,createDepartmentController )
