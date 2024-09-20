@@ -29,7 +29,7 @@ function DashboardRoutes() {
         >
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/employee" element={<Employee />} />
+            <Route path="/usermanagement" element={<Employee />} />
             <Route path="/role" element={<Role />} />
             <Route path="/Organization" element={<Organization />} />
             <Route path="/product" element={<ProductList />} />

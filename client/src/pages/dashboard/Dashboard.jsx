@@ -8,15 +8,8 @@ import { useMicellaneousServices } from "../../services/useMicellaneousServices"
 
 
 function Dashboard() {
-
   let userDetails = getStorageValue('userDetails')
-  console.log(userDetails);
-  const {getmenubyroleHandler}=useMicellaneousServices()
-  useEffect(() => {
-    if(userDetails){
-      getmenubyroleHandler({role_id:Number(userDetails.role_id)})
-    }
-  }, [])
+
   
 
   return (
