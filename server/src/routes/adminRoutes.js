@@ -6,6 +6,7 @@ import { createRoleController, getRoleController } from '../controllers/utilityC
 import { createAccessController } from '../controllers/utilityControllers/accessController.js'
 import { createUserController } from '../controllers/userController.js'
 import { adminAuth } from '../middlewares/adminAuth.js'
+import { auth } from '../middlewares/auth.js'
 
 const router = express.Router()
 
@@ -27,8 +28,12 @@ router.get('/getallmenu',[adminAuth] , getAllMenusController )
 
 router.post('/createrole',[adminAuth] , createRoleController )
 router.get('/getrole',[adminAuth] , getRoleController )
+
+
 router.post('/accesscontrol',[adminAuth], createAccessController);
 router.post('/getmenubyrole', [adminAuth], getMenusByRoleController)
+router.post('/getmenubyroles', [auth], getMenusByRoleController)
+
 
 router.post('/createusers', [adminAuth], createUserController)
 router.get('/getusers', [adminAuth], getAllUserController)
