@@ -40,7 +40,9 @@ export const adminLoginService = async (userId, password) => {
                     email: { $toLower: '$email' },
                     status: '$status',
                     password: '$password',
-                    name: '$name'
+                    name: '$name',
+                    role_id: '$role_id',
+                    
                 }
             },
             {
@@ -66,12 +68,13 @@ export const adminLoginService = async (userId, password) => {
                 // getting Token of User
                 tokenObj = await getTokenOfUserService(userDetails._id)
             }
-
+          console.log(userDetails)
+          
             return {
                 token: tokenObj.token,
                 expiresAt: tokenObj.expiresAt,
                 userName: userDetails.name,
-                role_id: role_id
+                role_id: userDetails.role_id
             }
         }
         else {
