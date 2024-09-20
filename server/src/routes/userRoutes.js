@@ -9,7 +9,7 @@ import {  getMenusByRoleController} from '../controllers/utilityControllers/menu
 const router = express.Router()
 
 router.post('/login', userLoginController)
-router.post('/getmenubyroles', [auth], getMenusByRoleController )
+router.post('/getmenubyrole', [auth], getMenusByRoleController )
 
 
 export default router
