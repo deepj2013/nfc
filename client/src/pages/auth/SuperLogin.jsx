@@ -19,11 +19,10 @@ function SuperLogin({ setIsLogin }) {
       };
     //   console.log("resporty", payload);
       let response = await dispatch(superAdminLoginServices(payload)).unwrap();
-      console.log("res909",response)
       if (response.msg === "Success") {
-        console.log(response.result);
         setStorageValue('userDetails', response?.result);
         setIsLogin(true);
+        navigate("/");
       }
     } catch (error) {
       errorLog(error);

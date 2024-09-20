@@ -24,6 +24,7 @@ export const useMicellaneousServices = () => {
     const getmenubyroleHandler = async (payload) => {
         try {
             let response = await dispatch(getMenuByRoleServices(payload)).unwrap()
+            return response
         } catch (error) {
             
         }
