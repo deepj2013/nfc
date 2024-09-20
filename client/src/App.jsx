@@ -12,12 +12,12 @@ import { useNavigate } from 'react-router';
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
-  let token = getStorageValue('token');
+  let userDetails = getStorageValue('userDetails')
    const navigate=useNavigate();
   
   const checkLogin=()=>{
     // console.log(token,'9090909');
-    if(token){
+    if(userDetails?.token){
       setIsLogin(true)
     }
     else{
@@ -31,8 +31,9 @@ function App() {
   }, [])
 
 
+  // console.log(localStorage.clear());
   const handleLogout=()=>{
-    // localStorage.clear()
+    localStorage.clear()
     // navigate("/")
   }
 
