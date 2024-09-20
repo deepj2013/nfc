@@ -7,6 +7,7 @@ axios.interceptors.request.use(
     const userDetails = await getStorageValue("userDetails");
     console.log(userDetails,'token');
     // config.headers["Authorization"] = `Bearer ${userDetails?.token}`;
+    
     config.headers["x-auth-token"] = `${userDetails?.token}`;
 
     return config;

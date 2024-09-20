@@ -39,4 +39,21 @@ export const employeeListServices = createAsyncThunk(
   );
 
 
+  export const createusersServices = createAsyncThunk(
+    "createusersServices",
+    async (payload) => {
+      try {
+        let url = `${BASE_URL_SUPER_ADMIN}createusers`;
+        const res = await axios.post(url,payload);
+        return res.data;
+      } catch (error) {
+        //   console.log(error);
+        handleError(error);
+        throw error;
+      }
+    }
+  );
+
+  
+
   

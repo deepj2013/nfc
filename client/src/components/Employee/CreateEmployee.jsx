@@ -3,15 +3,22 @@ import { FaXmark } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import Input from "../common/Input";
 import Button from "../common/Button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { successToast } from "../../utils/Helper";
+import { createusersServices, employeeListServices } from "../../redux/thunk/useMangementServices";
 const CreateEmployee = ({ isOpen, onClose, setFeedBackModal }) => {
     const navigate = useNavigate()
     const { employees,roleList } = useSelector((state) => state.userStateMangementState)
-
+    const dispatch = useDispatch()
     // Handle dropdown change
     const handleSelectChange = (event) => {
         const selectedId = event.target.value;
         setFormDetails((pre) => ({ ...pre, user_id_parent: selectedId }))
+    };
+
+    const handleSelectChange1 = (event) => {
+        const selectedId = event.target.value;
+        setFormDetails((pre) => ({ ...pre, role_id: selectedId }))
     };
     const [formDetails, setFormDetails] = useState({
         user_name: '',
@@ -24,12 +31,23 @@ const CreateEmployee = ({ isOpen, onClose, setFeedBackModal }) => {
     })
 
 
-    console.log(roleList);
 
     const updateStateHandler = (e) => {
         setFormDetails({ ...formDetails, [e.target.name]: e.target.value })
     }
 
+
+    const submitHandler = async (e) => {
+        try {
+            let response = await dispatch(createusersServices(formDetails)).unwrap()
+            successToast('User Add Successfully')
+            dispatch(employeeListServices())
+            onClose()
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
     
 
     return (
@@ -66,11 +84,11 @@ const CreateEmployee = ({ isOpen, onClose, setFeedBackModal }) => {
 
                         <div className="bg-white flex-col">
                             <label className="mb-5" htmlFor="employee-select">Role</label>
-                            <select id="employee-select" onChange={handleSelectChange} className="w-full p-2 mt-2 border rounded-lg bg-gray-100" value={formDetails?.role_id}>
+                            <select id="employee-select" onChange={handleSelectChange1} className="w-full p-2 mt-2 border rounded-lg bg-gray-100" value={formDetails?.role_id}>
                                 <option value="" disabled>Select an employee</option>
-                                {employees && employees.map((employee) => (
-                                    <option key={employee?.user_id} value={employee?.user_id}>
-                                        {employee?.user_name}
+                                {roleList && roleList.map((role) => (
+                                    <option key={role?.role_id} value={role?.role_id}>
+                                        {role?.role_name}
                                     </option>
                                 ))}
                             </select>
@@ -91,7 +109,7 @@ const CreateEmployee = ({ isOpen, onClose, setFeedBackModal }) => {
 
        
 
-                        <Button name={'Submit'} />
+                        <Button onClick={submitHandler} name={'Submit'} />
                     </div>
 
                 </div>
