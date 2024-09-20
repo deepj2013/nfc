@@ -70,7 +70,8 @@ export const adminLoginService = async (userId, password) => {
             return {
                 token: tokenObj.token,
                 expiresAt: tokenObj.expiresAt,
-                userName: userDetails.name
+                userName: userDetails.name,
+                role_id: role_id
             }
         }
         else {
