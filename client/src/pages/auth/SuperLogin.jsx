@@ -10,6 +10,7 @@ function SuperLogin({ setIsLogin }) {
   const dispatch = useDispatch();
   const [username, setusername] = useState("");
   const [password, setpassword] = useState("");
+
   const loginHander = async () => {
     try {
       let payload = {
@@ -20,7 +21,8 @@ function SuperLogin({ setIsLogin }) {
       let response = await dispatch(superAdminLoginServices(payload)).unwrap();
       console.log("res909",response)
       if (response.msg === "Success") {
-        setStorageValue('token', response?.result?.token);
+        console.log(response.result);
+        setStorageValue('userDetails', response?.result);
         setIsLogin(true);
       }
     } catch (error) {

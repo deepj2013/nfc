@@ -3,15 +3,18 @@ import Chart from "../../components/common/Chart";
 import CircleChart from "../../components/common/CircleChart";
 import DeatilCard from "../../components/dashboard/DeatilCard";
 import Table from "../../components/common/Table";
+import { getStorageValue } from "../../services/LocalStorageServices";
 
 
 function Dashboard() {
+
+  let userDetails = getStorageValue('userDetails')
   return (
     <div className="h-screen overflow-scroll ">
       <div className="flex justify-between bg-white mb-6 items-center relative h-40 p-4 rounded-2xl shadow">
         <div>
           <p className="text-black font-semibold h28">
-            Good Morning, <span className="text-theme"> </span>
+            Good Morning, <span className="text-theme">{userDetails?.userName}</span>
           </p>
           <h5 class=" text-base  font-medium  text-grayText  mt-2">
             Have a nice day at work
