@@ -2,7 +2,7 @@
 
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { getAllMenuServices } from '../redux/thunk/micellaneousServices';
+import { getAllMenuServices, getMenuByRoleServices } from '../redux/thunk/micellaneousServices';
 
 
 
@@ -19,5 +19,17 @@ export const useMicellaneousServices = () => {
         }
     }
 
-    return {dashBoardMenuHandler };
+
+    // Set App Logo
+    const getmenubyroleHandler = async (payload) => {
+        try {
+            let response = await dispatch(getMenuByRoleServices(payload)).unwrap()
+        } catch (error) {
+            
+        }
+    }
+
+    
+
+    return { dashBoardMenuHandler,getmenubyroleHandler};
 };

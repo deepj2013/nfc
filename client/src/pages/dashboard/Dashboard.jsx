@@ -1,14 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Chart from "../../components/common/Chart";
 import CircleChart from "../../components/common/CircleChart";
 import DeatilCard from "../../components/dashboard/DeatilCard";
 import Table from "../../components/common/Table";
 import { getStorageValue } from "../../services/LocalStorageServices";
+import { useMicellaneousServices } from "../../services/useMicellaneousServices";
 
 
 function Dashboard() {
 
   let userDetails = getStorageValue('userDetails')
+  console.log(userDetails);
+  const {getmenubyroleHandler}=useMicellaneousServices()
+  useEffect(() => {
+    if(userDetails){
+      getmenubyroleHandler({role_id:Number(userDetails.role_id)})
+    }
+  }, [])
+  
+
   return (
     <div className="h-screen overflow-scroll ">
       <div className="flex justify-between bg-white mb-6 items-center relative h-40 p-4 rounded-2xl shadow">

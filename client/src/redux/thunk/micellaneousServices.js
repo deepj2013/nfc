@@ -17,3 +17,19 @@ export const getAllMenuServices = createAsyncThunk(
     }
   }
 );
+
+
+
+export const getMenuByRoleServices = createAsyncThunk(
+    "getMenuByRoleServices",
+    async (payload) => {
+      try {
+        let url = `${BASE_URL_SUPER_ADMIN}getmenubyrole`;
+        const res = await axios.post(url,payload);
+        return res.data;
+      } catch (error) {
+          handleError(error)
+        throw error;
+      }
+    }
+  );
