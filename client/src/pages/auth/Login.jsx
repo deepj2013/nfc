@@ -20,7 +20,7 @@ function Login({ setIsLogin }) {
       let response = await dispatch(adminLoginServices(payload)).unwrap();
       console.log("res",response)
       if (response.msg === "Success") {
-        setStorageValue('token', response?.result?.token);
+        setStorageValue('userDetails', response?.result);
         setIsLogin(true);
       }
     } catch (error) {

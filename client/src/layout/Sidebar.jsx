@@ -63,8 +63,11 @@ const Sidebar = ({ open, setOpen }) => {
 
 
   let userDetails = getStorageValue('userDetails')
+
   const { getmenubyroleHandler } = useMicellaneousServices()
 
+
+  console.log(userDetails);
   useEffect(() => {
     const featch = async () => {
       try {
@@ -75,7 +78,9 @@ const Sidebar = ({ open, setOpen }) => {
       }
 
     }
-    featch()
+    if(userDetails){
+      featch()
+    }
   }, [])
 
 
