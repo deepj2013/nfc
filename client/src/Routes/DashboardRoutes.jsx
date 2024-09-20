@@ -39,7 +39,7 @@ function DashboardRoutes() {
             <Route path="/units" element={<Units />} />
             <Route path="/vendor" element={<Vendor />} />
             <Route path="/add-vender" element={<AddVender />} />
-            <Route path="/member" element={<Member />} />
+            <Route path="/members" element={<Member />} />
             <Route path="/add-member" element={<AddMember />} />
             <Route path="/menu-creation-list" element={<MenuCreationList />} />
             <Route path="/menu-creation" element={<MenuCreation />} />
