@@ -11,9 +11,9 @@ export const createRoleController = async (req, res) => {
 
 export const getRoleController = async (req, res) => {
     try {
-        const roles = await getRoleService();
+        const result = await getRoleService();
         // to check if roles are fetched correctly  // remove this line when done  //
-        res.status(200).json(roles);
+        res.status(200).json({ msg: "Success", result });
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: err.message });
