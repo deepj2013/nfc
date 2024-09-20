@@ -88,7 +88,7 @@ export const userLoginService = async (email_id, password) => {
             token: tokenObj.token,
             expiresAt: tokenObj.expiresAt,
             userName: user.user_name,
-            roleId: user.role_id,
+            role_id: user.role_id,
             user_id: user.user_id
         }
     } catch (error) {
