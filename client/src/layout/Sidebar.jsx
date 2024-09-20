@@ -15,17 +15,14 @@ import {
   universalAdmin,
 } from "../utils/routeByType";
 import { NavLink } from "react-router-dom";
+import { useMicellaneousServices } from "../services/useMicellaneousServices";
 
 // View Imports
 
 const Sidebar = ({ open, setOpen }) => {
-  //   const navigate = useNavigate();
-  //   const location = useLocation();
   const [profileToggle, setProfileToggle] = useState(true);
   const userType = localStorage.getItem("userType");
   const [active, setActive] = useState(null);
-  console.log(userType);
-  // const [open,setOpen]=useState(true)
   const applyTheme = (theme) => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -33,7 +30,6 @@ const Sidebar = ({ open, setOpen }) => {
       document.documentElement.classList.remove("dark");
     }
   };
-
   const toggleTheme = () => {
     const currentTheme = document.documentElement.classList.contains("dark")
       ? "dark"
@@ -50,6 +46,7 @@ const Sidebar = ({ open, setOpen }) => {
   const [width, setWidth] = useState(window.innerWidth);
   const [role, setRole] = useState(1);
   const [route, setRoute] = useState(AdminRoutes);
+  const {dashBoardMenuHandler}=useMicellaneousServices()
   // console.log("rakeshho",route)
   const routeToggle = () => {
     if (width < 1024) {
@@ -59,14 +56,16 @@ const Sidebar = ({ open, setOpen }) => {
     }
   };
 
-  // useEffect(() => {
-  //   if(userType=='admin'){
-  //     setRoute(AdminRoutes)
-  //   }
-  //   else if(userType=='gatekeeper'){
-  //     setRoute(GatekeeperRoute)
-  //   }
-  // }, [])
+
+  useEffect(() => {
+    const featchData=async()=>{
+      let response = await dashBoardMenuHandler()
+      console.log(response);
+    }
+    featchData()
+  }, [])
+  
+
 
   return (
     <div className="">
