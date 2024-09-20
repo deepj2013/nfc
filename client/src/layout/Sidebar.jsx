@@ -5,8 +5,9 @@ import { twMerge } from "tailwind-merge";
 import { GrAchievement } from "react-icons/gr";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaChevronRight, FaCircle, FaRegUser, FaUser } from "react-icons/fa";
-import { FaBuildingUser } from "react-icons/fa6";
+import { FaBuildingUser, FaFlorinSign } from "react-icons/fa6";
 import { RiFileUserFill } from "react-icons/ri";
+import { LuLogOut } from "react-icons/lu";
 
 import { MdSpaceDashboard } from "react-icons/md";
 import {
@@ -14,18 +15,19 @@ import {
   GatekeeperRoute,
   universalAdmin,
 } from "../utils/routeByType";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useMicellaneousServices } from "../services/useMicellaneousServices";
+import { getStorageValue } from "../services/LocalStorageServices";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 // View Imports
 
 const Sidebar = ({ open, setOpen }) => {
-  //   const navigate = useNavigate();
-  //   const location = useLocation();
   const [profileToggle, setProfileToggle] = useState(true);
+  const [menu, setMenu] = useState([]);
   const userType = localStorage.getItem("userType");
+  const navigate=useNavigate()
   const [active, setActive] = useState(null);
-  console.log(userType);
-  // const [open,setOpen]=useState(true)
   const applyTheme = (theme) => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -33,7 +35,6 @@ const Sidebar = ({ open, setOpen }) => {
       document.documentElement.classList.remove("dark");
     }
   };
-
   const toggleTheme = () => {
     const currentTheme = document.documentElement.classList.contains("dark")
       ? "dark"
@@ -59,14 +60,47 @@ const Sidebar = ({ open, setOpen }) => {
     }
   };
 
+
+
+  let userDetails = getStorageValue('userDetails')
+
+  const { getmenubyroleHandler } = useMicellaneousServices()
+
+
+  console.log(userDetails);
+  useEffect(() => {
+    const featch = async () => {
+      try {
+        let temp = await getmenubyroleHandler({ role_id: Number(userDetails?.role_id) })
+        setMenu(temp)
+      } catch (error) {
+        console.log(error);
+      }
+
+    }
+    if(userDetails){
+      featch()
+    }
+  }, [])
+
+
+
+  // console.log(menu);
+
   // useEffect(() => {
-  //   if(userType=='admin'){
-  //     setRoute(AdminRoutes)
+  //   const featchData=async()=>{
+  //     let response = await dashBoardMenuHandler()
+  //     console.log(response);
   //   }
-  //   else if(userType=='gatekeeper'){
-  //     setRoute(GatekeeperRoute)
-  //   }
+  //   featchData()
   // }, [])
+
+
+  const handleLogout = () => {
+    localStorage.clear()
+    window.location.reload()
+  }
+
 
   return (
     <div className="">
@@ -134,15 +168,13 @@ const Sidebar = ({ open, setOpen }) => {
 
       <aside
         id="logo-sidebar"
-        class={`fixed   top-0  bg-white shadow left-0 z-[999] ${
-          open ? "w-60" : "w-16 "
-        } duration-500 h-screen top-20 rounded-e-[40px]  overflow-hidden    border-gray-200 lg:translate-x-0 `}
+        class={`fixed   top-0  bg-white shadow left-0 z-[999] ${open ? "w-60" : "w-16 "
+          } duration-500 h-screen top-20 rounded-e-[40px]  overflow-hidden    border-gray-200 lg:translate-x-0 `}
         aria-label="Sidebar"
       >
         <div
-          className={`h-full  overflow-y-auto  duration-300= ${
-            open ? "w-60" : "w-16 px-0"
-          }`}
+          className={`h-full  overflow-y-auto  duration-300= ${open ? "w-60" : "w-16 px-0"
+            }`}
         >
           <div className="  mt-4 p w-full flex justify-between relative"></div>
           <ul
@@ -151,12 +183,15 @@ const Sidebar = ({ open, setOpen }) => {
               !open ? "px-0" : "px-4"
             )}
           >
-            {route.map((item, ind) => {
-              if (item?.type) {
+
+{/* <FontAwesomeIcon className="text-red-400 border " icon="fa-solid fa-house" /> */}
+
+            {menu?.map((item, ind) => {
                 return (
                   <div
                     onClick={() => {
                       setActive(ind);
+                      navigate(item?.routeUrl)
                       // if(!active){
                       //   setActive(ind)
                       // }
@@ -168,14 +203,14 @@ const Sidebar = ({ open, setOpen }) => {
                   >
                     <li className="flex items-center">
                       <div className="h-10 w-10 bg-bgColor rounded-lg text-theme text-xl flex justify-center items-center">
-                        <FaUser />
+                        
                       </div>
                       {open && (
                         <span class="ml-3 text-sm  text-grayText">
-                          {item.title}
+                          {item.Menu_name}
                         </span>
                       )}
-                      {open && <FaChevronRight className="absolute right-4" />}
+                      {open  &&  item?.submenus.length>0 &&<FaChevronRight className="absolute right-4" />}
                     </li>
                     {active == ind &&
                       item?.subMenu?.map((ele, ind) => {
@@ -191,58 +226,18 @@ const Sidebar = ({ open, setOpen }) => {
                       })}
                   </div>
                 );
-              } else {
-                return (
-                  <li className="">
-                    <NavLink onClick={() => routeToggle()} to={item.path}>
-                      <p
-                        // href={item?.path}
-                        class={twMerge(
-                          `flex items-center p-2 text-gray-900 rounded-lg   group text-sm `
-                        )}
-                      >
-                        <div className="h-10 w-10 bg-bgColor rounded-lg text-theme text-xl flex justify-center items-center">
-                          <FaUser />
-                        </div>
-                        {open && (
-                          <span class="ml-3 text-sm  text-grayText">
-                            {item.title}
-                          </span>
-                        )}
-                        {open && (
-                          <FaChevronRight className="absolute right-4" />
-                        )}
-                      </p>
-                    </NavLink>
-                  </li>
-                );
-              }
+           
             })}
           </ul>
 
-          {false && (
-            <div
-              id="dropdown-cta"
-              class="p-4 mt-6 rounded-lg bg-blue-50 dark:bg-blue-900"
-              role="alert"
-            >
-              <div class="flex items-center mb-3">
-                {/* <span class="bg-orange-100 text-orange-800 text-sm font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-orange-200 dark:text-orange-900">
-                Beta
-              </span> */}
-              </div>
-              <p class="mb-3 text-sm text-blue-800 dark:text-blue-400">
-                Preview the new Flowbite dashboard navigation! You can turn the
-                new navigation off for a limited time in your profile.
-              </p>
-              <a
-                class="text-sm text-blue-800 underline font-medium hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                href="#"
-              >
-                Turn new navigation off
-              </a>
-            </div>
-          )}
+          <button
+            onClick={() => {
+              handleLogout()
+            }}
+            className=" mt-32 border mx-auto p-3 flex items-center gap-4 w-[90%] bg-theme text-white rounded-md">
+            <LuLogOut />
+            <p className="text-white">Logout</p>
+          </button>
         </div>
       </aside>
     </div>

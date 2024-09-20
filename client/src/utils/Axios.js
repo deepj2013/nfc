@@ -4,10 +4,11 @@ import { tempToken } from "./Helper";
 
 axios.interceptors.request.use(
   async (config) => {
-    const token = await getStorageValue("userData");
-    // console.log(token,'token');
-    // config.headers["Authorization"] = `Bearer ${token?.accessToken}`;
-    config.headers["x-auth-token"] = `${tempToken}`;
+    const userDetails = await getStorageValue("userDetails");
+    console.log(userDetails,'token');
+    // config.headers["Authorization"] = `Bearer ${userDetails?.token}`;
+    
+    config.headers["x-auth-token"] = `${userDetails?.token}`;
 
     return config;
   },
