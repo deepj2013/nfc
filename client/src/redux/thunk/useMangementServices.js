@@ -1,10 +1,7 @@
-// authServices.js
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios  from '../../utils/Axios';
 import { BASE_URL, BASE_URL_SUPER_ADMIN } from '../../utils/Urls';
 import { handleError } from '../../utils/ErrorHandler';
-
-
 
 
 export const employeeListServices = createAsyncThunk(
@@ -12,6 +9,7 @@ export const employeeListServices = createAsyncThunk(
     async (payload) => {
       try {
         let url = `${BASE_URL_SUPER_ADMIN}getusers`;
+        console.log(url, "url are ");
         const res = await axios.get(url,payload);
         return res.data;
       } catch (error) {

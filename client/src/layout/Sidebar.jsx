@@ -18,7 +18,6 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 import { useMicellaneousServices } from "../services/useMicellaneousServices";
 import { getStorageValue } from "../services/LocalStorageServices";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 // View Imports
 
@@ -26,7 +25,7 @@ const Sidebar = ({ open, setOpen }) => {
   const [profileToggle, setProfileToggle] = useState(true);
   const [menu, setMenu] = useState([]);
   const userType = localStorage.getItem("userType");
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const [active, setActive] = useState(null);
   const applyTheme = (theme) => {
     if (theme === "dark") {
@@ -60,30 +59,26 @@ const Sidebar = ({ open, setOpen }) => {
     }
   };
 
+  let userDetails = getStorageValue("userDetails");
 
-
-  let userDetails = getStorageValue('userDetails')
-
-  const { getmenubyroleHandler } = useMicellaneousServices()
-
+  const { getmenubyroleHandler } = useMicellaneousServices();
 
   console.log(userDetails);
   useEffect(() => {
     const featch = async () => {
       try {
-        let temp = await getmenubyroleHandler({ role_id: Number(userDetails?.role_id) })
-        setMenu(temp)
+        let temp = await getmenubyroleHandler({
+          role_id: Number(userDetails?.role_id),
+        });
+        setMenu(temp);
       } catch (error) {
         console.log(error);
       }
-
+    };
+    if (userDetails) {
+      featch();
     }
-    if(userDetails){
-      featch()
-    }
-  }, [])
-
-
+  }, []);
 
   // console.log(menu);
 
@@ -95,12 +90,10 @@ const Sidebar = ({ open, setOpen }) => {
   //   featchData()
   // }, [])
 
-
   const handleLogout = () => {
-    localStorage.clear()
-    window.location.reload()
-  }
-
+    localStorage.clear();
+    window.location.reload();
+  };
 
   return (
     <div className="">
@@ -168,57 +161,58 @@ const Sidebar = ({ open, setOpen }) => {
 
       <aside
         id="logo-sidebar"
-        class={`fixed   top-0  bg-white shadow left-0 z-[999] ${open ? "w-60" : "w-16 "
-          } duration-500 h-screen top-20 rounded-e-[40px]  overflow-hidden    border-gray-200 lg:translate-x-0 `}
+        class={`fixed   top-0  bg-white shadow left-0 z-[999] ${
+          open ? "w-60" : "w-16 "
+        } duration-500 h-screen top-20 rounded-e-[40px]  overflow-hidden    border-gray-200 lg:translate-x-0 `}
         aria-label="Sidebar"
       >
         <div
-          className={`h-full  overflow-y-auto  duration-300= ${open ? "w-60" : "w-16 px-0"
-            }`}
+          className={`h-full  overflow-y-auto  duration-300= ${
+            open ? "w-60" : "w-16 px-0"
+          }`}
         >
           <div className="  mt-4 p w-full flex justify-between relative"></div>
           <ul
-            class={twMerge(
-              "space-y-2  font-normal group  ",
+            className={twMerge(
+              "space-y-2 font-normal group",
               !open ? "px-0" : "px-4"
             )}
           >
-
-{/* <FontAwesomeIcon className="text-red-400 border " icon="fa-solid fa-house" /> */}
-
-            {menu?.map((item, ind) => {
+            {/* Clone and Sort the menu based on menuOrder before rendering */}
+            {menu
+              ?.slice() // Clone the array to avoid mutating the original
+              .sort((a, b) => a.menuOrder - b.menuOrder) // Sort by item.menuOrder
+              .map((item, ind) => {
                 return (
                   <div
+                    key={ind} // Add unique key for each item
                     onClick={() => {
                       setActive(ind);
-                      navigate(item?.routeUrl)
-                      // if(!active){
-                      //   setActive(ind)
-                      // }
-                      // else{
-                      //   setActive(null)
-                      // }
+                      navigate(item?.routeUrl);
                     }}
-                    className="cursor-pointer "
+                    className="cursor-pointer"
                   >
                     <li className="flex items-center">
                       <div className="h-10 w-10 bg-bgColor rounded-lg text-theme text-xl flex justify-center items-center">
-                        
+                        {/* Using dynamic icon class from API */}
+                        <i className={item.iconClass}></i>
                       </div>
                       {open && (
-                        <span class="ml-3 text-sm  text-grayText">
+                        <span className="ml-3 text-sm text-grayText">
                           {item.Menu_name}
                         </span>
                       )}
-                      {open  &&  item?.submenus.length>0 &&<FaChevronRight className="absolute right-4" />}
+                      {open && item?.submenus?.length > 0 && (
+                        <FaChevronRight className="absolute right-4" />
+                      )}
                     </li>
-                    {active == ind &&
-                      item?.subMenu?.map((ele, ind) => {
+                    {/* Render subMenu items if this item is active */}
+                    {active === ind &&
+                      item?.subMenu?.map((ele, subInd) => {
                         return (
-                          <NavLink to={ele?.path}>
-                            <div className="w-full flex items-center gap-2 ml-14 text-center py-1 mt-1  text-theme">
-                              <FaCircle className="text-[6px] font-semibold " />
-
+                          <NavLink key={subInd} to={ele?.path}>
+                            <div className="w-full flex items-center gap-2 ml-14 text-center py-1 mt-1 text-theme">
+                              <FaCircle className="text-[6px] font-semibold" />
                               <p className="text-sm">{ele?.title}</p>
                             </div>
                           </NavLink>
@@ -226,15 +220,15 @@ const Sidebar = ({ open, setOpen }) => {
                       })}
                   </div>
                 );
-           
-            })}
+              })}
           </ul>
 
           <button
             onClick={() => {
-              handleLogout()
+              handleLogout();
             }}
-            className=" mt-32 border mx-auto p-3 flex items-center gap-4 w-[90%] bg-theme text-white rounded-md">
+            className=" mt-32 border mx-auto p-3 flex items-center gap-4 w-[90%] bg-theme text-white rounded-md"
+          >
             <LuLogOut />
             <p className="text-white">Logout</p>
           </button>

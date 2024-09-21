@@ -1,9 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Table from '../../../components/common/Table'
 import CreateOrganization from '../../../components/Modal/CreateOrganization'
+import { IoSearch } from "react-icons/io5";
+import { useDispatch, useSelector } from 'react-redux';
+import { organisationListservices } from '../../../redux/thunk/organizationMangementservices';
+
 
 function Organization() {
     const [isOpen, setisOpen] = useState(false)
+    const {organisation} = useSelector((state)=> state.organisationMangementState)
+    const dispatch=useDispatch()
+    dispatch(organisationListservices())
+    useEffect(()=> {
+        
+    })
 
     return (
         <div>
@@ -23,7 +33,7 @@ function Organization() {
       <div class=" overflow-x-auto pb-4">
           <div class="min-w-full inline-block align-middle">
               <div class="overflow-hidden  shadow bg-white rounded-lg border-gray-300">
-                  <table class="table-auto min-w-full rounded-xl">
+                  {/* <table class="table-auto min-w-full rounded-xl">
                       <thead>
                           <tr class="bg-gray-50">
                          
@@ -61,7 +71,8 @@ function Organization() {
                         }
                          
                       </tbody>
-                  </table>
+                  </table> */}
+                   {/* <Table data={organisation??[]} /> */}
               </div>
           </div>
       </div>
