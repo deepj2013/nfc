@@ -18,6 +18,7 @@ export const createCategoryServices = createAsyncThunk(
     }
   }
 );
+
 export const UpdateCategoryServices = createAsyncThunk(
   "UpdateCategoryServices",
   async (payload) => {

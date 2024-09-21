@@ -9,7 +9,7 @@ function AuthRoute({setIsLogin}) {
       <Route path="/" element={<Login setIsLogin={setIsLogin} />} />
   
       {/* <Route path="/club-control" element={<Login setIsLogin={setIsLogin} />} /> */}
-      <Route path="/cash-control" element={<SuperLogin setIsLogin={setIsLogin} />} />
+      <Route path="/control" element={<SuperLogin setIsLogin={setIsLogin} />} />
 
 
       {/* Add more routes for different authentication pages */}

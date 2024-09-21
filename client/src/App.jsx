@@ -9,6 +9,8 @@ import AuthRoute from './Routes/AuthRoute';
 import DashboardRoutes from './Routes/DashboardRoutes';
 import { getStorageValue } from './services/LocalStorageServices';
 import { useNavigate } from 'react-router';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
