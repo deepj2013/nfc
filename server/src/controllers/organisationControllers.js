@@ -24,7 +24,7 @@ export const updateOrganisationController = async (req, res) => {
 export const findAllOrganisationsController = async (req, res) => {
   try {
     const result = await findAllOrganisations();
-    res.status(200).json(result);
+    res.status(200).json({msg: 'sucess',result});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -15,8 +15,8 @@ const ClubOrganizationSchema = new mongoose.Schema({
     pan: { type: String, required: true },        // PAN number
     tan:{ type: String, required: true },        // TAN number
     gst: { type: String, required: true },        // GST number
-    logoUrl: { type: String },                    // URL of the logo image
-    website: { type: String },                    // Official website URL
+    logoUrl: { type: String, default:null },                    // URL of the logo image
+    website: { type: String, default:null },                    // Official website URL
     socialMedia: { type: [SocialMediaSchema], default: [] }, // Social media accounts with platform and URL
     facilities: { type: [String], required: true }, // Array of available facilities (pool, gym, etc.)
     members: { type: Number, default: 0 },        // Total members in the club
