@@ -32,7 +32,7 @@ router.get('/getrole',[adminAuth] , getRoleController )
 
 router.post('/accesscontrol',[adminAuth], createAccessController);
 router.post('/getmenubyrole', [adminAuth], getMenusByRoleController)
-router.post('/getmenubyroles', [auth], getMenusByRoleController)
+
 
 
 router.post('/createusers', [adminAuth], createUserController)
