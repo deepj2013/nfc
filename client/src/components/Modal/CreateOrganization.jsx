@@ -4,8 +4,11 @@ import { useNavigate } from "react-router-dom";
 import Input from "../common/Input";
 import Button from "../common/Button";
 
-const CreateOrganization = ({ isOpen, onClose, setFeedBackModal }) => {
+const CreateOrganization = ({ isOpen, onClose, selectedOrganisation }) => {
+    console.log(selectedOrganisation,'9090');
     const navigate = useNavigate()
+    const [formData,,setFormData]=useState({})
+    
     return (
         <div
             className={`fixed w-full inset-0 flex items-center justify-center z-[999] transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"

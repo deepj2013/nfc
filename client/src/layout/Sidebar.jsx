@@ -70,6 +70,9 @@ const Sidebar = ({ open, setOpen }) => {
         let temp = await getmenubyroleHandler({
           role_id: Number(userDetails?.role_id),
         });
+        // let tempArray=temp.sort((a, b) => a.menuOrder - b.menuOrder)
+        // console.log(tempArray,'tempArray');
+      
         setMenu(temp);
       } catch (error) {
         console.log(error);
