@@ -1,12 +1,4 @@
 import APIError, { HttpStatusCode } from "../exception/errorHandler.js";
-import {
-  comparePassword,
-  encryptPassword,
-} from "../helpers/passwordEncryption/passwordEncryption.js";
-import {
-  getTokenOfUserService,
-  generateTokenService,
-} from "../services/authServices.js";
 import MemberCategory from "../models/member_category.js";
 import {
   MemberData,
@@ -15,7 +7,8 @@ import {
   MemberTransactionHistory,
 } from "../models/member_Model.js";
 import mongoose from "mongoose";
-// import { CATEGORY_CHARGES } from "../constants/subscriptionCharges.js";
+import CATEGORY_CHARGES  from "../constants/subscriptionCharges.js";
+import ValidatorHelper from "../helpers/validator/validatorHelper.js"
 
 export const createMemberCategory = async (data) => {
   let sequenceId = 1;
@@ -165,16 +158,7 @@ const calculateTotalAmount = (category, months) => {
 };
 
 // Helper function to create a wallet and initial transaction
-const createWalletAndInitialTransaction = async (member, session) => {
-  // Create a wallet for the member
-  const wallet = new Wallet({
-    member_id: member._id,
-    memberId: member.memberId,
-    balance: 0,
-    createdBy: member.createdBy,
-    updatedBy: member.updatedBy,
-  });
-  await wallet.save({ session });
+const createWalletAndInitialTransaction = async (member, session) => { 
 
   const { duration, months } = calculateValidUpToAndDuration();
   const {
@@ -189,6 +173,16 @@ const createWalletAndInitialTransaction = async (member, session) => {
   // Create a detailed description
   const description = `Subscription charge for ${months} month(s): Single month payment: ₹${monthlyCharge}, Total subscription fee: ₹${subscriptionFee}, Annual fee: ₹${annualFee}, Amount before GST: ₹${totalBeforeGST}, GST (18%): ₹${gst}, Total amount: ₹${totalAmount}`;
 
+  let intialbalance = Number(0 - totalAmount);
+  // Create a wallet for the member
+  const wallet = new Wallet({
+    member_id: member._id,
+    memberId: member.memberId,
+    balance: intialbalance,
+    createdBy: member.createdBy,
+    updatedBy: member.updatedBy,
+  });
+  await wallet.save({ session });
   // Create an initial transaction with narration and duration for the calculated months
   const transaction = new MemberTransactionHistory({
     member_id: member._id,
@@ -267,58 +261,152 @@ export const createMember = async (data) => {
   }
 };
 
-// Create Dependent
+
 export const createDependent = async (memberId, dependentData) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const member = await MemberData.findById(memberId);
+    // Validate the member ID
+    const member = await MemberData.findOne({ memberId: memberId });
     if (!member) {
       throw new Error("Member not found");
     }
 
+    // Validate mobile number length and digits
+    if (!dependentData.mobileNumber || !ValidatorHelper.validateMobile(dependentData.mobileNumber)) {
+      throw new Error("Mobile number must be exactly 10 digits and contain only numbers.");
+    }
+
+    // Validate email format
+    if (dependentData.emailId && !ValidatorHelper.validateEmail(dependentData.emailId)) {
+      throw new Error("Invalid email address");
+    }
+
+    // Convert birthDate and currentDate to Unix timestamps
+    const currentDateUnix = Math.floor(Date.now() / 1000); // Current date in Unix time (seconds)
+    const birthDateUnix = Math.floor(new Date(dependentData.dateOfBirth).getTime() / 1000); // Birthdate in Unix time (seconds)
+    
+    // Calculate 18 years in seconds (18 * 365.25 days * 24 hours * 60 minutes * 60 seconds)
+    const eighteenYearsInSeconds = 18 * 365.25 * 24 * 60 * 60;
+
+    // Compare the current time with the birth time + 18 years
+    if ((currentDateUnix - birthDateUnix) > eighteenYearsInSeconds) {
+      throw new Error("Dependent cannot be registered if older than 18 years");
+    }
+
+    // Generate dependentId based on the number of dependents
+    const dependentCount = member.dependents.length;
+    const dependentId = `${memberId}D${dependentCount + 1}`;
+
+    // Store the birthDate in Unix time
+    dependentData.dateOfBirth = birthDateUnix;
+
+    // Create a new dependent
     const dependent = new Dependent({
+      dependentId,
+      member_id: member._id,  // MongoDB ObjectId reference for the member
+      memberId: member.memberId,  // The custom member ID
       ...dependentData,
-      memberId: member._id,
     });
+
+    // Save the dependent in the session
     const savedDependent = await dependent.save({ session });
 
-    // Update member with dependent ID
-    member.dependents.push(savedDependent.dependentId);
+    // Update member with the new dependent ID
+    member.dependents.push(dependentId);  // Use generated dependentId
     await member.save({ session });
 
+    // Commit the transaction
     await session.commitTransaction();
     session.endSession();
 
     return savedDependent;
   } catch (error) {
+    // Abort the transaction in case of an error
     await session.abortTransaction();
     session.endSession();
     throw new Error("Error creating dependent: " + error.message);
   }
 };
 
+
 // Update Member
 export const updateMember = async (id, data) => {
   try {
-    const updatedMember = await MemberData.findByIdAndUpdate(id, data, {
-      new: true,
-    });
+    const updatedMember = await MemberData.findOneAndUpdate(
+      { memberId: String(id) },
+      data,
+      { new: true }
+    );
+
+    // Check if member was not found
+    if (!updatedMember) {
+      throw new Error(`Member with ID ${id} not found`);
+    }
+
     return updatedMember;
   } catch (error) {
     throw new Error("Error updating member: " + error.message);
   }
 };
 
+
+
 // Update Dependent
 export const updateDependent = async (dependentId, data) => {
   try {
+    // Fetch the existing dependent to validate any changes
+    const dependent = await Dependent.findOne({ dependentId });
+    if (!dependent) {
+      throw new Error(`Dependent with ID ${dependentId} not found`);
+    }
+
+    // Validate mobile number if provided
+    if (data.mobileNumber && !ValidatorHelper.validateMobile(data.mobileNumber)) {
+      throw new Error("Mobile number must be exactly 10 digits and contain only numbers.");
+    }
+
+    // Validate email if provided
+    if (data.emailId && !ValidatorHelper.validateEmail(data.emailId)) {
+      throw new Error("Invalid email address.");
+    }
+
+    // Validate age based on dateOfBirth if provided (age should be <= 18)
+    if (data.dateOfBirth) {
+      let birthDate = data.dateOfBirth
+      if (isNaN(new Date(birthDate).getTime())) {
+        throw new Error("Invalid date format. Expected format is 'dd-mm-yyyy'.");
+      }
+
+      // Convert birthDate and currentDate to Unix timestamps
+      const currentDateUnix = Math.floor(Date.now() / 1000); // Current date in Unix time (seconds)
+      const birthDateUnix = Math.floor(new Date(birthDate).getTime() / 1000); // Birthdate in Unix time (seconds)
+     
+      
+      // Calculate 18 years in seconds (18 * 365.25 days * 24 hours * 60 minutes * 60 seconds)
+      const eighteenYearsInSeconds = 18 * 365.25 * 24 * 60 * 60;
+
+      // Compare the current time with the birth time + 18 years
+      if ((currentDateUnix - birthDateUnix) > eighteenYearsInSeconds) {
+        throw new Error("Dependent cannot be registered if older than 18 years.");
+      }
+
+      // Store the dateOfBirth as a Unix timestamp in the data object
+      data.dateOfBirth = birthDateUnix;
+    }
+
+    // Perform the update with the validated data
     const updatedDependent = await Dependent.findOneAndUpdate(
       { dependentId },
       data,
       { new: true }
     );
+
+    if (!updatedDependent) {
+      throw new Error(`Dependent with ID ${dependentId} could not be updated.`);
+    }
+
     return updatedDependent;
   } catch (error) {
     throw new Error("Error updating dependent: " + error.message);
@@ -326,18 +414,32 @@ export const updateDependent = async (dependentId, data) => {
 };
 
 // Update Member Status
-export const updateMemberStatus = async (id, status) => {
+export const updateMemberStatus = async (id, data) => {
   try {
-    const updatedMember = await MemberData.findByIdAndUpdate(
-      id,
-      { membershipStatus: status },
-      { new: true }
+    let status = data.status;
+    let updateBy = data.updateBy;
+    const updateMember = await MemberData.findOneAndUpdate(
+      { memberId: String(id) },  // Condition to match the memberId
+      { 
+        $set: { 
+          membershipStatus: status,  // Update membership status
+          updatedBy: updateBy        // Update the updatedBy field
+        } 
+      },
+      { new: true }  // This ensures the updated document is returned
     );
-    return updatedMember;
+
+    if (!updateMember) {
+      throw new Error(`Member with ID ${id} not found`);
+    }
+
+    return updateMember;
   } catch (error) {
     throw new Error("Error updating member status: " + error.message);
   }
 };
+
+
 
 // Update Dependent Status
 export const updateDependentStatus = async (dependentId, status) => {
@@ -373,13 +475,24 @@ export const getDependentsByMember = async (memberId) => {
   }
 };
 
-// Get Single Member Detail by MemberId
 export const getMemberById = async (memberId) => {
   try {
-    const member = await MemberData.findOne({ memberId }).populate(
-      "dependents"
-    );
-    return member;
+    // Fetch the member by memberId
+    const member = await MemberData.findOne({ memberId });
+    if (!member) {
+      throw new Error(`Member with ID ${memberId} not found`);
+    }
+
+    // Manually fetch the dependents based on the dependentId stored in the member's dependents array
+    const dependents = await Dependent.find({ dependentId: { $in: member.dependents } });
+
+    // Add the dependents data to the member object
+    const memberWithDependents = {
+      ...member._doc, // Access the member's document data
+      dependents, // Include the full dependent data
+    };
+
+    return memberWithDependents;
   } catch (error) {
     throw new Error("Error fetching member: " + error.message);
   }

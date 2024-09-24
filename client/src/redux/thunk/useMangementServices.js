@@ -9,7 +9,6 @@ export const employeeListServices = createAsyncThunk(
     async (payload) => {
       try {
         let url = `${BASE_URL_SUPER_ADMIN}getusers`;
-        console.log(url, "url are ");
         const res = await axios.get(url,payload);
         return res.data;
       } catch (error) {
