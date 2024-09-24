@@ -102,8 +102,7 @@ export const updateDependentController = async (req, res) => {
 export const updateMemberStatusController = async (req, res) => {
     try {
         const { id } = req.params;
-        const { status } = req.body;
-        const result = await updateMemberStatus(id, status);
+        const result = await updateMemberStatus(id, (req.body));
         res.status(200).json({ msg: 'Member status updated successfully', result });
     } catch (error) {
         res.status(400).json({ error: error.message });
