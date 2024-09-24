@@ -42,8 +42,8 @@ export const getAllUserController = async (req, res) => {
   try {
     const result = await getAllUserService();
     return res
-      .status(201)
-      .json({ msg: "Department created successfully", result });
+      .status(200)
+      .json({ msg: "Sucess", result });
   } catch (error) {
     res.status(error.httpCode || 500).json({ error: error.message });
   }

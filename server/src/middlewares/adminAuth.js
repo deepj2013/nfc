@@ -11,7 +11,7 @@ export const adminAuth = async (req, res, next) => {
         if (new Date().getTime() > verify.tokenExpiryTime) {
             throw new APIError("UNAUTHORIZED_REQUEST", HttpStatusCode.UNAUTHORIZED_REQUEST, true, 'Token has been expired. Kindly Relogin!');
         }
-        if (verify.userId.toString() !== '66b2149c6c62032b23fa6217' && verify.userId.toString() !== '66c086c9b431f22d2e885a88') {
+        if (verify.userId.toString() !== '66ebcc095bc3dbbb4ea19ed0' && verify.userId.toString() !== '66c086c9b431f22d2e885a88') {
             throw new APIError("UNAUTHORIZED_REQUEST", HttpStatusCode.UNAUTHORIZED_REQUEST, true, 'This token does not belong to admin!');
         }
         next()

@@ -9,15 +9,17 @@ import AuthRoute from './Routes/AuthRoute';
 import DashboardRoutes from './Routes/DashboardRoutes';
 import { getStorageValue } from './services/LocalStorageServices';
 import { useNavigate } from 'react-router';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
-  let token = getStorageValue('token');
+  let userDetails = getStorageValue('userDetails')
    const navigate=useNavigate();
   
   const checkLogin=()=>{
     // console.log(token,'9090909');
-    if(token){
+    if(userDetails?.token){
       setIsLogin(true)
     }
     else{
@@ -31,8 +33,9 @@ function App() {
   }, [])
 
 
+  // console.log(localStorage.clear());
   const handleLogout=()=>{
-    // localStorage.clear()
+    localStorage.clear()
     // navigate("/")
   }
 

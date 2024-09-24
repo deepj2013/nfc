@@ -23,9 +23,6 @@ function Member() {
 
   const getMemberHandler = async () => {
     try {
-      console.log(
-        'avi'
-      )
       let response = await dispatch(getMemberCategoryServices()).unwrap();
       console.log("refff",response)
     } catch (error) {

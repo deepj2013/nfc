@@ -10,6 +10,7 @@ function SuperLogin({ setIsLogin }) {
   const dispatch = useDispatch();
   const [username, setusername] = useState("");
   const [password, setpassword] = useState("");
+
   const loginHander = async () => {
     try {
       let payload = {
@@ -18,10 +19,10 @@ function SuperLogin({ setIsLogin }) {
       };
     //   console.log("resporty", payload);
       let response = await dispatch(superAdminLoginServices(payload)).unwrap();
-      console.log("res909",response)
       if (response.msg === "Success") {
-        setStorageValue('token', response?.result?.token);
+        setStorageValue('userDetails', response?.result);
         setIsLogin(true);
+        navigate("/");
       }
     } catch (error) {
       errorLog(error);
@@ -41,7 +42,7 @@ function SuperLogin({ setIsLogin }) {
       <div class=" w-screen flex justify-center items-center ">
         <img
           className="w-[50%] h-full "
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYh7056AB0WU_qII7iOs4mZG-0Oo8kV2IZow&s"
+          src="https://static.vecteezy.com/system/resources/thumbnails/005/879/539/small_2x/cloud-computing-modern-flat-concept-for-web-banner-design-man-enters-password-and-login-to-access-cloud-storage-for-uploading-and-processing-files-illustration-with-isolated-people-scene-free-vector.jpg"
         />
         <div class="grid gap-8 w-[50%] px-10">
           <div id="back-div" class="bg-gradient-to-r  rounded-[26px] m-4">
@@ -98,28 +99,7 @@ function SuperLogin({ setIsLogin }) {
                 LOG IN
               </button>
 
-              <div class="text-gray-500 flex text-center flex-col mt-4 items-center text-sm">
-                <p class="cursor-default">
-                  By signing in, you agree to our
-                  <a
-                    class="group text-blue-400 transition-all duration-100 ease-in-out"
-                    href="#"
-                  >
-                    <span class="cursor-pointer bg-left-bottom bg-gradient-to-r from-blue-400 to-blue-400 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out">
-                      Terms
-                    </span>
-                  </a>
-                  and
-                  <a
-                    class="group text-blue-400 transition-all duration-100 ease-in-out"
-                    href="#"
-                  >
-                    <span class="cursor-pointer bg-left-bottom bg-gradient-to-r from-blue-400 to-blue-400 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out">
-                      Privacy Policy
-                    </span>
-                  </a>
-                </p>
-              </div>
+
             </div>
           </div>
         </div>
