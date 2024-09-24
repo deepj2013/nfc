@@ -1,11 +1,22 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Table from '../../../components/common/Table'
 import CreateEmployee from '../../../components/Employee/CreateEmployee'
 import Input from '../../../components/common/Input'
 import { IoSearch } from "react-icons/io5";
+import { useDispatch, useSelector } from 'react-redux';
+import { employeeListServices, roleListServices } from '../../../redux/thunk/useMangementServices';
 
 function Employee() {
     const [isOpen, setisOpen] = useState(false)
+    const {employees}=useSelector((state)=>state.userStateMangementState)
+    const dispatch=useDispatch()
+
+    useEffect(() => {
+        dispatch(employeeListServices())
+        dispatch(roleListServices())
+    }, [])
+    
+    
     return (
         <div>
             <div className='mb-6 flex items-center justify-between'>
@@ -27,7 +38,7 @@ function Employee() {
                 </div>
             </div>
             <div>
-                <Table />
+                <Table data={employees??[]} />
             </div>
 
             <CreateEmployee isOpen={isOpen} onClose={() => setisOpen(false)} />

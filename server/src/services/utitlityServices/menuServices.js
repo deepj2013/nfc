@@ -46,7 +46,9 @@ export const getMenusByRole = async (roleId) => {
           _id: 0,
           Menu_name: "$menus.menuName",
           Menu_Id: "$menus.menuId",
-          submenus: "$menus.subMenus"
+          submenus: "$menus.subMenus",
+          routeUrl : "$menus.routeUrl",
+          iconClass: "$menus.iconClass",
         }
     }
   ]

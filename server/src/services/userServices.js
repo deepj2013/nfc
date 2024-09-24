@@ -6,21 +6,44 @@ import User from "../models/userModel.js"
 
 export const createUserService = async (userData) => {
     try {
+        // Validation for required fields
+        const { user_name, mobile_number, email_id, password, role_id } = userData;
+
+        // Check if required fields are present
+        if (!user_name) throw new APIError('ValidationError', 400, true, 'User name is required');
+        if (!mobile_number) throw new APIError('ValidationError', 400, true, 'Mobile number is required');
+        if (!email_id) throw new APIError('ValidationError', 400, true, 'Email ID is required');
+        if (!password) throw new APIError('ValidationError', 400, true, 'Password is required');
+        if (!role_id) throw new APIError('ValidationError', 400, true, 'Role ID is required');
+
+        // Additional checks for email and mobile number format
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const mobilePattern = /^[0-9]{10}$/;
+
+        if (!emailPattern.test(email_id)) throw new APIError('ValidationError', 400, true, 'Invalid email format');
+        if (!mobilePattern.test(mobile_number)) throw new APIError('ValidationError', 400, true, 'Invalid mobile number format');
+
         // Hashing Password
-        userData.password = await encryptPassword(userData.password);
+        userData.password = await encryptPassword(password);
+
         // Fetch the last user to determine the next user ID
         const lastUser = await User.findOne().sort({ user_id: -1 }).exec();
         userData.user_id = lastUser ? lastUser.user_id + 1 : 1;
+
         // Creating new user object
         const newUser = new User(userData);
+
         // Save the new user to the database
         await newUser.save();
+
         // Resolve Promise
         return Promise.resolve(newUser);
     } catch (error) {
-        throw new APIError(error.name, error.httpCode, error.isOperational, error.message);
+        // Error handling
+        throw new APIError(error.name, error.httpCode || 500, error.isOperational || true, error.message || 'Internal Server Error');
     }
 };
+
 
 export const userLoginService = async (email_id, password) => {
     try {
@@ -65,7 +88,7 @@ export const userLoginService = async (email_id, password) => {
             token: tokenObj.token,
             expiresAt: tokenObj.expiresAt,
             userName: user.user_name,
-            roleId: user.role_id,
+            role_id: user.role_id,
             user_id: user.user_id
         }
     } catch (error) {
