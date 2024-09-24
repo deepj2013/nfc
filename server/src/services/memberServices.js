@@ -458,7 +458,7 @@ export const updateDependentStatus = async (dependentId, status) => {
 // Get List of Members
 export const getAllMembers = async () => {
   try {
-    const members = await MemberData.find().populate("dependents");
+    const members = await MemberData.find();
     return members;
   } catch (error) {
     throw new Error("Error fetching members: " + error.message);
