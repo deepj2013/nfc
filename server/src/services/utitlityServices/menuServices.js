@@ -21,7 +21,7 @@ export const createMenuService = async (menuData) => {
 
 export const getMenusByRole = async (roleId) => {
   // Fetch the menu names for the given role from the database
-  console.log(roleId,"roleid in getMenuRole")
+
   const pipeline = [
     {
       $match:
@@ -49,6 +49,7 @@ export const getMenusByRole = async (roleId) => {
           submenus: "$menus.subMenus",
           routeUrl : "$menus.routeUrl",
           iconClass: "$menus.iconClass",
+          menuOrder: "$menus.menuOrder",
         }
     }
   ]
