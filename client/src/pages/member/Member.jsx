@@ -24,7 +24,7 @@ function Member() {
   const getMemberHandler = async () => {
     try {
       let response = await dispatch(getMemberCategoryServices()).unwrap();
-      console.log("refff",response)
+      console.log("refff", response);
     } catch (error) {
       logger(error);
     }
@@ -34,8 +34,8 @@ function Member() {
     getMemberHandler();
   }, []);
 
-  const { unitList,memberList } = useSelector((state) => state.inventaryState);
-  console.log("memberListmemberList",memberList)
+  const { unitList, memberList } = useSelector((state) => state.inventaryState);
+  console.log("memberListmemberList", memberList);
 
   return (
     <div>
@@ -44,8 +44,7 @@ function Member() {
         <div className="flex gap-4">
           <Button
             onClick={() => {
-              setIsOpen(true);
-              setType("add");
+              navigate("/create-member");
             }}
             rigntIcon={<IoAddCircleSharp className="text-2xl" />}
             name={"Add Member"}
@@ -76,8 +75,7 @@ function Member() {
                           class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                         >
                           {" "}
-                          memberCategoryId
-{" "}
+                          memberCategoryId{" "}
                         </th>
                         <th
                           scope="col"
@@ -118,7 +116,6 @@ function Member() {
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               {/* {ind + 1}{" "} */}
                               {ele?.memberCategoryId}
-
                             </td>
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
                               {ele?.memberCategory}
@@ -126,7 +123,7 @@ function Member() {
 
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               {" "}
-                              {ele?.status? "Active":"InActive"}
+                              {ele?.status ? "Active" : "InActive"}
                             </td>
 
                             <td class="flex p-5 items-center gap-0.5">
@@ -207,7 +204,6 @@ function Member() {
         onClose={() => {
           setIsOpen(false);
         }}
-        
       />
     </div>
   );
