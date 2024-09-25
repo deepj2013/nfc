@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getAllMenuServices } from "../thunk/adminServices";
 
 const initialState = {
-  data: null,
+  data: "sjsjsj",
   loading: false,
   error: null,
   success: false,
@@ -18,10 +18,12 @@ const adminSlice = createSlice({
       return { ...state, loading: true };
     });
     builder.addCase(getAllMenuServices.fulfilled, (state, action) => {
+      console.log("jhghjkjhgfvghjk", action.payload);
+      console.log({ ...state }, "work");
       return {
         ...state,
         loading: false,
-        allMeanuList: action?.payload?.result,
+        allMeanuList: action?.payload,
       };
     });
     builder.addCase(getAllMenuServices.rejected, (state, action) => {
