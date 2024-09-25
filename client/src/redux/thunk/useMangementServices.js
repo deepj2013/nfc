@@ -52,6 +52,7 @@ export const createMemberServices = createAsyncThunk(
   "createMemberServices",
   async (payload) => {
     console.log("memberpayload", payload);
+
     try {
       let url = `${BASE_URL}member`;
       const res = await axios.post(url, payload);

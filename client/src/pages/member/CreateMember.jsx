@@ -26,15 +26,15 @@ function CreateMember() {
     fatherName: "",
     husbandName: "",
     spouseName: "",
-    gender: "",
+    gender: "Male",
     dateOfBirth: "1950-04-22",
-    maritalStatus: "",
+    maritalStatus: "singale",
     nationality: "",
     bloodGroup: "",
     mobileNumber: "",
     emailId: "",
     phoneNumber: "",
-    membershipStatus: "",
+    membershipStatus: "Active",
     panNumber: "",
     weddingDate: "2005-06-15",
     serviceBusinessDetail: "",
@@ -45,8 +45,8 @@ function CreateMember() {
     emergencyContactName: "",
     emergencyContactNumber: "",
     emergencyContactRelation: "",
-    createdBy: userDetails,
-    updatedBy: userDetails,
+    createdBy: userDetails?.role_id,
+    updatedBy: userDetails?.role_id,
     errors: {},
   });
   const {
@@ -81,7 +81,7 @@ function CreateMember() {
     errors,
   } = formData;
 
-  console.log("payload", formData);
+  // console.log("payload", formData);
 
   const upadteStateHandler = (e) => {
     let { name, value } = e.target;
