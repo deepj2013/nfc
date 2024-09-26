@@ -12,6 +12,7 @@ import {
     getAllMembers,
     getDependentsByMember,
     getMemberById,
+    depositInWalletService, withdrawFromWalletService, getTransactionHistoryService
   } from "../services/memberServices.js"
   
   export const createMemberCategoryController = async (req, res) => {
@@ -148,6 +149,58 @@ export const getMemberByIdController = async (req, res) => {
         const { memberId } = req.params;
         const result = await getMemberById(memberId);
         res.status(200).json({ msg: 'Member details fetched successfully', result });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Deposit in wallet controller
+export const depositInWalletController = async (req, res) => {
+    try {
+        const result = await depositInWalletService(req.body);
+        res.status(200).json({ msg: 'Deposit successful', result });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Withdraw from wallet controller
+export const withdrawFromWalletController = async (req, res) => {
+    try {
+        const result = await withdrawFromWalletService(req.body);
+        res.status(200).json({ msg: 'Withdrawal successful', result });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Get transaction history controller
+export const getTransactionHistoryController = async (req, res) => {
+    try {
+        const result = await getTransactionHistoryService(req.params.memberId);
+        res.status(200).json({ msg: 'Transaction history fetched successfully', result });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Update cheque status controller
+export const updateChequeStatusController = async (req, res) => {
+    try {
+        const { chequeId, status } = req.body;
+        const result = await updateChequeStatusService(chequeId, status);
+        res.status(200).json({ msg: result.message });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Get all cheques by status controller
+export const getAllChequesController = async (req, res) => {
+    try {
+        const { status } = req.params;
+        const cheques = await getAllChequesService(status);
+        res.status(200).json({ msg: 'Cheques fetched successfully', cheques });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
