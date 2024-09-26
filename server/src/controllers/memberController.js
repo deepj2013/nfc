@@ -12,7 +12,7 @@ import {
     getAllMembers,
     getDependentsByMember,
     getMemberById,
-    depositInWalletService, withdrawFromWalletService, getTransactionHistoryService
+    depositInWalletService, withdrawFromWalletService, getTransactionHistoryService, updateChequeStatusService
   } from "../services/memberServices.js"
   
   export const createMemberCategoryController = async (req, res) => {
@@ -187,8 +187,8 @@ export const getTransactionHistoryController = async (req, res) => {
 // Update cheque status controller
 export const updateChequeStatusController = async (req, res) => {
     try {
-        const { chequeId, status } = req.body;
-        const result = await updateChequeStatusService(chequeId, status);
+        const { chequeNumber, status } = req.body;
+        const result = await updateChequeStatusService(chequeNumber, status);
         res.status(200).json({ msg: result.message });
     } catch (error) {
         res.status(400).json({ error: error.message });

@@ -94,7 +94,7 @@ const memberTransactionHistorySchema = new Schema({
     modeOfTransaction: { type: String, required: true }, // UPI | Cheque | Cash | NEFT
     transactionRef: { type: String }, // For UPI/NEFT
     chequeNumber: { type: String }, // For Cheque
-    chequeStatus: { type: String, default: 'Pending' }, // Pending | Cleared | Bounced
+    chequeStatus: { type: String,}, // Pending | Cleared | Bounced
     bankName: { type: String }, // For Cheque
     branchName: { type: String }, // For Cheque
     supportDocuments: { type: String }, // in case UPI / NEFT / CHEQUE image URL
