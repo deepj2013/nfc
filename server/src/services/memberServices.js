@@ -188,6 +188,7 @@ const createWalletAndInitialTransaction = async (member, session) => {
     member_id: member._id,
     memberId: member.memberId,
     transactionDate: new Date(),
+    modeOfTransaction: null,
     amount: totalAmount, // Example amount for subscription charge
     transactionType: "Debit",
     remarks: `Subscription charge for ${duration}`,
@@ -593,7 +594,7 @@ export const depositInWalletService = async (data) => {
 
 // Withdraw from wallet service
 export const withdrawFromWalletService = async (data) => {
-let {memberId, amount, withdrawFor, remarks, invoiceNumber} = data
+let {memberId, amount, withdrawFor, modeOfTransaction, remarks, invoiceNumber, transactionRef} = data
 
   if (!memberId || !amount) {
       throw new Error('Missing required fields: memberId or amount');
@@ -627,11 +628,14 @@ let {memberId, amount, withdrawFor, remarks, invoiceNumber} = data
       transactionDate: Date.now(),
       amount,
       transactionType: 'Debit',
+      modeOfTransaction: `${modeOfTransaction}`,
+      transactionRef,
       remarks: `${remarks}`,
       description: `Withdrawal of ${amount} , at ${withdrawFor}`,
       narration: `${withdrawFor}`,
       supportDocuments: invoiceNumber
   });
+
   await transaction.save();
 
   return { updatedBalance: wallet.balance };
@@ -642,6 +646,13 @@ export const getTransactionHistoryService = async (memberId) => {
   if (!memberId) {
       throw new Error('Missing required field: memberId');
   }
+  const member = await MemberData.findOne({memberId: memberId});
+  if (!member) {
+      throw new Error('Member not found with id : ' + memberId);
+  }
+  if (!memberId) {
+    throw new Error('Missing required field: memberId');
+}
 
   const transactions = await MemberTransactionHistory.find({ memberId }).sort({ transactionDate: -1 });
   if (!transactions || transactions.length === 0) {
@@ -651,47 +662,68 @@ export const getTransactionHistoryService = async (memberId) => {
   return transactions;
 };
 
-export const updateChequeStatusService = async (chequeId, status) => {
+export const updateChequeStatusService = async (chequeNumber, status) => {
   const validStatuses = ['Pending', 'Cleared', 'Bounced'];
 
   if (!validStatuses.includes(status)) {
       throw new Error('Invalid cheque status');
   }
 
-  const transaction = await MemberTransactionHistory.findById(chequeId);
+  // Find the cheque transaction
+  const transaction = await MemberTransactionHistory.findOne({ chequeNumber });
   if (!transaction || transaction.modeOfTransaction !== 'Cheque') {
       throw new Error('Cheque transaction not found');
   }
 
+if ( transaction.chequeStatus == 'Cleared' ) {
+      throw new Error('Cheque is already cleared and deposited');
+  }
+  // Update cheque status
   transaction.chequeStatus = status;
   await transaction.save();
 
-  // Update wallet balance only if cheque is cleared
+  // Handle cheque clearance
   if (status === 'Cleared') {
       const wallet = await Wallet.findOne({ memberId: transaction.memberId });
       if (!wallet) {
           throw new Error('Member wallet not found');
       }
 
+      // Add the cheque amount to the wallet
       wallet.balance += transaction.amount;
       await wallet.save();
 
       return { message: 'Cheque cleared and wallet balance updated', updatedBalance: wallet.balance };
-  } else if (status === 'Bounced') {
-      // Handle bounce logic, e.g., apply penalty
-      const bounceCharge = 50; // Example bounce penalty
+  } 
+  
+  // Handle cheque bounce
+  else if (status === 'Bounced') {
+      const bounceCharge = 650; // Bounce penalty
       const wallet = await Wallet.findOne({ memberId: transaction.memberId });
       if (!wallet) {
           throw new Error('Member wallet not found');
       }
 
+      // Deduct the bounce charge, allow negative balance
       wallet.balance -= bounceCharge;
-      if (wallet.balance < 0) {
-          // Handle negative balance
-      }
       await wallet.save();
 
-      return { message: 'Cheque bounced and bounce charge applied', updatedBalance: wallet.balance };
+      // Log the bounce penalty in the transaction history
+      const penaltyTransaction = new MemberTransactionHistory({
+          memberId: transaction.memberId,
+          member_id: transaction.member_id,
+          transactionDate: Date.now(),
+          amount: bounceCharge,
+          transactionType: 'Debit',
+          modeOfTransaction: 'Penalty',
+          remarks: 'Cheque Bounce Penalty',
+          description: `Penalty for cheque bounce of ₹${bounceCharge}`,
+          narration: 'Bounce penalty applied',
+          supportDocuments: null  // Optional, as no documents are needed for penalty
+      });
+      await penaltyTransaction.save();
+
+      return { message: 'Cheque bounced, penalty applied, and wallet balance updated', updatedBalance: wallet.balance };
   }
 
   return { message: `Cheque status updated to ${status}` };
