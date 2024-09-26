@@ -9,6 +9,7 @@ const dependentSchema = new Schema({
     memberId: { type: String, ref: 'master_members', required: true },
     firstName: { type: String, required: true },
     middleName: { type: String },
+    profilePicture: { type: String},
     surname: { type: String, required: true },
     relationship: { type: String, required: true }, // Wife, Husband, Son, Daughter
     dateOfBirth: { type: Date, required: true },
