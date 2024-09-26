@@ -91,7 +91,7 @@ const memberTransactionHistorySchema = new Schema({
     transactionDate: { type: Date, required: true, default: Date.now },
     amount: { type: Number, required: true, default: 0 },
     transactionType: { type: String, required: true }, // Credit, Debit
-    modeOfTransaction: { type: String, required: true }, // UPI | Cheque | Cash | NEFT
+    modeOfTransaction: { type: String }, // UPI | Cheque | Cash | NEFT
     transactionRef: { type: String }, // For UPI/NEFT
     chequeNumber: { type: String }, // For Cheque
     chequeStatus: { type: String,}, // Pending | Cleared | Bounced
