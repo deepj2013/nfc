@@ -15,7 +15,9 @@ import {
     getMemberByIdController,
     depositInWalletController, 
     withdrawFromWalletController, 
-    getTransactionHistoryController
+    getTransactionHistoryController,
+    updateChequeStatusController
+    
 } from "../controllers/memberController.js";
 
 const router = express.Router();
@@ -45,7 +47,9 @@ router.get("/member/:id/dependents", [auth], getDependentsByMemberController);
 router.post('/member/wallet/deposit',[auth], depositInWalletController);
 // Route to withdraw money from wallet
 router.post('/member/wallet/withdraw',[auth],  withdrawFromWalletController);
+router.post('/member/wallet/updatechequestatus',[auth],  updateChequeStatusController);
 // Route to get transaction history
 router.get('/member/:memberId/transactions',[auth],  getTransactionHistoryController);
+
 
 export default router;
