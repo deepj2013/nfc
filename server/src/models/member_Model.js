@@ -31,6 +31,7 @@ const memberDataSchema = new Schema({
     memberId: { type: String, required: true, unique: true },
     memberCategory: { type: String, required: true },
     memberType: { type: String, required: true }, 
+    profilePicture: { type: String},
     title: { type: String, required: true },
     dateOfMembership: { type: Number, required: true },
     firstName: { type: String, required: true },
