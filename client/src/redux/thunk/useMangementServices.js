@@ -64,3 +64,18 @@ export const createMemberServices = createAsyncThunk(
     }
   }
 );
+export const getMemberManagementListServices = createAsyncThunk(
+  "getMemberManagementListServices",
+  async () => {
+    try {
+      let url = `${BASE_URL}members`;
+      const res = await axios.get(url);
+      console.log("poiuytrewq");
+      return res.data;
+    } catch (error) {
+      console.log("0987654321", error);
+      handleError(error);
+      throw error;
+    }
+  }
+);

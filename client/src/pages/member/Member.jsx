@@ -12,6 +12,7 @@ import { getMeasurementUnitsServices } from "../../redux/thunk/unitServices";
 import { logger } from "../../utils/Helper";
 import AddMember from "./AddMember";
 import { getMemberCategoryServices } from "../../redux/thunk/vendorServices";
+import { getMemberManagementListServices } from "../../redux/thunk/useMangementServices";
 
 function Member() {
   const navigate = useNavigate();
@@ -30,17 +31,28 @@ function Member() {
     }
   };
 
+  const getMembersManagementList = async () => {
+    try {
+      console.log("qwertyuiop1");
+      let response = await dispatch(getMemberManagementListServices()).unwrap();
+      console.log("refff", response);
+    } catch (error) {
+      logger(error);
+    }
+  };
+
   useEffect(() => {
-    getMemberHandler();
+    console.log("qwertyuiop");
+    getMembersManagementList();
   }, []);
 
   const { unitList, memberList } = useSelector((state) => state.inventaryState);
-  console.log("memberListmemberList", memberList);
+  // console.log("memberListmemberList", memberList);
 
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <p className="font-semibold h28">Member</p>
+        <p className="font-semibold h28">Members</p>
         <div className="flex gap-4">
           <Button
             onClick={() => {
