@@ -500,7 +500,7 @@ export const getMemberById = async (memberId) => {
 
 // Deposit in wallet service
 export const depositInWalletService = async (data) => {
-  let { memberId, amount, depositType, modeOfTransaction, transactionRef, chequeNumber, bankName, branchName } = data;
+  let { memberId, amount, depositType, modeOfTransaction, transactionRef, chequeNumber, bankName, branchName,remarks } = data;
 
   // Validate required fields
   if (!memberId || !amount || !depositType || !modeOfTransaction) {
@@ -516,7 +516,17 @@ export const depositInWalletService = async (data) => {
   if (!wallet) {
       throw new Error('Member wallet not found');
   }
-
+  
+  let transactionData = {
+    memberId,
+    member_id: wallet.member_id,
+    amount,
+    transactionType: 'Credit',
+    remarks: `${remarks} `,
+    modeOfTransaction,
+    description: `Deposit of ${amount}, through ${modeOfTransaction} against ${depositType}`,
+    narration: `${depositType}`
+};
   // Check for duplicate transactions based on transactionRef, chequeNumber, or amount
   let duplicateTransaction = null;
   switch (modeOfTransaction) {
@@ -533,6 +543,7 @@ export const depositInWalletService = async (data) => {
           if (duplicateTransaction) {
               throw new Error('Duplicate transaction detected for UPI reference');
           }
+          transactionData.transactionRef =transactionRef
           break;
 
       case 'NEFT':
@@ -544,6 +555,7 @@ export const depositInWalletService = async (data) => {
           if (duplicateTransaction) {
               throw new Error('Duplicate transaction detected for NEFT reference');
           }
+          transactionData.transactionRef = transactionRef
           break;
 
       case 'Cheque':
@@ -580,7 +592,9 @@ export const depositInWalletService = async (data) => {
 };
 
 // Withdraw from wallet service
-export const withdrawFromWalletService = async ({ memberId, amount }) => {
+export const withdrawFromWalletService = async (data) => {
+let {memberId, amount, withdrawFor, remarks, invoiceNumber} = data
+
   if (!memberId || !amount) {
       throw new Error('Missing required fields: memberId or amount');
   }
@@ -600,6 +614,12 @@ export const withdrawFromWalletService = async ({ memberId, amount }) => {
   wallet.balance -= amount;
   await wallet.save();
 
+//   const invoiceUrl = await invoiceGenerator({
+//     memberId,
+//    invoiceNumber
+// });
+ const invoiceUrl = null;
+
   // Log the transaction in member history
   const transaction = new MemberTransactionHistory({
       memberId,
@@ -607,9 +627,10 @@ export const withdrawFromWalletService = async ({ memberId, amount }) => {
       transactionDate: Date.now(),
       amount,
       transactionType: 'Debit',
-      remarks: 'Withdrawal made',
-      description: `Withdrawal of ${amount}`,
-      narration: 'Amount withdrawn by member'
+      remarks: `${remarks}`,
+      description: `Withdrawal of ${amount} , at ${withdrawFor}`,
+      narration: `${withdrawFor}`,
+      supportDocuments: invoiceNumber
   });
   await transaction.save();
 
