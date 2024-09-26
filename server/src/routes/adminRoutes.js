@@ -28,12 +28,8 @@ router.get('/getallmenu',[adminAuth] , getAllMenusController )
 
 router.post('/createrole',[adminAuth] , createRoleController )
 router.get('/getrole',[adminAuth] , getRoleController )
-
-
 router.post('/accesscontrol',[adminAuth], createAccessController);
 router.post('/getmenubyrole', [adminAuth], getMenusByRoleController)
-
-
 
 router.post('/createusers', [adminAuth], createUserController)
 router.get('/getusers', [adminAuth], getAllUserController)

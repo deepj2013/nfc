@@ -10,10 +10,12 @@ import {
     updateMemberController,
     updateDependentController,
     updateMemberStatusController,
-    updateDependentStatusController,
     getAllMembersController,
     getDependentsByMemberController,
     getMemberByIdController,
+    depositInWalletController, 
+    withdrawFromWalletController, 
+    getTransactionHistoryController
 } from "../controllers/memberController.js";
 
 const router = express.Router();
@@ -32,16 +34,18 @@ router.post("/member", [auth], createMemberController);
 router.put("/member/:id", [auth], updateMemberController);
 router.patch("/member/:id/status", [auth], updateMemberStatusController);
 router.get("/members", [auth], getAllMembersController);
-router.get("/member/:memberId", auth, getMemberByIdController);
+router.get("/member/:memberId", [auth], getMemberByIdController);
 
 // Dependent Routes
 router.post("/member/:id/dependent", [auth], createDependentController);
 router.put("/dependent/:dependentId", [auth], updateDependentController);
-router.patch(
-  "/dependent/:dependentId/status",
-  [auth],
-  updateDependentStatusController
-);
 router.get("/member/:id/dependents", [auth], getDependentsByMemberController);
+
+// Route to deposit money in wallet
+router.post('/member/wallet/deposit',[auth], depositInWalletController);
+// Route to withdraw money from wallet
+router.post('/member/wallet/withdraw',[auth],  withdrawFromWalletController);
+// Route to get transaction history
+router.get('/member/:memberId/transactions',[auth],  getTransactionHistoryController);
 
 export default router;
