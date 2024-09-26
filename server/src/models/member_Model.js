@@ -86,17 +86,24 @@ const Wallet = mongoose.model('members_wallets', walletSchema);
 
 // Member Transaction History Schema
 const memberTransactionHistorySchema = new Schema({
-    member_id: {  type: mongoose.Schema.Types.ObjectId, ref: 'master_member', required: true},
+    member_id: { type: mongoose.Schema.Types.ObjectId, ref: 'master_member', required: true },
     memberId: { type: String, ref: 'master_member', required: true },
     transactionDate: { type: Date, required: true, default: Date.now },
-    amount: { type: Number, required: true, default: 0},
-    transactionType: { type: String, required: true },  // Credit, Debit,
-    remarks: { type: String, required: true},
-    description : { type: String, required: true},
+    amount: { type: Number, required: true, default: 0 },
+    transactionType: { type: String, required: true }, // Credit, Debit
+    modeOfTransaction: { type: String, required: true }, // UPI | Cheque | Cash | NEFT
+    transactionRef: { type: String }, // For UPI/NEFT
+    chequeNumber: { type: String }, // For Cheque
+    chequeStatus: { type: String, default: 'Pending' }, // Pending | Cleared | Bounced
+    bankName: { type: String }, // For Cheque
+    branchName: { type: String }, // For Cheque
+    supportDocuments: { type: String }, // in case UPI / NEFT / CHEQUE image URL
+    remarks: { type: String, required: true },
+    description: { type: String, required: true },
     narration: { type: String, required: true },
-}, {
-    timestamps: true,
-});
+    createdBy: { type: Number },
+    updatedBy: { type: Number },
+}, { timestamps: true });
 
 const MemberTransactionHistory = mongoose.model('members_transaction_history', memberTransactionHistorySchema);
 
