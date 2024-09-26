@@ -9,6 +9,7 @@ const dependentSchema = new Schema({
     memberId: { type: String, ref: 'master_members', required: true },
     firstName: { type: String, required: true },
     middleName: { type: String },
+    profilePicture: { type: String},
     surname: { type: String, required: true },
     relationship: { type: String, required: true }, // Wife, Husband, Son, Daughter
     dateOfBirth: { type: Date, required: true },
@@ -31,6 +32,7 @@ const memberDataSchema = new Schema({
     memberId: { type: String, required: true, unique: true },
     memberCategory: { type: String, required: true },
     memberType: { type: String, required: true }, 
+    profilePicture: { type: String},
     title: { type: String, required: true },
     dateOfMembership: { type: Number, required: true },
     firstName: { type: String, required: true },
