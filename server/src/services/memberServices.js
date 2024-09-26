@@ -497,3 +497,181 @@ export const getMemberById = async (memberId) => {
     throw new Error("Error fetching member: " + error.message);
   }
 };
+
+// Deposit in wallet service
+export const depositInWalletService = async (data) => {
+  let { memberId, amount, depositType, modeOfTransaction, transactionRef, chequeNumber, bankName, branchName } = data;
+
+  // Validate required fields
+  if (!memberId || !amount || !depositType || !modeOfTransaction) {
+      throw new Error('Missing required fields: memberId, amount, depositType, or modeOfTransaction');
+  }
+
+  if (amount <= 0) {
+      throw new Error('Deposit amount must be greater than zero');
+  }
+
+  // Find the member's wallet
+  const wallet = await Wallet.findOne({ memberId });
+  if (!wallet) {
+      throw new Error('Member wallet not found');
+  }
+
+  // Check for duplicate transactions based on transactionRef, chequeNumber, or amount
+  let duplicateTransaction = null;
+  switch (modeOfTransaction) {
+      case 'Cash':
+          // Cash transactions might not need a duplicate check, since they don't rely on external references
+          break;
+
+      case 'UPI':
+          if (!transactionRef) {
+              throw new Error('UPI transaction reference is required');
+          }
+          // Check if a transaction with the same reference already exists
+          duplicateTransaction = await MemberTransactionHistory.findOne({ transactionRef, memberId });
+          if (duplicateTransaction) {
+              throw new Error('Duplicate transaction detected for UPI reference');
+          }
+          break;
+
+      case 'NEFT':
+          if (!transactionRef) {
+              throw new Error('NEFT transaction reference is required');
+          }
+          // Check if a transaction with the same NEFT reference already exists
+          duplicateTransaction = await MemberTransactionHistory.findOne({ transactionRef, memberId });
+          if (duplicateTransaction) {
+              throw new Error('Duplicate transaction detected for NEFT reference');
+          }
+          break;
+
+      case 'Cheque':
+          if (!chequeNumber || !bankName || !branchName) {
+              throw new Error('Cheque details are required');
+          }
+          // Check if a transaction with the same cheque number and memberId already exists
+          duplicateTransaction = await MemberTransactionHistory.findOne({ chequeNumber, memberId });
+          if (duplicateTransaction) {
+              throw new Error('Duplicate cheque transaction detected');
+          }
+          transactionData.chequeNumber = chequeNumber;
+          transactionData.bankName = bankName;
+          transactionData.branchName = branchName;
+          transactionData.chequeStatus = 'Pending'; // Initially set cheque status to "Pending"
+          // Do NOT update wallet balance yet, wait for cheque clearance
+          break;
+
+      default:
+          throw new Error('Invalid mode of transaction');
+  }
+
+  // Save the transaction first
+  const transaction = new MemberTransactionHistory(transactionData);
+  await transaction.save();
+
+  // Now, update the wallet balance for non-cheque transactions
+  if (modeOfTransaction !== 'Cheque') {
+      wallet.balance += amount;
+      await wallet.save();
+  }
+
+  return { updatedBalance: wallet.balance, transactionId: transaction._id };
+};
+
+// Withdraw from wallet service
+export const withdrawFromWalletService = async ({ memberId, amount }) => {
+  if (!memberId || !amount) {
+      throw new Error('Missing required fields: memberId or amount');
+  }
+  if (amount <= 0) {
+      throw new Error('Withdrawal amount must be greater than zero');
+  }
+
+  const wallet = await Wallet.findOne({ memberId });
+  if (!wallet) {
+      throw new Error('Member wallet not found');
+  }
+  if (wallet.balance < amount) {
+      throw new Error('Insufficient balance in wallet');
+  }
+
+  // Update wallet balance
+  wallet.balance -= amount;
+  await wallet.save();
+
+  // Log the transaction in member history
+  const transaction = new MemberTransactionHistory({
+      memberId,
+      member_id: wallet.member_id,
+      transactionDate: Date.now(),
+      amount,
+      transactionType: 'Debit',
+      remarks: 'Withdrawal made',
+      description: `Withdrawal of ${amount}`,
+      narration: 'Amount withdrawn by member'
+  });
+  await transaction.save();
+
+  return { updatedBalance: wallet.balance };
+};
+
+// Get transaction history service
+export const getTransactionHistoryService = async (memberId) => {
+  if (!memberId) {
+      throw new Error('Missing required field: memberId');
+  }
+
+  const transactions = await MemberTransactionHistory.find({ memberId }).sort({ transactionDate: -1 });
+  if (!transactions || transactions.length === 0) {
+      throw new Error('No transaction history found for this member');
+  }
+
+  return transactions;
+};
+
+export const updateChequeStatusService = async (chequeId, status) => {
+  const validStatuses = ['Pending', 'Cleared', 'Bounced'];
+
+  if (!validStatuses.includes(status)) {
+      throw new Error('Invalid cheque status');
+  }
+
+  const transaction = await MemberTransactionHistory.findById(chequeId);
+  if (!transaction || transaction.modeOfTransaction !== 'Cheque') {
+      throw new Error('Cheque transaction not found');
+  }
+
+  transaction.chequeStatus = status;
+  await transaction.save();
+
+  // Update wallet balance only if cheque is cleared
+  if (status === 'Cleared') {
+      const wallet = await Wallet.findOne({ memberId: transaction.memberId });
+      if (!wallet) {
+          throw new Error('Member wallet not found');
+      }
+
+      wallet.balance += transaction.amount;
+      await wallet.save();
+
+      return { message: 'Cheque cleared and wallet balance updated', updatedBalance: wallet.balance };
+  } else if (status === 'Bounced') {
+      // Handle bounce logic, e.g., apply penalty
+      const bounceCharge = 50; // Example bounce penalty
+      const wallet = await Wallet.findOne({ memberId: transaction.memberId });
+      if (!wallet) {
+          throw new Error('Member wallet not found');
+      }
+
+      wallet.balance -= bounceCharge;
+      if (wallet.balance < 0) {
+          // Handle negative balance
+      }
+      await wallet.save();
+
+      return { message: 'Cheque bounced and bounce charge applied', updatedBalance: wallet.balance };
+  }
+
+  return { message: `Cheque status updated to ${status}` };
+};

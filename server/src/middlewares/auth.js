@@ -16,6 +16,7 @@ export const auth = async (req, res, next) => {
         req.body.userId = userId
         next();
     } catch (error) {
+        console.log(error);
         next(error)
     }
 }
