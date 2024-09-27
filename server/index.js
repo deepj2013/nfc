@@ -11,7 +11,8 @@ import adminRoutes from "./src/routes/adminRoutes.js"; // Adjust the import path
 import userRoutes from "./src/routes/userRoutes.js"; // Adjust the import path as needed
 import invRoutes from "./src/routes/invRoutes.js"; // Adjust the import path as needed
 import memberRoutes from "./src/routes/memberRoutes.js"; // Adjust the import path as needed
-import uploadRoutes from "./src/routes/uploadRoutes.js"
+import uploadRoutes from "./src/routes/uploadRoutes.js";
+import facilityRoutes from "./src/routes/facilityRoutes.js";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -89,13 +90,17 @@ mongoose
   });
 
 // Routes
+app.use("/api/utility/", uploadRoutes)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 app.use("/api/admin/", adminRoutes);
 app.use("/api/user/", userRoutes);
 app.use("/api/user/inv/", invRoutes);
 app.use("/api/user/", memberRoutes);
-app.use("/api/utility/", uploadRoutes)
+app.use("/api/facilities/", facilityRoutes);
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.get("/api/facilities", (req, res)=>{res.send("facility apißß")})
 
 app.get("/", (req, res) => {
   res.send("API is running...");
