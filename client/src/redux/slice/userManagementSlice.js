@@ -5,12 +5,17 @@ import {
   getMemberCategoryServices,
 } from "../thunk/vendorServices";
 import { getAllProductListServices } from "../thunk/productServices";
-import { employeeListServices, roleListServices } from "../thunk/useMangementServices";
+import {
+  employeeListServices,
+  getMemberManagementListServices,
+  roleListServices,
+} from "../thunk/useMangementServices";
 
 const initialState = {
-    loading: false,
-    employees: [],
-    roleList:[]
+  loading: false,
+  employees: [],
+  roleList: [],
+  membersList: [],
 };
 
 const inventarySlice = createSlice({
@@ -32,23 +37,40 @@ const inventarySlice = createSlice({
       return { ...state, loading: false, error: "Something went wrong" };
     });
 
-
     builder.addCase(roleListServices.pending, (state) => {
-        return { ...state, loading: true };
-      });
-      builder.addCase(roleListServices.fulfilled, (state, action) => {
+      return { ...state, loading: true };
+    });
+    builder.addCase(roleListServices.fulfilled, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        roleList: action?.payload?.result,
+      };
+    });
+    builder.addCase(roleListServices.rejected, (state, action) => {
+      console.log("ppp");
+      return { ...state, loading: false, error: "Something went wrong" };
+    });
+
+    builder.addCase(getMemberManagementListServices.pending, (state) => {
+      return { ...state, loading: true };
+    });
+    builder.addCase(
+      getMemberManagementListServices.fulfilled,
+      (state, action) => {
         return {
           ...state,
           loading: false,
-          roleList: action?.payload?.result,
+          membersList: action?.payload?.result,
         };
-      });
-      builder.addCase(roleListServices.rejected, (state, action) => {
-        console.log("ppp");
+      }
+    );
+    builder.addCase(
+      getMemberManagementListServices.rejected,
+      (state, action) => {
         return { ...state, loading: false, error: "Something went wrong" };
-      });
-
-    
+      }
+    );
   },
 });
 

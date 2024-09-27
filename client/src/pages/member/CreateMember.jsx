@@ -6,16 +6,23 @@ import {
   createProductsServices,
   getAllProductListServices,
 } from "../../redux/thunk/productServices";
-import { logger } from "../../utils/Helper";
+import { logger, successToast } from "../../utils/Helper";
 import moment from "moment";
 import { getStorageValue } from "../../services/LocalStorageServices";
-import { createMemberServices } from "../../redux/thunk/useMangementServices";
+import {
+  createMemberServices,
+  updateMemberServices,
+  uploadFileServices,
+} from "../../redux/thunk/useMangementServices";
+import { useLocation, useNavigate } from "react-router";
 
 function CreateMember() {
+  const location = useLocation();
+  const { element } = location.state || {};
   const dispatch = useDispatch();
   let userDetails = getStorageValue("userDetails");
-  //   console.log("jkhvgjkl", userDetails);
-
+  console.log("12123456789", element);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     memberCategory: "SENIOR_CITIZEN_RESIDENT",
     memberType: "Regular",
@@ -26,15 +33,15 @@ function CreateMember() {
     fatherName: "",
     husbandName: "",
     spouseName: "",
-    gender: "",
+    gender: "Male",
     dateOfBirth: "1950-04-22",
-    maritalStatus: "",
+    maritalStatus: "singale",
     nationality: "",
     bloodGroup: "",
     mobileNumber: "",
     emailId: "",
     phoneNumber: "",
-    membershipStatus: "",
+    membershipStatus: "Active",
     panNumber: "",
     weddingDate: "2005-06-15",
     serviceBusinessDetail: "",
@@ -45,9 +52,11 @@ function CreateMember() {
     emergencyContactName: "",
     emergencyContactNumber: "",
     emergencyContactRelation: "",
-    createdBy: userDetails,
-    updatedBy: userDetails,
+    modeOfTransaction: "UPI",
+    createdBy: userDetails?.role_id,
+    updatedBy: userDetails?.role_id,
     errors: {},
+    profilePicture: "",
   });
   const {
     memberCategory,
@@ -81,7 +90,7 @@ function CreateMember() {
     errors,
   } = formData;
 
-  console.log("payload", formData);
+  // console.log("payload", formData);
 
   const upadteStateHandler = (e) => {
     let { name, value } = e.target;
@@ -199,7 +208,19 @@ function CreateMember() {
     if (formIsValid) {
       try {
         delete [formData.errors];
-        let response = await dispatch(createMemberServices(formData)).unwrap();
+        if (element) {
+          let response = await dispatch(
+            updateMemberServices(formData)
+          ).unwrap();
+          successToast("Update Sucessfully");
+          navigate("/members");
+        } else {
+          let response = await dispatch(
+            createMemberServices(formData)
+          ).unwrap();
+          successToast("Add Sucessfully");
+          navigate("/members");
+        }
       } catch (error) {
         console.log(error);
         logger(error);
@@ -207,17 +228,38 @@ function CreateMember() {
     }
   };
 
-  const getHandler = async () => {
+  // const getHandler = async () => {
+  //   try {
+  //     let response = await dispatch(getcategoryServices()).unwarp();
+  //   } catch (error) {
+  //     logger(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getHandler();
+  // }, []);
+
+  useEffect(() => {
+    if (element) {
+      let paylod = { ...element, errors: {} };
+      setFormData(paylod);
+    }
+  }, []);
+
+  const updateMemberHandler = async (file) => {
     try {
-      let response = await dispatch(getcategoryServices()).unwarp();
+      let response = await dispatch(uploadFileServices(file)).unwrap();
+      console.log("responseresponse{}{", response);
     } catch (error) {
+      console.log(error);
       logger(error);
     }
   };
-
-  useEffect(() => {
-    getHandler();
-  }, []);
+  const handleFileChange = (e) => {
+    console.log("e.target.files[0]", e.target.files[0]);
+    updateMemberHandler(e.target.files[0]);
+  };
 
   const { categoryList } = useSelector((state) => state.categoryState);
   const { allVenderList } = useSelector((state) => state.inventaryState);
@@ -228,6 +270,37 @@ function CreateMember() {
       <div className="mb-6 flex items-center justify-between">
         <p className="font-semibold h28">Member / Services</p>
         <div className="flex gap-4"></div>
+      </div>
+
+      <div className="mx-auto w-full bg-white flex justify-center items-center py-4">
+        <div class="rounded-full border border-indigo-500 bg-gray-50 p-4 shadow-md h-36 flex justify-center items-center w-36">
+          <label
+            for="upload"
+            class="flex flex-col items-center gap-2 cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-10 w-10 fill-white stroke-indigo-500"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <span class="text-gray-600 font-medium">Upload file</span>
+          </label>
+          <input
+            // value={}
+            onChange={handleFileChange}
+            id="upload"
+            type="file"
+            class="hidden"
+          />
+        </div>
       </div>
 
       <div className="flex bg-white p-4 rounded-lg  w-full border justify-between flex-wrap">
