@@ -188,7 +188,6 @@ const createWalletAndInitialTransaction = async (member, session) => {
     member_id: member._id,
     memberId: member.memberId,
     transactionDate: new Date(),
-    modeOfTransaction: null,
     amount: totalAmount, // Example amount for subscription charge
     transactionType: "Debit",
     remarks: `Subscription charge for ${duration}`,

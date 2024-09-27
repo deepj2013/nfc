@@ -11,6 +11,6 @@ const restaurantSchema = new mongoose.Schema({
     }]
 }, { timestamps: true });
 
-const Restaurant = mongoose.model('Restaurant', restaurantSchema);
+const Restaurant = mongoose.model('Restaurants', restaurantSchema);
 
 export default Restaurant;

@@ -23,6 +23,6 @@ const menuItemSchema = new mongoose.Schema({
     }
   });
 
-const MenuItem = mongoose.model('restaurant_menu', menuItemSchema);
+const MenuItem = mongoose.model('restaurant_menus', menuItemSchema);
 
 export default MenuItem;
