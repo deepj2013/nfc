@@ -13,14 +13,17 @@ import { logger } from "../../utils/Helper";
 import AddMember from "./AddMember";
 import { getMemberCategoryServices } from "../../redux/thunk/vendorServices";
 import { getMemberManagementListServices } from "../../redux/thunk/useMangementServices";
+import DepositModal from "./DepositModal";
 
 function Member() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [type, setType] = useState("");
-
+  const [dropdownData, setDropDownData] = useState([]);
   const dispatch = useDispatch();
+  const { unitList, memberList } = useSelector((state) => state.inventaryState);
+  const { membersList } = useSelector((state) => state.userStateMangementState);
 
   const getMemberHandler = async () => {
     try {
@@ -35,7 +38,12 @@ function Member() {
     try {
       console.log("qwertyuiop1");
       let response = await dispatch(getMemberManagementListServices()).unwrap();
-      console.log("refff", response);
+      const temp = response?.result.map((ele) => ({
+        label: ele?.firstName,
+        value: ele?.memberId,
+      }));
+      setDropDownData(temp);
+      console.log(temp, "sss");
     } catch (error) {
       logger(error);
     }
@@ -46,21 +54,29 @@ function Member() {
     getMembersManagementList();
   }, []);
 
-  const { unitList, memberList } = useSelector((state) => state.inventaryState);
-  // console.log("memberListmemberList", memberList);
-
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <p className="font-semibold h28">Members</p>
         <div className="flex gap-4">
-          <Button
-            onClick={() => {
-              navigate("/create-member");
-            }}
-            rigntIcon={<IoAddCircleSharp className="text-2xl" />}
-            name={"Add Member"}
-          />
+          <div className="flex gap-4">
+            <Button
+              onClick={() => {
+                setIsOpen(true), setType("add");
+              }}
+              // rigntIcon={<IoAddCircleSharp className="text-2xl" />}
+              name={"Deposit"}
+            />
+          </div>
+          <div className="flex gap-4">
+            <Button
+              onClick={() => {
+                navigate("/create-member");
+              }}
+              rigntIcon={<IoAddCircleSharp className="text-2xl" />}
+              name={"Add Member"}
+            />
+          </div>
         </div>
       </div>
 
@@ -87,21 +103,29 @@ function Member() {
                           class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                         >
                           {" "}
-                          memberCategoryId{" "}
+                          Member Id{" "}
                         </th>
                         <th
                           scope="col"
                           class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                         >
                           {" "}
-                          memberCategory{" "}
+                          Name{" "}
                         </th>
+                        <th
+                          scope="col"
+                          class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                        >
+                          {" "}
+                          Phone{" "}
+                        </th>
+
                         <th
                           scope="col"
                           class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
                         >
                           {" "}
-                          Status{" "}
+                          Address{" "}
                         </th>
                         <th
                           scope="col"
@@ -113,7 +137,7 @@ function Member() {
                       </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-300 ">
-                      {memberList.map((ele, ind) => {
+                      {membersList.map((ele, ind) => {
                         return (
                           <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
                             <td class="">
@@ -127,25 +151,26 @@ function Member() {
                             </td>
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               {/* {ind + 1}{" "} */}
-                              {ele?.memberCategoryId}
+                              {ele?.memberId}
                             </td>
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
-                              {ele?.memberCategory}
+                              {`${ele?.firstName} ${ele?.middleName} ${ele?.surname}`}
                             </td>
-
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               {" "}
-                              {ele?.status ? "Active" : "InActive"}
+                              {ele?.mobileNumber}
                             </td>
-
+                            <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                              {" "}
+                              {ele?.address}
+                            </td>
                             <td class="flex p-5 items-center gap-0.5">
                               <button
                                 class="p-2  rounded-full bg-white group transition-all duration-500 hover:bg-indigo-600 flex item-center"
                                 onClick={() => {
-                                  setSelectedItem(ele);
-                                  setIsOpen(true);
-
-                                  setType("edit");
+                                  navigate("/create-member", {
+                                    state: { element: ele },
+                                  });
                                 }}
                               >
                                 <svg
@@ -209,7 +234,8 @@ function Member() {
         </div>
       </div>
 
-      <AddMember
+      <DepositModal
+        dropdownData={dropdownData}
         type={type}
         selectedItem={selectedItem}
         isOpen={isOpen}
