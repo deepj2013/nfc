@@ -86,6 +86,42 @@ export const getMemberManagementListServices = createAsyncThunk(
   }
 );
 
+
+export const getDependentListServices = createAsyncThunk(
+  "getDependentListServices",
+  async (id) => {
+    try {
+      let url = `${BASE_URL}member/${id} `;
+      const res = await axios.get(url);
+      console.log("poiuytrewq");
+      return res.data;
+    } catch (error) {
+      console.log("0987654321", error);
+      handleError(error);
+      throw error;
+    }
+  }
+);
+
+
+export const addDependentServices = createAsyncThunk(
+  "addDependentServices",
+  async (parmas) => {
+    try {
+      let url = `${BASE_URL}member/${parmas?.id}/dependent`;
+      const res = await axios.post(url,parmas?.payload);
+      console.log("poiuytrewq");
+      return res.data;
+    } catch (error) {
+      console.log("0987654321", error);
+      handleError(error);
+      throw error;
+    }
+  }
+);
+
+
+
 export const updateMemberServices = createAsyncThunk(
   "updateMemberServices",
   async (payload) => {
