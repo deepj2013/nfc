@@ -31,7 +31,7 @@ const ModalWrapper = ({ isOpen, onClose, children }) => {
     >
       <motion.div
         className={twMerge(
-          "bg-foreground rounded-lg shadow-lg p-8 max-w-lg w-full"
+          "bg-white rounded-lg shadow-lg p-8 max-w-lg w-full"
         )}
         variants={modal}
         onClick={(e) => e.stopPropagation()}
