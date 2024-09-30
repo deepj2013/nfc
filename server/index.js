@@ -24,25 +24,26 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 // Middleware
-// app.options("*", cors({ origin: '*', optionsSuccessStatus: 200 }));
-// app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
-// Allow all origins for preflight (OPTIONS) requests
-app.options("*", cors()); 
+app.options("*", cors({ origin: '*', optionsSuccessStatus: 200 }));
+app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
 
-// Apply CORS globally before defining routes
-app.use(cors({
-  origin: '*', // Allow all origins
-  methods: 'GET,POST,PUT,PATCH,DELETE', // Allow all relevant HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
-  optionsSuccessStatus: 200 // For legacy browsers
-}));
+// // Allow all origins for preflight (OPTIONS) requests
+// app.options("*", cors()); 
 
-app.use(cors({
-  origin: 'http://localhost:5173',  // Replace '*' with specific origin
-  credentials: true,
-  methods: 'GET, POST, OPTIONS',
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-}));
+// // Apply CORS globally before defining routes
+// app.use(cors({
+//   origin: '*', // Allow all origins
+//   methods: 'GET,POST,PUT,PATCH,DELETE', // Allow all relevant HTTP methods
+//   allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+//   optionsSuccessStatus: 200 // For legacy browsers
+// }));
+
+// app.use(cors({
+//   origin: 'http://localhost:5173',  // Replace '*' with specific origin
+//   credentials: true,
+//   methods: 'GET, POST, OPTIONS',
+//   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+// }));
 
 // Routes
 app.get('/api/data', (req, res) => {
