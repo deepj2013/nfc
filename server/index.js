@@ -29,13 +29,18 @@ const app = express();
 // Allow all origins for preflight (OPTIONS) requests
 app.options("*", cors()); 
 
-// Enable CORS for all origins
-app.use(cors({ 
-    origin: "*", // Allow any origin
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allow specific methods if necessary
-    preflightContinue: false,
-    optionsSuccessStatus: 204 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+// Apply CORS globally before defining routes
+app.use(cors({
+  origin: '*', // Allow all origins
+  methods: 'GET,POST,PUT,PATCH,DELETE', // Allow all relevant HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+  optionsSuccessStatus: 200 // For legacy browsers
 }));
+
+// Routes
+app.get('/api/data', (req, res) => {
+  res.json({ message: 'CORS is enabled and open for all origins!' });
+});
 
 const PORT = process.env.PORT || 3000; // Default port to 3000 if not specified
 
