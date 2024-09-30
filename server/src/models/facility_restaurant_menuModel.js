@@ -1,21 +1,24 @@
 import mongoose from 'mongoose';
 
 const menuItemSchema = new mongoose.Schema({
+    category: { type: String, required: true },
     name: { type: String, required: true },
-    price: { type: Number, required: true },
-    category: { type: String, enum: ['Appetizer', 'Main Course', 'Dessert', 'Beverage'], required: true },
-    availability: { type: Boolean, default: true },
     description: { type: String },
-    ingredients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient' }],
-    restaurantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant', required: true },
-    MRP: { type: Number, required: true },
-    discount: {
-        min: { type: Number, default: 0 },
-        max: { type: Number, default: 0 },
-    },
+    images: [{type: String}],
+    food_type: { type: String, enum: ['Veg', 'Non-Veg', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Kosher', 'Halal', 'Other'], required: true },
+    cuisines:{ type: String },
+    is_available: { type: Boolean, default: true },
+    is_bestseller: { type: Boolean, default: false},
+    price_info: [{ 
+      price : { type: Number},
+      offer_price: { type: Number},
+      is_offer: { type: Boolean},
+      tax_percentage: { type: Number},
+      discount_percentage: { type: Number}
+    }],
+    restaurantId: { type: Number, ref: 'Restaurant', required: true },
     createdBy: { type: Number },
     updatedBy: { type: Number  },
-   
 }, {
     timestamps: {
       createdAt: 'date_created',
