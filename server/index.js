@@ -14,6 +14,15 @@ import memberRoutes from "./src/routes/memberRoutes.js"; // Adjust the import pa
 import uploadRoutes from "./src/routes/uploadRoutes.js";
 import facilityRoutes from "./src/routes/facilityRoutes.js";
 
+
+// Load environment variables from .env file
+dotenv.config();
+
+// Handle __dirname in ES module scope
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
 // Middleware
 // app.options("*", cors({ origin: '*', optionsSuccessStatus: 200 }));
 // app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
@@ -28,14 +37,6 @@ app.use(cors({
     optionsSuccessStatus: 204 // Some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
 
-// Load environment variables from .env file
-dotenv.config();
-
-// Handle __dirname in ES module scope
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const app = express();
 const PORT = process.env.PORT || 3000; // Default port to 3000 if not specified
 
 app.use(express.json());
