@@ -37,6 +37,13 @@ app.use(cors({
   optionsSuccessStatus: 200 // For legacy browsers
 }));
 
+app.use(cors({
+  origin: 'http://localhost:5173',  // Replace '*' with specific origin
+  credentials: true,
+  methods: 'GET, POST, OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+}));
+
 // Routes
 app.get('/api/data', (req, res) => {
   res.json({ message: 'CORS is enabled and open for all origins!' });
