@@ -14,6 +14,20 @@ import memberRoutes from "./src/routes/memberRoutes.js"; // Adjust the import pa
 import uploadRoutes from "./src/routes/uploadRoutes.js";
 import facilityRoutes from "./src/routes/facilityRoutes.js";
 
+// Middleware
+// app.options("*", cors({ origin: '*', optionsSuccessStatus: 200 }));
+// app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
+// Allow all origins for preflight (OPTIONS) requests
+app.options("*", cors()); 
+
+// Enable CORS for all origins
+app.use(cors({ 
+    origin: "*", // Allow any origin
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allow specific methods if necessary
+    preflightContinue: false,
+    optionsSuccessStatus: 204 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+}));
+
 // Load environment variables from .env file
 dotenv.config();
 
@@ -24,9 +38,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000; // Default port to 3000 if not specified
 
-// Middleware
-app.options("*", cors({ origin: "*", optionsSuccessStatus: 200 }));
-app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
 app.use(express.json());
 
 // Setup Morgan for logging
