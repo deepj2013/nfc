@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getStorageValue } from "../services/LocalStorageServices";
 import { tempToken } from "./Helper";
+import { handleError } from "./ErrorHandler";
 
 axios.interceptors.request.use(
   async (config) => {
@@ -34,7 +35,7 @@ axios.interceptors.response.use(
       //   payload: "AUTH",
       // });
     }
-    // handleError(error)
+    handleError(error)
     return Promise.reject(error);
   }
 );
