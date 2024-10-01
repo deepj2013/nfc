@@ -9,22 +9,29 @@ import {
   UpdateCategoryServices,
   createCategoryServices,
 } from "../../redux/thunk/categoryServices";
-import { logger } from "../../utils/Helper";
+import { logger, successToast } from "../../utils/Helper";
 import moment from "moment";
+import { getStorageValue } from "../../services/LocalStorageServices";
 let initialState = {
   categoryName: null,
   description: null,
   parentCategoryId: "",
-  updatedBy:"",
-
+  updatedBy: "",
 };
-const AddCategory = ({ isOpen, onClose, setFeedBackModal, selectedItem,type,setType}) => {
+const AddCategory = ({
+  isOpen,
+  onClose,
+  setFeedBackModal,
+  selectedItem,
+  type,
+  setType,
+}) => {
   const navigate = useNavigate();
+  let userDetails = getStorageValue("userDetails");
 
   const dispatch = useDispatch();
   const [formData, setFormData] = useState(initialState);
-  const { categoryName, description, parentCategoryId, updatedBy } =
-    formData;
+  const { categoryName, description, parentCategoryId, updatedBy } = formData;
 
   const upadteStateHandler = (e) => {
     let { name, value } = e.target;
@@ -34,7 +41,15 @@ const AddCategory = ({ isOpen, onClose, setFeedBackModal, selectedItem,type,setT
   const createHandler = async () => {
     // alert("this is test")
     try {
-      let response = await dispatch(createCategoryServices(formData)).unwrap();
+      let response = await dispatch(
+        createCategoryServices({
+          ...formData,
+          createdBy: userDetails?.role_id,
+          updatedBy: userDetails?.role_id,
+        })
+      ).unwrap();
+      successToast("Category created successfully");
+      onClose();
     } catch (error) {
       console.log(error);
       logger(error);
@@ -42,37 +57,36 @@ const AddCategory = ({ isOpen, onClose, setFeedBackModal, selectedItem,type,setT
   };
 
   useEffect(() => {
-    if (selectedItem!== null && type==="edit") {
+    if (selectedItem !== null && type === "edit") {
       setFormData((pre) => ({
         ...pre,
         categoryName: selectedItem?.categoryName,
         description: selectedItem?.description,
         parentCategoryId: selectedItem?._id,
-        updatedBy:moment(selectedItem?.updatedAt).format("YYYY-MM-DD")
+        updatedBy: moment(selectedItem?.updatedAt).format("YYYY-MM-DD"),
       }));
     } else {
-      setFormData((prev)=>(
-        {...prev,
-         categoryName:"",
-        description:"",
-        parentCategoryId:"",
-        updatedBy:""
+      setFormData((prev) => ({
+        ...prev,
+        categoryName: "",
+        description: "",
+        parentCategoryId: "",
+        updatedBy: "",
       }));
     }
   }, [isOpen]);
 
   const updateHandler = async () => {
-    let payload =
-        {
- category_id:selectedItem?.category_id,
-  categoryName: categoryName,
-  description: description,
-  parentCategoryId: selectedItem?._id,
-  updatedBy:12345
-    }
+    let payload = {
+      category_id: selectedItem?.category_id,
+      categoryName: categoryName,
+      description: description,
+      parentCategoryId: selectedItem?._id,
+      updatedBy: 12345,
+    };
     try {
       let response = await dispatch(UpdateCategoryServices(payload)).unwrap();
-      console.log("responseresponse",response)
+      console.log("responseresponse", response);
     } catch (error) {
       console.log(error);
       logger(error);
@@ -98,9 +112,9 @@ const AddCategory = ({ isOpen, onClose, setFeedBackModal, selectedItem,type,setT
         style={{ minHeight: "100px" }}
       >
         <button
-          onClick={()=>{
-            setFormData(initialState)
-            onClose()
+          onClick={() => {
+            setFormData(initialState);
+            onClose();
           }}
           className="text-2xl absolute right-2 top-2 text-secondry"
         >
@@ -108,7 +122,7 @@ const AddCategory = ({ isOpen, onClose, setFeedBackModal, selectedItem,type,setT
         </button>
         <div className=" flex flex-col items-center">
           <h2 className="text-2xl  w-full font-medium lg:px-10">
-            {`${type ==="add"?"Add":"Edit"} Category`}
+            {`${type === "add" ? "Add" : "Edit"} Category`}
           </h2>
           {/* <img className="w-64  h-32 my-6 object-cover" src={TeacherFeedback}/> */}
           <p className="text-xl mt-4 w-full"></p>
@@ -133,11 +147,11 @@ const AddCategory = ({ isOpen, onClose, setFeedBackModal, selectedItem,type,setT
               name={"parentCategoryId"}
               onChange={upadteStateHandler}
             /> */}
-            
+
             <Input
-            type={"date"}
+              type={"date"}
               placeholder={"updatedBy"}
-            //   value={updatedBy}
+              //   value={updatedBy}
               name="updatedBy"
               value={updatedBy}
               onChange={upadteStateHandler}
