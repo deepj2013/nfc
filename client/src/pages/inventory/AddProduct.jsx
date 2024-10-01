@@ -6,11 +6,15 @@ import {
   createProductsServices,
   getAllProductListServices,
 } from "../../redux/thunk/productServices";
-import { logger } from "../../utils/Helper";
-import moment from 'moment';
+import { logger, validateFields } from "../../utils/Helper";
+import moment from "moment";
+import SelectDropdown from "../../components/common/SelectDropdown";
+import { getcategoryServices } from "../../redux/thunk/categoryServices";
+import { useNavigate } from "react-router";
 
 function AddProduct() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     productName: "",
     description: "",
@@ -20,7 +24,7 @@ function AddProduct() {
     unitOfMeasure: "",
     vendorId: "",
     createdBy: null,
-    errors:{}
+    errors: {},
   });
   const {
     productName,
@@ -31,73 +35,92 @@ function AddProduct() {
     unitOfMeasure,
     vendorId,
     createdBy,
-    errors
+    errors,
   } = formData;
 
   const upadteStateHandler = (e) => {
     let { name, value } = e.target;
     setFormData((pre) => ({ ...pre, [name]: value }));
   };
-  
-  
 
-  const dropDownChange=(item)=>{
-    setFormData((pre)=>({...pre,categoryId:item?.category_id
-}))
-  }
+  const dropDownChange = (item) => {
+    setFormData((pre) => ({ ...pre, categoryId: item?.category_id }));
+  };
 
-  const dropDownChangeVender=(item)=>{
-    setFormData((pre)=>({...pre,vendorId:item?.vendor
-}))
-  }
+  const dropDownChangeVender = (item) => {
+    setFormData((pre) => ({ ...pre, vendorId: item?.vendor }));
+  };
+
+  // const handleValidation = () => {
+  //   let error = {};
+  //   let formIsValid = true;
+
+  //   if (!productName || !productName.trim()) {
+  //     error.productNameError = " * Product name can't be empty";
+  //     formIsValid = false;
+  //   }
+
+  //   if (!description || !description.trim()) {
+  //     error.descriptionError = " * Description can't be empty";
+  //     formIsValid = false;
+  //   }
+
+  //   if (!price || !price.trim()) {
+  //     error.priceError = " * Price can't be empty";
+  //     formIsValid = false;
+  //   }
+  //   if (!quantityInStock || !quantityInStock.trim()) {
+  //     error.quantityInStockError = " * Quantity In Stock can't be empty";
+  //     formIsValid = false;
+  //   }
+  //   if (!unitOfMeasure || !unitOfMeasure.trim()) {
+  //     error.unitOfMeasureError = " * Unit Of Measure can't be empty";
+  //     formIsValid = false;
+  //   }
+
+  //   // Add more validation checks as needed
+  //   setFormData((prev) => ({ ...prev, errors: error }));
+  //   return formIsValid;
+  // };
 
   const handleValidation = () => {
-    let error = {};
-    let formIsValid = true;
-
-    if (!productName || !productName.trim()) {
-      error.productNameError = " * Product name can't be empty";
-      formIsValid = false;
-    }
-
-    if (!description || !description.trim()) {
-      error.descriptionError = " * Description can't be empty";
-      formIsValid = false;
-    }
-
-    if (!price || !price.trim()) {
-      error.priceError = " * Price can't be empty";
-      formIsValid = false;
-    }
-    if (!quantityInStock || !quantityInStock.trim()) {
-      error.quantityInStockError = " * Quantity In Stock can't be empty";
-      formIsValid = false;
-    }
-    if (!unitOfMeasure || !unitOfMeasure.trim()) {
-      error.unitOfMeasureError = " * Unit Of Measure can't be empty";
-      formIsValid = false;
-    }
-    
-    // Add more validation checks as needed
-    setFormData((prev) => ({ ...prev, errors: error }));
+    const validationRules = {
+      productName: { required: true },
+      description: { required: true },
+      categoryId: { required: true },
+      price: { required: true },
+      quantityInStock: { required: true },
+      unitOfMeasure: { required: true },
+      vendorId: { required: true },
+    };
+    const formData = {
+      productName,
+      description,
+      categoryId,
+      price,
+      quantityInStock,
+      unitOfMeasure,
+      vendorId,
+    };
+    const { formIsValid, errors } = validateFields(formData, validationRules);
+    setFormData((prev) => ({ ...prev, errors }));
     return formIsValid;
   };
 
-
   const addProductHandler = async (e) => {
-    e.preventDefault();
     let formIsValid = handleValidation();
-    if (formIsValid) {
+    if (!formIsValid) {
+      return;
+    }
+
     try {
-      delete[formData.errors]
+      delete [formData.errors];
       let response = await dispatch(createProductsServices(formData)).unwrap();
       dispatch(getAllProductListServices());
-      navigate("/product");
-    }
-    catch (error) {
+      navigate("/inventorymanagement");
+    } catch (error) {
       console.log(error);
       logger(error);
-    }
     }
   };
 
@@ -114,11 +137,22 @@ function AddProduct() {
   }, []);
 
   const { categoryList } = useSelector((state) => state.categoryState);
-    const { allVenderList } = useSelector((state) => state.inventaryState);
-    // console.log("78909",allVenderList,categoryList)
-    
-  
+  const { allVenderList } = useSelector((state) => state.inventaryState);
+  const [category, setCategory] = useState([]);
 
+  useEffect(() => {
+    const setCategoryHandler = () => {
+      let temp = categoryList.map((ele) => {
+        return {
+          label: ele.categoryName,
+          value: ele.category_id,
+        };
+      });
+      setCategory(temp);
+    };
+
+    setCategoryHandler();
+  }, []);
 
   return (
     <div>
@@ -129,7 +163,7 @@ function AddProduct() {
 
       <div className="flex bg-white p-4 rounded-lg  w-full border justify-between flex-wrap">
         <FormInput
-        errors={errors.productNameError}
+          errors={errors.productName}
           width={"w-[30%]"}
           placeholder={"Product Name"}
           value={productName}
@@ -137,7 +171,7 @@ function AddProduct() {
           onChange={upadteStateHandler}
         />
         <FormInput
-        errors={errors.descriptionError}
+          errors={errors.description}
           width={"w-[30%]"}
           placeholder={"Description"}
           value={description}
@@ -150,16 +184,29 @@ function AddProduct() {
                     value={categoryId} name={"categoryId"} onChange={upadteStateHandler}
 
                 /> */}
-        <Dropdown
+        {/* <Dropdown
           width={"w-[30%]"}
           data={categoryList}
           placeholder={"Category Id"}
           // name={"categoryId"}
-          onChange={(val)=>dropDownChange(val)}
+          onChange={(val) => dropDownChange(val)}
+        /> */}
+        <SelectDropdown
+          errors={errors?.categoryId}
+          data={category}
+          handleSelectChange={(e) => {
+            setFormData((pre) => ({
+              ...pre,
+              categoryId: Number(e.target.value),
+            }));
+          }}
+          // selected={formData?.memberId}
+          label={"Category Id"}
+          placeHolder={"Category Id"}
         />
 
         <FormInput
-        errors={errors.priceError}
+          errors={errors.price}
           width={"w-[30%]"}
           placeholder={"price"}
           value={price}
@@ -167,7 +214,7 @@ function AddProduct() {
           onChange={upadteStateHandler}
         />
         <FormInput
-        errors={errors.quantityInStockError}
+          errors={errors.quantityInStock}
           width={"w-[30%]"}
           placeholder={"Quantity In Stock"}
           value={quantityInStock}
@@ -175,7 +222,7 @@ function AddProduct() {
           onChange={upadteStateHandler}
         />
         <FormInput
-        errors={errors.unitOfMeasureError}
+          errors={errors.unitOfMeasure}
           width={"w-[30%]"}
           placeholder={"Unit Of Measure"}
           value={unitOfMeasure}
@@ -194,25 +241,27 @@ function AddProduct() {
           data={allVenderList}
           placeholder={"Vendor Id"}
           // name={"categoryId"}
-          onChange={(val)=>dropDownChangeVender(val)}
+          onChange={(val) => dropDownChangeVender(val)}
         />
-        <FormInput
-        errors={errors.createdByError}
-        type={"date"}
+        {/* <FormInput
+          errors={errors.createdByError}
+          type={"date"}
           width={"w-[30%]"}
           placeholder={"Created By"}
           // value={createdBy}
           name={"createdBy"}
           onChange={(e) => {
-                            const selectedDate = e.target.value;
-                            console.log("sachinTime",selectedDate)
-                            const timestamp = selectedDate ? new Date(selectedDate).getTime() : null;
-                            setFormData({
-                                ...formData,
-                                createdBy: timestamp,
-                            });
-                      }}
-        />
+            const selectedDate = e.target.value;
+            console.log("sachinTime", selectedDate);
+            const timestamp = selectedDate
+              ? new Date(selectedDate).getTime()
+              : null;
+            setFormData({
+              ...formData,
+              createdBy: timestamp,
+            });
+          }}
+        /> */}
         {/* <FormInput
                     placeholder={'Product Code (SKU)'}
                     width={'w-[30%]'} showButton={true} />
@@ -264,7 +313,7 @@ function AddProduct() {
         </div>
 
         <button
-          onClick={(e)=>addProductHandler(e)}
+          onClick={(e) => addProductHandler(e)}
           type="submit"
           class="text-white mt-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
@@ -285,7 +334,7 @@ const FormInput = ({
   onChange,
   value,
   type,
-  errors
+  errors,
 }) => {
   return (
     <div class={twMerge("mb-5 relative", width)}>
@@ -296,7 +345,7 @@ const FormInput = ({
         onChange={onChange}
         value={value}
         name={name}
-        type= {type ? type : "text"}
+        type={type ? type : "text"}
         id="email"
         class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5    dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder={placeholder}
@@ -313,8 +362,8 @@ const FormInput = ({
   );
 };
 
-const Dropdown = ({ width, placeholder, data,onChange}) => {
-    const [selectedVal,setSelectedVal] = useState("select")
+const Dropdown = ({ width, placeholder, data, onChange }) => {
+  const [selectedVal, setSelectedVal] = useState("select");
   return (
     <div class={twMerge(" text-gray-900 dark:text-gray-100 ", width)}>
       <div class="relative w-full group">
@@ -332,12 +381,12 @@ const Dropdown = ({ width, placeholder, data,onChange}) => {
           {data?.map((ele, ind) => {
             return (
               <div
-              onClick={()=>{
-                onChange(ele);
-                setSelectedVal(ele?.categoryName || ele?.vendor)
-            }
-            }
-              class=" w-full block cursor-pointer  text-black  hover:text-link px-3 py-2 rounded-md">
+                onClick={() => {
+                  onChange(ele);
+                  setSelectedVal(ele?.categoryName || ele?.vendor);
+                }}
+                class=" w-full block cursor-pointer  text-black  hover:text-link px-3 py-2 rounded-md"
+              >
                 {ele?.categoryName || ele?.vendor}
               </div>
             );
@@ -347,7 +396,3 @@ const Dropdown = ({ width, placeholder, data,onChange}) => {
     </div>
   );
 };
-
-
-
-

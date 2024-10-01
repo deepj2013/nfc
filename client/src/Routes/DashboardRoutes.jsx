@@ -36,7 +36,7 @@ function DashboardRoutes() {
             <Route path="/product" element={<ProductList />} />
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/category" element={<Category />} />
-            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/inventorymanagement" element={<Inventory />} />
             <Route path="/units" element={<Units />} />
             <Route path="/vendor" element={<Vendor />} />
             <Route path="/add-vender" element={<AddVender />} />
