@@ -22,7 +22,9 @@ import FormInput from "../../components/common/FormInput";
 import { getHistoryServices } from "../../redux/thunk/productServices";
 
 const InventryHistoryModal = ({ isOpenHistory, onClose }) => {
-  const [historyData, setHistoryData] = useState();
+  const [historyData, setHistoryData] = useState([]);
+  console.log("hemender345", historyData);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -30,7 +32,7 @@ const InventryHistoryModal = ({ isOpenHistory, onClose }) => {
     console.log("gered history");
     try {
       let response = await dispatch(getHistoryServices()).unwrap();
-      console.log("hemender345", response);
+      setHistoryData(response?.result);
     } catch (error) {
       console.log("hemendererror", error);
       logger(error);
@@ -52,7 +54,7 @@ const InventryHistoryModal = ({ isOpenHistory, onClose }) => {
         // onClick={onClose}
       ></div>
       <div
-        className={`bg-white  w-[95vw] px-4 lg:w-[500px] py-4 rounded-lg h-[95vh] lg:h-auto  shadow-xl transform transition-transform duration-300 ${
+        className={`bg-white  w-[95vw] px-4 md:w-[80vw] lg:w-[80vw] py-4 rounded-lg h-[95vh] lg:h-auto  shadow-xl transform transition-transform duration-300 ${
           isOpenHistory ? "translate-y-0" : "translate-y-full"
         }`}
         style={{ minHeight: "100px" }}
@@ -66,10 +68,105 @@ const InventryHistoryModal = ({ isOpenHistory, onClose }) => {
           <FaXmark />
         </button>
         <div className=" flex flex-col items-center h-[600px] overflow-scroll">
-          <h2 className="text-2xl  w-full font-medium lg:px-8">Add Member</h2>
+          <h2 className="text-2xl  w-full font-medium lg:px-8">
+            Inventory History
+          </h2>
 
           <div className="w-full lg:px-8 h-[400px] pb-5">
-            <div className="pb-10"></div>
+            <div className="pb-10">
+              <table class="table-auto min-w-full rounded-xl">
+                <thead>
+                  <tr class="bg-gray-50">
+                    <th
+                      scope="col"
+                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                    >
+                      {" "}
+                      Id{" "}
+                    </th>
+                    <th
+                      scope="col"
+                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                    >
+                      {" "}
+                      Department{" "}
+                    </th>
+                    <th
+                      scope="col"
+                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
+                    >
+                      {" "}
+                      Quantity{" "}
+                    </th>
+                    <th
+                      scope="col"
+                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                    >
+                      {" "}
+                      Remarks{" "}
+                    </th>
+                    <th
+                      scope="col"
+                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                    >
+                      {" "}
+                      SKU{" "}
+                    </th>
+
+                    <th
+                      scope="col"
+                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                    >
+                      {" "}
+                      Transaction Type{" "}
+                    </th>
+                    <th
+                      scope="col"
+                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                    >
+                      {" "}
+                      Transaction Date{" "}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-300 ">
+                  {historyData.map((ele, ind) => {
+                    return (
+                      <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
+                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                          {ind + 1}{" "}
+                        </td>
+                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
+                          {ele?.department}
+                        </td>
+
+                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                          {" "}
+                          {ele?.quantity}{" "}
+                        </td>
+                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                          {" "}
+                          {ele?.remarks}{" "}
+                        </td>
+                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                          {" "}
+                          {ele?.sku}{" "}
+                        </td>
+                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                          {" "}
+                          {ele?.transactionType}{" "}
+                        </td>
+
+                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                          {" "}
+                          {ele?.transactionDate}{" "}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
