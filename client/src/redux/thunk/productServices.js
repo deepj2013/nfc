@@ -96,3 +96,37 @@ export const createProductsServices = createAsyncThunk(
     }
   }
 );
+
+export const getHistoryServices = createAsyncThunk(
+  "getHistoryServices",
+  async () => {
+    try {
+      let url = `${BASE_URL}inv/inventory-transactions/history/NFC00001`;
+      const res = await axios.get(url);
+      return res.data;
+    } catch (error) {
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);
+
+export const stockInOrOutServices = createAsyncThunk(
+  "stockInOrOutServices",
+  async (payload) => {
+    try {
+      console.log("formtest123", payload);
+      let url = `${BASE_URL}inv/inventory-transactions`;
+      const res = await axios.post(url, payload);
+      console.log("res123", res);
+      return res.data;
+    } catch (error) {
+      console.log("res", error);
+
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);

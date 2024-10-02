@@ -7,13 +7,18 @@ import { IoFilterSharp } from "react-icons/io5";
 import Table from "../../components/common/Table";
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaMinusCircle } from "react-icons/fa";
-import InventoryMangement from "../../components/Modal/InventoryMangement";
+import InventoryMangement from "../../components/Modal/InventoryStockMangement";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProductListServices } from "../../redux/thunk/productServices";
+import InventryHistoryModal from "../../components/Modal/InventryHistoryModal";
+import InventoryStockMangement from "../../components/Modal/InventoryStockMangement";
 
 function Inventory() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenHistory, setIsOpenHistory] = useState(false);
+  const [isOpenStock, setIsOpenStock] = useState(false);
+  const [view, setView] = useState("");
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -26,6 +31,7 @@ function Inventory() {
       logger(error);
     }
   };
+
   useEffect(() => {
     getHandler();
   }, []);
@@ -84,7 +90,6 @@ function Inventory() {
           </div> */}
         </div>
       </div>
-
       <div>
         <div className=" ">
           <div class="flex flex-col">
@@ -258,7 +263,12 @@ function Inventory() {
 
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               <div className="flex gap-2">
-                                <div class="py-1.5 px-2.5 bg-orange-400/30 rounded flex justify-center w-20 items-center gap-1">
+                                <div
+                                  onClick={() => {
+                                    setIsOpenHistory(true);
+                                  }}
+                                  class="py-1.5 px-2.5 bg-orange-400/30 rounded flex justify-center w-20 items-center gap-1"
+                                >
                                   <IoEyeOutline />
 
                                   <span class="font-medium text-xs text-orange-500 ">
@@ -267,7 +277,10 @@ function Inventory() {
                                 </div>
 
                                 <div
-                                  onClick={() => setIsOpen(true)}
+                                  onClick={() => {
+                                    setView("STOCK_IN");
+                                    setIsOpenStock(true);
+                                  }}
                                   class="py-1.5 px-2.5 bg-green-500 rounded flex justify-center w-20 items-center gap-1"
                                 >
                                   <FaCirclePlus className="text-white" />
@@ -276,8 +289,13 @@ function Inventory() {
                                     Stock In
                                   </span>
                                 </div>
-
-                                <div class="py-1.5 px-2.5 bg-red-400/30 rounded flex justify-center w-20 items-center gap-1">
+                                <div
+                                  onClick={() => {
+                                    setView("STOCK_OUT");
+                                    setIsOpenStock(true);
+                                  }}
+                                  class="py-1.5 px-2.5 bg-red-400/30 rounded flex justify-center w-20 items-center gap-1"
+                                >
                                   <FaMinusCircle className="text-red-500" />
 
                                   <span class="font-medium text-xs text-red-600 ">
@@ -297,13 +315,23 @@ function Inventory() {
           </div>
         </div>
       </div>
-
-      <InventoryMangement
-        isOpen={isOpen}
-        onClose={() => {
-          setIsOpen(false);
-        }}
-      />
+      {isOpenHistory && (
+        <InventryHistoryModal
+          isOpenHistory={isOpenHistory}
+          onClose={() => {
+            setIsOpenHistory(false);
+          }}
+        />
+      )}
+      {isOpenStock && (
+        <InventoryStockMangement
+          isOpenStock={isOpenStock}
+          onClose={() => {
+            setIsOpenStock(false);
+          }}
+          view={view}
+        />
+      )}
     </div>
   );
 }
