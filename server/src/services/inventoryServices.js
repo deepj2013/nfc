@@ -991,7 +991,7 @@ export const createInventoryTransactionService = async (data) => {
       sku,
       transactionType,
       quantity,
-      departmentId: department._id, // Store the ObjectId, not the custom department_id
+      departmentId: department.department_id, 
       createdBy,
       remarks,
     });
@@ -1010,11 +1010,12 @@ export const createInventoryTransactionService = async (data) => {
 };
 
 export const getProductHistoryService = async (sku) => {
+  console.log(sku, "sku", typeof sku);
   try {
     // Define the aggregation pipeline
     const pipeline = [
       // Match transactions with the given SKU
-      { $match: { sku: sku } },
+      { $match: { sku: sku } },  // Use the sku parameter dynamically
 
       // Lookup to populate department details
       {
@@ -1063,15 +1064,16 @@ export const getProductHistoryService = async (sku) => {
 
     // Execute the aggregation pipeline
     const history = await InventoryTransaction.aggregate(pipeline);
-
-    if (!history.length) {
-      throw new APIError(
-        "Not Found",
-        404,
-        true,
-        "No transactions found for the given SKU"
-      );
-    }
+    console.log(history);
+    
+    // if (!history.length) {
+    //   throw new APIError(
+    //     "Not Found",
+    //     404,
+    //     true,
+    //     "No transactions found for the given SKU"
+    //   );
+    // }
 
     return history;
   } catch (error) {
@@ -1082,6 +1084,7 @@ export const getProductHistoryService = async (sku) => {
     }
   }
 };
+
 
 // Utility function to create date ranges
 const getDateRange = (period) => {
