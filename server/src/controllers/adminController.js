@@ -2,6 +2,8 @@ import {
   adminLoginService,
   adminSignUpService,
   createDepartmentService,
+  getAllDepartmentsService,
+  updateDepartmentService,
   getAllUserService,
 } from "../services/adminServices.js";
 
@@ -33,6 +35,29 @@ export const createDepartmentController = async (req, res) => {
     return res
       .status(201)
       .json({ msg: "Department created successfully", result });
+  } catch (error) {
+    res.status(error.httpCode || 500).json({ error: error.message });
+  }
+};
+export const getAllDepartmentController = async (req, res) => {
+  try {
+    let {page, limit} = req.body
+    const result = await getAllDepartmentsService(page, limit);
+    return res
+      .status(200)
+      .json({ msg: "sucess", result });
+  } catch (error) {
+    res.status(error.httpCode || 500).json({ error: error.message });
+  }
+};
+
+export const updateDepartmentController = async (req, res) => {
+  try {
+    let department_id = req.params
+    const result = await updateDepartmentService(department_id,req.body);
+    return res
+      .status(201)
+      .json({ msg: "sucess", result });
   } catch (error) {
     res.status(error.httpCode || 500).json({ error: error.message });
   }

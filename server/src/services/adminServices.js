@@ -139,6 +139,82 @@ export const createDepartmentService = async (data) => {
   }
 };
 
+export const getAllDepartmentsService = async (page = 1, limit) => {
+  try {
+    // Define the aggregation pipeline
+    const pipeline = [
+      // Project to include only necessary fields and exclude _id
+      {
+        $project: {
+          _id: 0, // Hide the _id field
+          departmentName: 1,
+          department_id: 1,
+          headOfDepartment: 1,
+          createdBy: 1
+        }
+      },
+      // Skip documents for pagination
+      { $skip: (page - 1) * limit },
+
+      // Limit the results for pagination
+      { $limit: limit }
+    ];
+
+    // Execute the aggregation pipeline
+    const departments = await Department.aggregate(pipeline);
+
+    // Get the total count of departments
+    const totalCount = await Department.countDocuments();
+
+    // Return the count and result
+    return {
+      count: totalCount,    // Total number of departments
+      result: departments,  // Paginated result
+    };
+  } catch (error) {
+    throw new APIError('Internal Server Error', 500, true, error.message);
+  }
+};
+
+export const updateDepartmentService = async (department_id, data) => {
+  
+  try {
+    const { departmentName, headOfDepartment } = data;
+
+    // Validate required fields
+    if (!departmentName || !headOfDepartment) {
+      throw new APIError('Validation Error', 400, true, 'Department name and head of department are required');
+    }
+
+    // Check if the head of department exists
+    const userExists = await User.findOne({ user_id: headOfDepartment });
+    if (!userExists) {
+      throw new APIError('Not Found', 404, true, 'Head of Department not found');
+    }
+
+    // Find and update the department
+    const updatedDepartment = await Department.findOneAndUpdate(
+      { department_id : `"${department_id}" `},
+      { departmentName, headOfDepartment },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedDepartment) {
+      throw new APIError('Not Found', 404, true, 'Department not found');
+    }
+
+    return updatedDepartment;
+
+  } catch (error) {
+    if (error instanceof APIError) {
+      throw error;
+    } else {
+      throw new APIError('Internal Server Error', 500, true, error.message);
+    }
+  }
+};
+
+
 export const getAllUserService = async () =>{
   try {
     const users = await User.find();
