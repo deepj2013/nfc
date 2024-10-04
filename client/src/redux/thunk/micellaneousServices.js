@@ -67,3 +67,19 @@ export const getAllRoleServices = createAsyncThunk(
     }
   }
 );
+
+export const facilitiesRestaurantServices = createAsyncThunk(
+  "facilitiesRestaurantServices",
+  async (payload) => {
+    console.log("facilitiesRestaurantServices", payload);
+    try {
+      let url = `${BASE_URL_SUPER_ADMIN}restaurant`;
+      const res = await axios.post(url, payload);
+      return res.data;
+    } catch (error) {
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);
