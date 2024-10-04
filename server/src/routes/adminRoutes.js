@@ -1,6 +1,6 @@
 import express from 'express'
 import {createOrganisationController,updateOrganisationController, findAllOrganisationsController, searchOrganisationsController} from '../controllers/organisationControllers.js'
-import { adminLoginController, adminSignupController, createDepartmentController, getAllUserController } from '../controllers/adminController.js'
+import { adminLoginController, adminSignupController, createDepartmentController, getAllDepartmentController, updateDepartmentController, getAllUserController } from '../controllers/adminController.js'
 import { createMenuController, getMenusByRoleController,getAllMenusController } from '../controllers/utilityControllers/menuController.js'
 import { createRoleController, getRoleController } from '../controllers/utilityControllers/roleController.js'
 import { createAccessController } from '../controllers/utilityControllers/accessController.js'
@@ -34,6 +34,10 @@ router.post('/getmenubyrole', [adminAuth], getMenusByRoleController)
 router.post('/createusers', [adminAuth], createUserController)
 router.get('/getusers', [adminAuth], getAllUserController)
 router.post('/departments',[adminAuth] ,createDepartmentController )
+router.get('/departments',[adminAuth] ,getAllDepartmentController )
+router.put('/departments/:department_id',[adminAuth] ,updateDepartmentController )
+
+
 
 
 export default router
