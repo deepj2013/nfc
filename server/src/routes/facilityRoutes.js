@@ -26,7 +26,7 @@ router.put("/restaurant/:restaurantId", [auth], updateRestaurantController);
 //Route to get a single restaurant
 router.get("/restaurant/:id", [auth], getSingleRestaurantController);
 // Route to get all restaurants
-router.get("restaurants", [auth], getAllRestaurantsController);
+router.get("/restaurants", [auth], getAllRestaurantsController);
 
 // Route to create a new table for a restaurant
 router.post("/restaurant/:restaurantId/table", createTableController);
