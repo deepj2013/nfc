@@ -10,4 +10,4 @@ export const BASE_URL_FILEUPLOAD = "https://api.k2krafts.in/api/";
 
 export const BASE_URL_SUPER_ADMIN = "https://api.k2krafts.in/api/admin/";
 
-export const BASE_URL_FACILITY = "https://api.k2krafts.in/api/";
+export const URL = "https://api.k2krafts.in/api/";

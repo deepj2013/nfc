@@ -227,7 +227,7 @@ import React, { useState } from "react";
 import ModalWrapper from "../../layout/ModalWrapper";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
-import { facilitiesRestaurantServices } from "../../redux/thunk/micellaneousServices";
+import { createRestaurantServices } from "../../redux/thunk/micellaneousServices";
 
 export default function RestaurantModal({ isOpen, setIsOpen, onClose }) {
   const [restaurantData, setRestaurantData] = useState({
@@ -245,6 +245,8 @@ export default function RestaurantModal({ isOpen, setIsOpen, onClose }) {
       },
     ],
     isOpen: true,
+    createdBy: 1,
+    updatedBy: 1,
   });
 
   const navigate = useNavigate();
@@ -274,7 +276,7 @@ export default function RestaurantModal({ isOpen, setIsOpen, onClose }) {
 
     try {
       let response = await dispatch(
-        facilitiesRestaurantServices(restaurantData)
+        createRestaurantServices(restaurantData)
       ).unwrap();
       successToast("Category created successfully");
       onClose();
