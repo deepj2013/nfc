@@ -31,6 +31,7 @@ export const updateRestaurantController = async (req, res) => {
 
 export const getAllRestaurantsController = async (req, res) => {
   try {
+    console.log("all restaurants")
     const restaurants = await getAllRestaurants();
     res.status(200).json({ success: true, data: restaurants });
   } catch (error) {
