@@ -18,6 +18,7 @@ import AddMember from "../pages/member/AddMember";
 import MenuCreationList from "../pages/superAdmin/MenuCreationList";
 import MenuCreation from "../pages/superAdmin/MenuCreation";
 import CreateMember from "../pages/member/CreateMember";
+import FacilityManagement from "../pages/facilityManagement/FacilityManagement";
 
 function DashboardRoutes() {
   const [open, setOpen] = useState(true);
@@ -36,7 +37,7 @@ function DashboardRoutes() {
             <Route path="/product" element={<ProductList />} />
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/category" element={<Category />} />
-            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/inventorymanagement" element={<Inventory />} />
             <Route path="/units" element={<Units />} />
             <Route path="/vendor" element={<Vendor />} />
             <Route path="/add-vender" element={<AddVender />} />
@@ -45,6 +46,10 @@ function DashboardRoutes() {
             <Route path="/menu-creation-list" element={<MenuCreationList />} />
             <Route path="/menu-creation" element={<MenuCreation />} />
             <Route path="/create-member" element={<CreateMember />} />
+            <Route
+              path="/facilitymanagement"
+              element={<FacilityManagement />}
+            />
           </Routes>
         </div>
       </div>
