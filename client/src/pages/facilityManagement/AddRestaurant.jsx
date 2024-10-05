@@ -1,235 +1,51 @@
-// import React, { useState } from "react";
-// import { FaXmark } from "react-icons/fa6";
-// import { useNavigate } from "react-router-dom";
-
-// import { stockInOrOutServices } from "../../redux/thunk/productServices";
-// import { logger, successToast } from "../../utils/Helper";
-// import { getStorageValue } from "../../services/LocalStorageServices";
-// import { useDispatch } from "react-redux";
-// import { twMerge } from "tailwind-merge";
-// import Button from "../../components/common/Button";
-// import SelectDropdown from "../../components/common/SelectDropdown";
-
-// const AddRestaurant = ({ isOpenAddRestaurant, onClose, view }) => {
-//   console.log("view is open", view);
-//   let userDetails = getStorageValue("userDetails");
-//   const [formData, setFormData] = useState({
-//     sku: "",
-//     transactionType: view === "STOCK_IN" ? "inward" : "outward",
-//     quantity: null,
-//     departmentId: "",
-//     createdBy: 2,
-//     remarks: "",
-//     errors: {},
-//   });
-
-//   const {
-//     sku,
-//     transactionType,
-//     quantity,
-//     departmentId,
-//     createdBy,
-//     remarks,
-//     errors,
-//   } = formData;
-
-//   const navigate = useNavigate();
-//   const dispatch = useDispatch();
-
-//   const upadteStateHandler = (e) => {
-//     let { name, value } = e.target;
-//     setFormData((pre) => ({ ...pre, [name]: value }));
-//   };
-
-//   const handleValidation = () => {
-//     const validationRules = {
-//       sku: { required: true },
-//       quantity: { required: true },
-//       departmentId: { required: true },
-//       remarks: { required: true },
-//     };
-//     const formData = {
-//       sku,
-//       quantity,
-//       departmentId,
-//       remarks,
-//     };
-//     const { formIsValid, errors } = validateFields(formData, validationRules);
-//     setFormData((prev) => ({ ...prev, errors }));
-//     return formIsValid;
-//   };
-
-//   const createStockInOrOutHandler = async () => {
-//     // let formIsValid = handleValidation();
-//     // if (!formIsValid) {
-//     //   return;
-//     // }
-
-//     let payload = {
-//       sku,
-//       transactionType,
-//       quantity,
-//       departmentId,
-//       createdBy,
-//       remarks,
-//     };
-
-//     try {
-//       let response = await dispatch(stockInOrOutServices(payload)).unwrap();
-//       successToast("Category created successfully");
-//       onClose();
-//     } catch (error) {
-//       console.log(error);
-//       logger(error);
-//     }
-//   };
-
-//   const department_Id = [
-//     {
-//       label: "DEP001",
-//       value: "DEP001",
-//     },
-//     {
-//       label: "DEP001",
-//       value: "DEP001",
-//     },
-//     {
-//       label: "DEP001",
-//       value: "DEP001",
-//     },
-//   ];
-
-//   return (
-//     <div
-//       className={`fixed w-full inset-0 flex items-center justify-center z-[999] transition-opacity duration-300 ${
-//         isOpenAddRestaurant ? "opacity-100" : "opacity-0 pointer-events-none"
-//       }`}
-//     >
-//       <div
-//         className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ${
-//           isOpenAddRestaurant ? "opacity-100" : "opacity-0"
-//         }`}
-//         // onClick={onClose}
-//       ></div>
-//       <div
-//         className={`bg-white  overflow-scroll w-[95vw] lg:w-[500px] py-4 rounded-lg h-[95vh] lg:h-auto  shadow-xl transform transition-transform duration-300 ${
-//           isOpenAddRestaurant ? "translate-y-0" : "translate-y-full"
-//         }`}
-//         style={{ minHeight: "100px" }}
-//       >
-//         <button
-//           onClick={onClose}
-//           className="text-2xl absolute right-2 top-2 text-secondry"
-//         >
-//           <FaXmark />
-//         </button>
-//         <div className=" flex flex-col items-center">
-//           <h2 className="text-2xl  w-full font-medium lg:px-10">
-//             Create New Restaurant
-//           </h2>
-
-//           <p className="text-xl mt-4 w-full"></p>
-//           <div className="w-full lg:px-10">
-//             <FormInput
-//               errors={errors?.sku}
-//               placeholder={"sku"}
-//               value={sku}
-//               name={"sku"}
-//               onChange={upadteStateHandler}
-//             />
-
-//             <FormInput
-//               errors={errors?.quantity}
-//               placeholder={"quantity"}
-//               value={quantity}
-//               name={"quantity"}
-//               onChange={upadteStateHandler}
-//             />
-
-//             <SelectDropdown
-//               data={department_Id}
-//               handleSelectChange={(e) => {
-//                 setFormData((pre) => ({
-//                   ...pre,
-//                   departmentId: e.target.value,
-//                 }));
-//               }}
-//               selected={departmentId}
-//               label={"departmentId"}
-//               placeHolder={"departmentId"}
-//             />
-//             <FormInput
-//               errors={errors?.remarks}
-//               placeholder={"remarks"}
-//               value={remarks}
-//               name={"remarks"}
-//               onChange={upadteStateHandler}
-//             />
-
-//             <Button
-//               name={"Add"}
-//               style={"w-full py-2"}
-//               onClick={createStockInOrOutHandler}
-//             />
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AddRestaurant;
-
-// const FormInput = ({
-//   width,
-//   showButton,
-//   placeholder,
-//   name,
-//   onChange,
-//   value,
-//   type,
-//   errors,
-// }) => {
-//   return (
-//     <div class={twMerge("mb-5 relative", width)} className="fle">
-//       <div className="flex flex-row justify-center items-center w-full">
-//         <label
-//           for="email"
-//           class="block mb-2 text-sm font-medium text-gray-900 "
-//         >
-//           {placeholder}
-//         </label>
-//         <div>
-//           <input
-//             onChange={onChange}
-//             value={value}
-//             name={name}
-//             type={type ? type : "text"}
-//             id="email"
-//             class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5    dark:focus:ring-blue-500 dark:focus:border-blue-500"
-//             placeholder={placeholder}
-//             required
-//             // chooseDate={date}
-//           />
-//           <span style={{ color: "red" }}>{errors}</span>
-//         </div>
-//       </div>
-//       {showButton && (
-//         <button className="text-sm bg-theme text-white absolute top-[34px] p-1.5 right-2 rounded-lg ">
-//           Genrate Code
-//         </button>
-//       )}
-//     </div>
-//   );
-// };
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModalWrapper from "../../layout/ModalWrapper";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
-import { createRestaurantServices } from "../../redux/thunk/micellaneousServices";
+import {
+  createRestaurantServices,
+  updateRestaurantServices,
+} from "../../redux/thunk/micellaneousServices";
+import { GENDER_DATA, logger, successToast } from "../../utils/Helper";
+import moment from "moment";
 
-export default function RestaurantModal({ isOpen, setIsOpen, onClose }) {
+export default function RestaurantModal({
+  isOpen,
+  setIsOpen,
+  onClose,
+  menuEdit,
+  types,
+}) {
+  let CUISINES_DATA = [
+    {
+      label: "Italian",
+      value: "Italian",
+    },
+    {
+      label: "Chinese",
+      value: "Chinese",
+    },
+    {
+      label: "Thai",
+      value: "Thai",
+    },
+    {
+      label: "Indian",
+      value: "Indian",
+    },
+    {
+      label: "French",
+      value: "French",
+    },
+    {
+      label: "Japanese",
+      value: "Japanese",
+    },
+    {
+      label: "Mexican",
+      value: "Mexican",
+    },
+  ];
   const [restaurantData, setRestaurantData] = useState({
     name: "",
     type: "Third-Party",
@@ -280,12 +96,13 @@ export default function RestaurantModal({ isOpen, setIsOpen, onClose }) {
       ).unwrap();
       successToast("Category created successfully");
       onClose();
+      console.log("response899", response);
     } catch (error) {
       console.log(error);
       logger(error);
     }
     console.log("Submitting restaurant data:");
-    setIsOpen(false); // Close modal after submission
+    // setIsOpen(false); // Close modal after submission
   };
 
   const updateTiming = (field, value) => {
@@ -295,10 +112,68 @@ export default function RestaurantModal({ isOpen, setIsOpen, onClose }) {
     }));
   };
 
+  useEffect(() => {
+    if (menuEdit !== null && types === "edit") {
+      setRestaurantData((pre) => ({
+        ...pre,
+        name: menuEdit?.name,
+        type: menuEdit?.type,
+        commissionRate: menuEdit?.commissionRate,
+        description: menuEdit?.description,
+        cuisines: menuEdit?.cuisines,
+        images: menuEdit?.images,
+        timings: menuEdit?.timings,
+        isOpen: menuEdit?.isOpen,
+        updatedBy: moment(menuEdit?.updatedBy).format("YYYY-MM-DD"),
+      }));
+    } else {
+      setRestaurantData((prev) => ({
+        ...prev,
+        name: "",
+        type: "",
+        commissionRate: 30,
+        description: "",
+        cuisines: [],
+        images: ["", "", ""],
+        timings: [
+          {
+            days: [0, 1, 2, 3, 4, 5, 6],
+            openingTime: "11:00",
+            closingTime: "22:00",
+          },
+        ],
+        isOpen: true,
+        createdBy: 1,
+        updatedBy: 1,
+      }));
+    }
+  }, [isOpen]);
+
+  const updateHandler = async () => {
+    let payload = {
+      name: menuEdit?.name,
+      type: menuEdit?.type,
+      commissionRate: menuEdit?.commissionRate,
+      description: menuEdit?.description,
+      cuisines: menuEdit?.cuisines,
+      images: menuEdit?.images,
+      timings: menuEdit?.timings,
+      isOpen: menuEdit?.isOpen,
+      updatedBy: moment(menuEdit?.updatedBy).format("YYYY-MM-DD"),
+    };
+    try {
+      let response = await dispatch(updateRestaurantServices(payload)).unwrap();
+      console.log("responseresponse", response);
+    } catch (error) {
+      console.log(error);
+      logger(error);
+    }
+  };
+
   return (
     <ModalWrapper isOpen={isOpen} onClose={onClose}>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={types === "eidt" ? updateHandler : handleSubmit}
         className="mt-2 text-left h-[500px] overflow-scroll"
       >
         <div className="mb-4">
@@ -374,27 +249,22 @@ export default function RestaurantModal({ isOpen, setIsOpen, onClose }) {
           />
         </div>
 
-        <div className="mb-4">
-          <label
-            htmlFor="cuisines"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Cuisines
-          </label>
-          <input
-            type="text"
-            id="cuisines"
-            name="cuisines"
-            value={restaurantData.cuisines.join(", ")}
-            onChange={(e) =>
-              setRestaurantData((prev) => ({
-                ...prev,
-                cuisines: e.target.value.split(", "),
-              }))
-            }
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+        <SelectDropdown
+          data={CUISINES_DATA}
+          handleSelectChange={(e) => {
+            const selectedOptions = Array.from(
+              e.target.selectedOptions,
+              (option) => option.value
+            );
+            setRestaurantData((prev) => ({
+              ...prev,
+              cuisines: selectedOptions, // Update the cuisines with the selected options
+            }));
+          }}
+          selected={restaurantData.cuisines} // Set the selected values
+          label={"Cuisines"}
+          placeHolder={"Cuisines"}
+        />
 
         {restaurantData.images.map((image, index) => (
           <div key={index} className="mb-4">
@@ -484,5 +354,77 @@ export default function RestaurantModal({ isOpen, setIsOpen, onClose }) {
         </div>
       </form>
     </ModalWrapper>
+  );
+}
+
+// function SelectDropdown({
+//   data,
+//   handleSelectChange,
+//   selected,
+//   label,
+//   placeHolder,
+//   errors,
+// }) {
+//   console.log(data);
+//   return (
+//     <div>
+//       <div className="bg-white flex-col mt-4 mb-5">
+//         <label className="mb-5" htmlFor="employee-select">
+//           {label}{" "}
+//         </label>
+//         <select
+//           id="employee-select"
+//           onChange={handleSelectChange}
+//           className="w-full p-2 mt-2 border rounded-lg bg-gray-100"
+//           value={selected}
+//         >
+//           <option value=" ">{placeHolder}</option>
+//           {data &&
+//             data.map((item) => (
+//               <option key={item?.value} value={item?.value}>
+//                 {item?.label}
+//               </option>
+//             ))}
+//         </select>
+//         <p className="text-red-600 mt-3">{errors}</p>
+//       </div>
+//     </div>
+//   );
+// }
+
+function SelectDropdown({
+  data,
+  handleSelectChange,
+  selected,
+  label,
+  placeHolder,
+  errors,
+}) {
+  return (
+    <div>
+      <div className="bg-white flex-col mt-4 mb-5">
+        <label className="mb-5" htmlFor="employee-select">
+          {label}
+        </label>
+        <select
+          id="employee-select"
+          onChange={handleSelectChange}
+          className="w-full p-2 mt-2 border rounded-lg bg-gray-100"
+          value={selected}
+          multiple
+        >
+          <option value=" " disabled>
+            {placeHolder}
+          </option>
+          {data &&
+            data.map((item) => (
+              <option key={item?.value} value={item?.value}>
+                {item?.label}
+              </option>
+            ))}
+        </select>
+        <p className="text-red-600 mt-3">{errors}</p>
+      </div>
+    </div>
   );
 }
