@@ -63,7 +63,7 @@ const Sidebar = ({ open, setOpen }) => {
 
   const { getmenubyroleHandler } = useMicellaneousServices();
 
-  console.log(userDetails);
+  // console.log(userDetails);
   useEffect(() => {
     const featch = async () => {
       try {
@@ -72,7 +72,7 @@ const Sidebar = ({ open, setOpen }) => {
         });
         // let tempArray=temp.sort((a, b) => a.menuOrder - b.menuOrder)
         // console.log(tempArray,'tempArray');
-      
+
         setMenu(temp);
       } catch (error) {
         console.log(error);

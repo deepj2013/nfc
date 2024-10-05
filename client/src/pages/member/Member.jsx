@@ -12,7 +12,10 @@ import { getMeasurementUnitsServices } from "../../redux/thunk/unitServices";
 import { logger } from "../../utils/Helper";
 import AddMember from "./AddMember";
 import { getMemberCategoryServices } from "../../redux/thunk/vendorServices";
-import { getDependentListServices, getMemberManagementListServices } from "../../redux/thunk/useMangementServices";
+import {
+  getDependentListServices,
+  getMemberManagementListServices,
+} from "../../redux/thunk/useMangementServices";
 import DepositModal from "./DepositModal";
 import ModalWrapper from "../../layout/ModalWrapper";
 import AddDependent from "./AddDependent";
@@ -26,8 +29,8 @@ function Member() {
   const dispatch = useDispatch();
   const { unitList, memberList } = useSelector((state) => state.inventaryState);
   const { membersList } = useSelector((state) => state.userStateMangementState);
-  const [dependentsList, setDependentsList] = useState([])
-  const [dependentModal,setDependentModal] = useState(false);
+  const [dependentsList, setDependentsList] = useState([]);
+  const [dependentModal, setDependentModal] = useState(false);
   const [dependentsListModal, setDepositModalOpen] = useState(false);
   const getMemberHandler = async () => {
     try {
@@ -53,36 +56,31 @@ function Member() {
     }
   };
 
-
   const getDelepentList = async (id) => {
     try {
       let response = await dispatch(getDependentListServices(id)).unwrap();
-      console.log(response?.result?.dependents, 'ssss');
-      setDepositModalOpen(true)
-      setDependentsList(response?.result?.dependents)
+      console.log(response?.result?.dependents, "ssss");
+      setDepositModalOpen(true);
+      setDependentsList(response?.result?.dependents);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     getMembersManagementList();
   }, []);
 
-
   console.log(dependentsList);
-
-
 
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <p className="font-semibold h28">Members</p>
         <div className="flex gap-4">
-
           <div className="flex gap-4">
             <Button
-            style={'bg-yellow-500'}
+              style={"bg-yellow-500"}
               onClick={() => {
                 setDependentModal(true), setType("add");
               }}
@@ -91,10 +89,9 @@ function Member() {
             />
           </div>
 
-
           <div className="flex gap-4">
             <Button
-             style={'bg-green-500'}
+              style={"bg-green-500"}
               onClick={() => {
                 setIsOpen(true), setType("add");
               }}
@@ -162,7 +159,6 @@ function Member() {
                           Address{" "}
                         </th>
 
-
                         <th
                           scope="col"
                           class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
@@ -209,15 +205,15 @@ function Member() {
                               {ele?.address}
                             </td>
 
-                            <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900"
+                            <td
+                              class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900"
                               onClick={() => {
-                                getDelepentList(ele?.memberId)
+                                getDelepentList(ele?.memberId);
                               }}
                             >
                               {" "}
                               {ele?.dependents?.length}
                             </td>
-
 
                             <td class="flex p-5 items-center gap-0.5">
                               <button
@@ -289,14 +285,13 @@ function Member() {
         </div>
       </div>
 
-      <ModalWrapper onClose={() => {
-        setDepositModalOpen(false);
-      }} isOpen={dependentsListModal}>
+      <ModalWrapper
+        onClose={() => {
+          setDepositModalOpen(false);
+        }}
+        isOpen={dependentsListModal}
+      >
         <div className="bg-white h-[400px] overflow-scroll">
-
-
-
-
           <div class="relative overflow-x-auto">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -316,34 +311,25 @@ function Member() {
                 </tr>
               </thead>
               <tbody>
+                {dependentsList?.map((ele, ind) => {
+                  return (
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                      <td class="px-6 py-4">{ele?.memberId}</td>
+                      <th
+                        scope="row"
+                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      >
+                        {ele?.firstName} {ele?.middleName} {ele?.surname}
+                      </th>
+                      <td class="px-6 py-4">{ele?.relationship}</td>
 
-
-                {
-                  dependentsList?.map((ele, ind) => {
-                    return (
-                      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <td class="px-6 py-4">
-                          {ele?.memberId}
-                        </td>
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                          {ele?.firstName} {ele?.middleName} {ele?.surname}
-                        </th>
-                        <td class="px-6 py-4">
-                          {ele?.relationship}
-                        </td>
-
-                        <td class="px-6 py-4">
-                          {ele?.mobileNumber}
-                        </td>
-                      </tr>
-                    )
-                  })
-                }
-
+                      <td class="px-6 py-4">{ele?.mobileNumber}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-
         </div>
       </ModalWrapper>
 
@@ -358,10 +344,12 @@ function Member() {
       />
 
       <AddDependent
-          onClose={() => {
-            setDependentModal(false);
-          }}
-      isOpen={dependentModal} dropdownData={dropdownData}/>
+        onClose={() => {
+          setDependentModal(false);
+        }}
+        isOpen={dependentModal}
+        dropdownData={dropdownData}
+      />
     </div>
   );
 }

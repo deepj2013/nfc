@@ -1,7 +1,7 @@
 // authServices.js
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../../utils/Axios";
-import { BASE_URL, BASE_URL_SUPER_ADMIN } from "../../utils/Urls";
+import { BASE_URL, BASE_URL_SUPER_ADMIN, URL } from "../../utils/Urls";
 import { handleError } from "../../utils/ErrorHandler";
 import { getStorageValue } from "../../services/LocalStorageServices";
 
@@ -59,6 +59,58 @@ export const getAllRoleServices = createAsyncThunk(
     try {
       let url = `${BASE_URL_SUPER_ADMIN}getrole`;
       const res = await axios.get(url);
+      return res.data;
+    } catch (error) {
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);
+
+export const createRestaurantServices = createAsyncThunk(
+  "createRestaurantServices",
+  async (payload) => {
+    console.log("facilitiesRestaurantServices", payload);
+    try {
+      let url = `${URL}facilities/restaurant`;
+      const res = await axios.post(url, payload);
+      return res.data;
+    } catch (error) {
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);
+
+export const getAllRestaurantServices = createAsyncThunk(
+  "getAllRestaurantServices",
+  async () => {
+    try {
+      console.log("getAllRestaurantServices");
+      let url = `${URL}facilities/restaurants`;
+      const res = await axios.get(url);
+      console.log("getAllRestaurantServices1");
+
+      return res.data;
+    } catch (error) {
+      console.log("getAllRestaurantServices2");
+
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);
+
+export const updateRestaurantServices = createAsyncThunk(
+  "updateRestaurantServices",
+  async (payload) => {
+    // console.log("facilitiesRestaurantServices", payload);
+    try {
+      let url = `${URL}facilities/restaurant/2`;
+      const res = await axios.put(url, payload);
       return res.data;
     } catch (error) {
       //   console.log(error);
