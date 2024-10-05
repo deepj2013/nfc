@@ -294,7 +294,6 @@ function CreateMember() {
             <span class="text-gray-600 font-medium">Upload file</span>
           </label>
           <input
-            // value={}
             onChange={handleFileChange}
             id="upload"
             type="file"
