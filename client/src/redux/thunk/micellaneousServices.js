@@ -103,3 +103,19 @@ export const getAllRestaurantServices = createAsyncThunk(
     }
   }
 );
+
+export const updateRestaurantServices = createAsyncThunk(
+  "updateRestaurantServices",
+  async (payload) => {
+    // console.log("facilitiesRestaurantServices", payload);
+    try {
+      let url = `${URL}facilities/restaurant/2`;
+      const res = await axios.put(url, payload);
+      return res.data;
+    } catch (error) {
+      //   console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);
