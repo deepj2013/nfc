@@ -1,6 +1,5 @@
 // Package Imports
 import React, { useEffect, useState } from "react";
-
 import { twMerge } from "tailwind-merge";
 import { GrAchievement } from "react-icons/gr";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -8,7 +7,6 @@ import { FaChevronRight, FaCircle, FaRegUser, FaUser } from "react-icons/fa";
 import { FaBuildingUser, FaFlorinSign } from "react-icons/fa6";
 import { RiFileUserFill } from "react-icons/ri";
 import { LuLogOut } from "react-icons/lu";
-
 import { MdSpaceDashboard } from "react-icons/md";
 import {
   AdminRoutes,
@@ -18,6 +16,7 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 import { useMicellaneousServices } from "../services/useMicellaneousServices";
 import { getStorageValue } from "../services/LocalStorageServices";
+import Logo from "../assets/logo.png";
 
 // View Imports
 
@@ -105,7 +104,10 @@ const Sidebar = ({ open, setOpen }) => {
       {
         <nav class=" fixed  top-0 bg-white shadow mr-64 w-full  z-30  py-3  ">
           <div class="px-3 lg:px-6 lg:pl-3">
-            <div class="flex items-center justify-between ">
+            <div class="flex items-center ">
+              <img src={Logo} alt="Logo" height={90} width={90} className="mr-4" />
+
+              {/* Sidebar toggle button next to the logo */}
               <button onClick={() => setOpen(!open)}>
                 <GiHamburgerMenu className="text-theme text-3xl" />
               </button>
