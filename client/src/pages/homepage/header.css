@@ -27,9 +27,10 @@ header {
     transition: color 0.3s ease-in-out;
   }
   
-  nav ul li:hover {
+  nav ul li:not(.no-underline):hover {
     border-bottom: 2px solid #8B4513; /* Brown underline on hover */
   }
+  
 
   .more-about-us-section {
     background-size: cover;
