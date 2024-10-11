@@ -3,7 +3,7 @@ import './MapSection.css'; // Import custom CSS for additional styling
 
 const MapSection = () => {
   return (
-    <div className="map-section bg-gray-100 py-10">
+    <div className="map-section bg-gray-100 py-5">
       <div className="container mx-auto max-w-5xl px-4">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-semibold text-teal-800 mb-2">Club in New Friends Colony, Delhi</h2>

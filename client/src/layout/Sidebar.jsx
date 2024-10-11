@@ -94,8 +94,9 @@ const Sidebar = ({ open, setOpen }) => {
 
   const handleLogout = () => {
     localStorage.clear();
-    window.location.reload();
+    window.location.href = '/'; // Redirects to the home page after logout
   };
+  
 
   return (
     <div className="">

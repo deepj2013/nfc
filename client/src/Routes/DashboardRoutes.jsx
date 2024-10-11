@@ -30,7 +30,7 @@ function DashboardRoutes() {
           className={twMerge("pt-24 px-2 lg:px-8", open ? "ml-60" : "ml-20")}
         >
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/usermanagement" element={<Employee />} />
             <Route path="/rolemanagement" element={<Role />} />
             <Route path="/organisation" element={<Organization />} />

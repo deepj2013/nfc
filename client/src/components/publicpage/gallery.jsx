@@ -1,96 +1,3 @@
-// import React, { useState } from 'react';
-// import Slider from 'react-slick';
-// import Lightbox from 'react-image-lightbox';
-// import 'react-image-lightbox/style.css';
-// import './gallery.css'; // Your custom CSS for additional styling
-
-
-// // import image3 from '../../assets/images/03.jpg';
-// // import image4 from '../../assets/images/04.jpg';
-// // import image5 from '../../assets/images/05.jpg';
-// // import image6 from '../../assets/images/06.jpg';
-
-// // Gallery Slider Component
-// const Gallery = ({ images }) => {
-//   const settings = {
-//     dots: true,
-//     infinite: true,
-//     speed: 500,
-//     slidesToShow: 1,
-//     slidesToScroll: 1,
-//     autoplay: true,
-//     autoplaySpeed: 3000,
-//     fade: true, // Adds a fade animation effect to the slides
-//     cssEase: 'linear',
-//     adaptiveHeight: true, // Ensures that the slider adapts to the image height
-//   };
-
-//   return (
-//     <div className="gallery-container mx-auto ">
-//       <Slider {...settings}>
-//         {images.map((image, index) => (
-//           <div key={index}>
-//             <img
-//               src={image}
-//               alt={`Slide ${index + 1}`}
-//               className="w-full h-full object-cover shadow-md rounded-lg"
-//             />
-//           </div>
-//         ))}
-//       </Slider>
-//     </div>
-//   );
-// };
-
-// // Gallery Section with Lightbox Component
-// const GallerySection = () => {
-//   const [isOpen, setIsOpen] = useState(false);
-//   const [photoIndex, setPhotoIndex] = useState(0);
-
-//   const galleryImages = [image1, image2];
-
-//   return (
-//     <div className="gallery-section max-w-screen-lg mx-auto py-8">
-//       <h2 className="text-2xl font-semibold text-teal-800 mb-4 text-center">Club Gallery</h2>
-//       <hr className="border-t-2 border-teal-800 w-16 mx-auto mb-8" />
-//       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-//         {galleryImages.map((img, index) => (
-//           <div key={index} className="gallery-item">
-//             <img
-//               src={img}
-//               alt={`Gallery Image ${index + 1}`}
-//               className="w-full h-auto object-cover cursor-pointer rounded-lg shadow-lg hover:opacity-75 transition-opacity duration-300"
-//               onClick={() => {
-//                 setPhotoIndex(index);
-//                 setIsOpen(true);
-//               }}
-//             />
-//           </div>
-//         ))}
-//       </div>
-
-//       {isOpen && (
-//         <Lightbox
-//           mainSrc={galleryImages[photoIndex]}
-//           nextSrc={galleryImages[(photoIndex + 1) % galleryImages.length]}
-//           prevSrc={galleryImages[(photoIndex + galleryImages.length - 1) % galleryImages.length]}
-//           onCloseRequest={() => setIsOpen(false)}
-//           onMovePrevRequest={() =>
-//             setPhotoIndex((photoIndex + galleryImages.length - 1) % galleryImages.length)
-//           }
-//           onMoveNextRequest={() =>
-//             setPhotoIndex((photoIndex + 1) % galleryImages.length)
-//           }
-//         />
-//       )}
-//     </div>
-//   );
-// };
-
-// // Export both components in a single file
-// export { Gallery, GallerySection };
-
-
 import React, { useState } from 'react';
 import Slider from 'react-slick';
 import Lightbox from 'react-image-lightbox';
@@ -136,8 +43,7 @@ const GallerySection = ({ images }) => {
 
   return (
     <div className="gallery-section max-w-screen-lg mx-auto py-8">
-      <h2 className="text-2xl font-semibold text-teal-800 mb-4 text-center">Club Gallery</h2>
-      <hr className="border-t-2 border-teal-800 w-16 mx-auto mb-8" />
+     
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {images.map((img, index) => (
           <div key={index} className="gallery-item">

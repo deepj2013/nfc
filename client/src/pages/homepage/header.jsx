@@ -39,6 +39,9 @@ const Header = () => {
             <Link to="/about" onClick={() => setIsMenuOpen(false)}>About Club</Link>
           </li>
           <li className="hover:text-purple-600 py-2 sm:py-0">
+            <Link to="/occasions" onClick={() => setIsMenuOpen(false)}>Club Functions</Link>
+          </li>
+          <li className="hover:text-purple-600 py-2 sm:py-0">
             <Link to="/services" onClick={() => setIsMenuOpen(false)}>Our Services</Link>
           </li>
           <li className="hover:text-purple-600 py-2 sm:py-0">
