@@ -13,6 +13,12 @@ import store, { persistor } from "./redux/store.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Polyfill for the global object in the browser
+if (typeof global === 'undefined') {
+  window.global = window;
+}
+
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>

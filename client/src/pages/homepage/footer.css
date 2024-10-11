@@ -1,0 +1,35 @@
+.footer {
+    background-color: #1a1a1a; /* Dark background for the footer */
+    color: #d1d1d1; /* Light color for the text */
+  }
+  
+  .footer-section h3 {
+    color: #ffffff; /* White color for section headings */
+  }
+  
+  .footer-section a {
+    color: #d1d1d1; /* Light color for links */
+    transition: color 0.3s; /* Smooth transition for hover effect */
+  }
+  
+  .footer-section a:hover {
+    color: #17f9f7; /* Teal color on hover */
+  }
+  
+  .social-media-icons a {
+    font-size: 1.5rem; /* Larger size for social media icons */
+    transition: color 0.3s; /* Smooth transition for hover effect */
+  }
+  
+  .social-media-icons a:hover {
+    color: #17f9f7; /* Teal color on hover for social media icons */
+  }
+  
+  .footer hr {
+    border-color: #333333; /* Dark gray color for the horizontal divider */
+  }
+  
+  .footer .text-center {
+    color: #888888; /* Gray color for the copyright text */
+  }
+  

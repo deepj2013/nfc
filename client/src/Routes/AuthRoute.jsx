@@ -6,7 +6,7 @@ import SuperLogin from '../pages/auth/SuperLogin'
 function AuthRoute({setIsLogin}) {
   return (
     <Routes>
-      <Route path="/" element={<Login setIsLogin={setIsLogin} />} />
+      <Route path="/login" element={<Login setIsLogin={setIsLogin} />} />
   
       {/* <Route path="/club-control" element={<Login setIsLogin={setIsLogin} />} /> */}
       <Route path="/control" element={<SuperLogin setIsLogin={setIsLogin} />} />

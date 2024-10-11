@@ -24,6 +24,11 @@ body{
     @apply text-3xl lg:text-xl  2xll:text-2xl ;
 }
 
+.schedule-appointment-section {
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+}
 
 
 @layer components {
