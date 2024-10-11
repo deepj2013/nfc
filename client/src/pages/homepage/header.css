@@ -1,0 +1,112 @@
+
+  
+  /* header.css */
+header {
+    background-color: #ffffff; /* White background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  }
+  
+  .logo img {
+    max-height: 48px; /* Responsive logo sizing */
+  }
+  
+  nav ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  @media (min-width: 640px) {
+    nav ul {
+      flex-direction: row; /* Horizontal layout for larger screens */
+    }
+  }
+  
+  nav ul li {
+    padding: 0.5rem 1rem;
+    transition: color 0.3s ease-in-out;
+  }
+  
+  nav ul li:hover {
+    border-bottom: 2px solid #8B4513; /* Brown underline on hover */
+  }
+
+  .more-about-us-section {
+    background-size: cover;
+    background-position: center;
+    filter: grayscale(100%); /* Makes the image black and white */
+  }
+  
+  .more-about-us-content {
+    background: rgba(0, 0, 0, 0.6); /* Semi-transparent background for text content */
+  }
+  
+  .more-about-us-heading {
+    font-size: 1.5rem;
+    line-height: 1.5;
+  }
+  
+  .more-about-us-description {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  
+  .more-about-us-button {
+    background-color: #d48943; /* Matching the button color */
+    transition: background-color 0.3s ease;
+  }
+  
+  .more-about-us-button:hover {
+    background-color: #c77539; /* Slightly darker shade on hover */
+  }
+  
+  .text-container h2 {
+    color: #4b0082; /* Dark purple color */
+    font-weight: bold;
+  }
+  
+  .text-container p {
+    color: #4b4b4b; /* Dark gray color for the paragraph text */
+  }
+  
+  .image-container img {
+    max-height: 400px; /* To control image size */
+  }
+  
+  .text-container p.uppercase {
+    letter-spacing: 2px; /* Letter spacing to match the picture's look */
+  }
+  
+  .flex {
+    align-items: center;
+    justify-content: space-around;
+  }
+  
+  
+  .testimonial-section {
+    background-color: #f5f8f8; /* Light background color */
+    padding: 4rem 1rem;
+  }
+  
+  .testimonial-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    animation: fadeIn 1s ease-in-out; /* Fading animation for testimonial */
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .testimonial-card:hover {
+    transform: translateY(-5px); /* Subtle lift effect on hover */
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* Slight shadow on hover */
+  }
+

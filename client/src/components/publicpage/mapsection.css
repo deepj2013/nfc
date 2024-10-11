@@ -1,0 +1,24 @@
+.map-section {
+    background-color: #f5f8f8; /* Light background color for the map section */
+    padding: 2.5rem 0; /* Vertical padding */
+  }
+  
+  .map-container {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow to lift the map */
+    border-radius: 10px; /* Rounded corners for a softer look */
+    overflow: hidden; /* Ensures content stays within the border radius */
+  }
+  
+  .map-section h2 {
+    color: #004c4c; /* Dark teal color for the heading */
+  }
+  
+  .map-section .border-t-2 {
+    border-color: #17f9f7; /* Light teal color for the separator line */
+  }
+  
+  .map-section .container {
+    max-width: 100%;
+    margin: 0 auto; /* Centering the content */
+  }
+  

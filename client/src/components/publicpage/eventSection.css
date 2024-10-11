@@ -1,0 +1,33 @@
+/* EventSections.css */
+
+.event-column {
+    overflow: hidden;
+  }
+  
+  .event-content {
+    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+  }
+  
+  .event-content:hover {
+    transform: scale(1.1); /* Zoom-in effect */
+    opacity: 0.9; /* Slight fade-out effect */
+  }
+  
+  .heading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem 0; /* Adjust spacing as needed */
+  }
+  
+  .line {
+    height: 2px;
+    background-color: #ccc; /* Gray color for lines */
+  }
+  
+  .heading-text {
+    font-size: 1.5rem; /* Adjust the size of the heading */
+    color: #4A148C; /* Purple color matching your design */
+    text-transform: uppercase; /* Makes the text uppercase */
+    text-align: center;
+  }
