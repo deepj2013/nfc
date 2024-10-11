@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Gallery, GallerySection } from "../../components/publicpage/gallery";
 import EventSections from "../../components/publicpage/eventSection";
+import ScheduleSection from "../../components/publicpage/scheduleSection";
 import image1 from "../../assets/images/s1.jpg";
 import image2 from "../../assets/images/s2.jpg";
 import image3 from "../../assets/images/s3.jpg";
 import image4 from "../../assets/images/s4.jpg";
-import appointmentImage from "../../assets/images/home-sche.jpg";
 import moreAboutUsimage from "../../assets/images/01.jpg";
 import adventureImage from "../../assets/images/adventure.jpeg";
 import galleryimage1 from "../../assets/images/01.jpg";
@@ -181,22 +181,9 @@ const Home = () => {
           </p>
         </div>
       </div>
-      <div
-        className="schedule-appointment-section relative my-12 bg-fixed bg-cover bg-center text-white flex items-center justify-center"
-        style={{
-          backgroundImage: `url(${appointmentImage})`,
-          minHeight: "60vh",
-        }}
-      >
-        <div className="bg-black bg-opacity-60 p-8 rounded-lg max-w-lg mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-4">Schedule Appointment</h2>
-          <p className="mb-2">Contact Person: Anil Dutta (President)</p>
-          <p className="mb-2">Mathura Rd, New Friends Colony,</p>
-          <p className="mb-2">New Delhi,</p>
-          <p className="mb-2">Delhi 110025</p>
-          <p>Phone: 011 2632 8235</p>
-        </div>
-      </div>
+      <ScheduleSection />
+      <h2 className="text-2xl font-semibold text-teal-800 mb-4 text-center">Club Gallery</h2>
+      <hr className="border-t-2 border-teal-800 w-16 mx-auto mb-8" />
       <GallerySection images={galleryImages} />
       <div
         className="more-about-us-section relative my-12 bg-fixed bg-cover bg-center text-white flex items-center justify-center"
