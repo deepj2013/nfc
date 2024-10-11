@@ -6,7 +6,7 @@ import image1 from "../../assets/images/s1.jpg";
 import image2 from "../../assets/images/s2.jpg";
 import image3 from "../../assets/images/s3.jpg";
 import image4 from "../../assets/images/s4.jpg";
-import moreAboutUsimage from "../../assets/images/01.jpg";
+import moreAboutUsimage from "../../assets/images/01.JPG";
 import adventureImage from "../../assets/images/adventure.jpeg";
 import galleryimage1 from "../../assets/images/01.JPG";
 import galleryimage2 from "../../assets/images/02.JPG";
