@@ -1,5 +1,5 @@
 import React from 'react';
-import './MapSection.css'; // Import custom CSS for additional styling
+import './mapsection.css'; // Import custom CSS for additional styling
 
 const MapSection = () => {
   return (
