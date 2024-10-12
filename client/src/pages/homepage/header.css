@@ -79,10 +79,7 @@ header {
     letter-spacing: 2px; /* Letter spacing to match the picture's look */
   }
   
-  .flex {
-    align-items: center;
-    justify-content: space-around;
-  }
+
   
   
   .testimonial-section {

@@ -22,18 +22,11 @@ function Login({ setIsLogin }) {
       if (response.msg === "Success") {
         setStorageValue('userDetails', response?.result);
         setIsLogin(true);
+        navigate("/dashboard");
       }
     } catch (error) {
       errorLog(error);
     }
-    // if(username=='admin@123gmail.com'){
-    //   localStorage.setItem('userType','admin')
-    //   alert('rrrr')
-    // }
-    // if(username=='gatekeeper@gmail.com'){
-    //   localStorage.setItem('userType','gatekeeper')
-    // }
-    // setIsLogin(true)
   };
 
   return (
