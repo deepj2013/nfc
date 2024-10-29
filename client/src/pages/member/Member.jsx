@@ -12,6 +12,7 @@ import { getMeasurementUnitsServices } from "../../redux/thunk/unitServices";
 import { logger } from "../../utils/Helper";
 import AddMember from "./AddMember";
 import { getMemberCategoryServices } from "../../redux/thunk/vendorServices";
+import { IoMdEye } from "react-icons/io";
 import {
   getDependentListServices,
   getMemberManagementListServices,
@@ -56,6 +57,12 @@ function Member() {
     }
   };
 
+  const [showBalanceForMember, setShowBalanceForMember] = useState(null); // Track the clicked memberId
+
+  const handleToggleBalance = (memberId) => {
+    // Toggle the balance visibility for the specific member row
+    setShowBalanceForMember((prev) => (prev === memberId ? null : memberId));
+  };
   const getDelepentList = async (id) => {
     try {
       let response = await dispatch(getDependentListServices(id)).unwrap();
@@ -120,15 +127,7 @@ function Member() {
                   <table class="table-auto min-w-full rounded-xl">
                     <thead>
                       <tr class="bg-gray-50">
-                        <th class="">
-                          <div class="flex items-center py-5 px-5 ">
-                            <input
-                              type="checkbox"
-                              value=""
-                              class="w-5 h-5 appearance-none border border-gray-300  rounded-md mr-2 hover:border-indigo-500 hover:bg-indigo-100 checked:bg-no-repeat checked:bg-center checked:border-indigo-500 checked:bg-indigo-100"
-                            />
-                          </div>
-                        </th>
+                       
                         <th
                           scope="col"
                           class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
@@ -158,6 +157,13 @@ function Member() {
                           {" "}
                           Address{" "}
                         </th>
+                        <th
+                          scope="col"
+                          class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
+                        >
+                          {" "}
+                          Balance
+                        </th>
 
                         <th
                           scope="col"
@@ -180,15 +186,7 @@ function Member() {
                       {membersList.map((ele, ind) => {
                         return (
                           <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
-                            <td class="">
-                              <div class="flex items-center py-5 px-5 ">
-                                <input
-                                  type="checkbox"
-                                  value=""
-                                  class="w-5 h-5 appearance-none border border-gray-300  rounded-md mr-2 hover:border-indigo-500 hover:bg-indigo-100 checked:bg-no-repeat checked:bg-center checked:border-indigo-500 checked:bg-indigo-100"
-                                />
-                              </div>
-                            </td>
+                          
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               {/* {ind + 1}{" "} */}
                               {ele?.memberId}
@@ -204,7 +202,32 @@ function Member() {
                               {" "}
                               {ele?.address}
                             </td>
+                            <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                              <div className="flex items-center">
+                                {/* Eye icon to toggle the visibility of balance */}
+                                <button
+                                  onClick={() =>
+                                    handleToggleBalance(ele?.memberId)
+                                  }
+                                  className="focus:outline-none"
+                                >
+                                  <IoMdEye className="h-5 w-5 text-gray-600" />
+                                </button>
 
+                                {/* Conditionally render the balance for this specific member */}
+                                {showBalanceForMember === ele?.memberId && (
+                                  <span
+                                    className={`ml-3 px-3 py-1 rounded border ${
+                                      ele?.balance < 0
+                                        ? "border-red-500 bg-red-100 text-red-500" // Red for negative balance
+                                        : "border-green-500 bg-green-100 text-green-500" // Green for positive balance
+                                    }`}
+                                  >
+                                    {ele?.balance}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
                             <td
                               class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900"
                               onClick={() => {

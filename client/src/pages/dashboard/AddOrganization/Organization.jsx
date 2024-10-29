@@ -5,6 +5,7 @@ import { IoSearch } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { organisationListservices } from "../../../redux/thunk/organizationMangementservices";
 import { FaEdit } from "react-icons/fa";
+import logo from "../../../assets/image/logo5.jpg";
 
 function Organization() {
   const [isOpen, setisOpen] = useState(false);
@@ -31,41 +32,63 @@ function Organization() {
                 <table class="table-auto min-w-full rounded-xl">
                   <thead>
                     <tr class="bg-gray-50">
-                      <th
+                      {/* <th
                         scope="col"
                         class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                       >
                         {" "}
                         Organization{" "}
+                      </th> */}
+                      <th
+                        scope="col"
+                        class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                      >
+                        {" "}
+                        Organization Name{" "}
                       </th>
                       <th
                         scope="col"
                         class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                       >
                         {" "}
-                        Organization Id{" "}
+                        Organization LOGO{" "}
                       </th>
                       <th
                         scope="col"
                         class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
                       >
                         {" "}
-                        Adress{" "}
+                        Adress & website{" "}
                       </th>
                       <th
                         scope="col"
                         class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                       >
                         {" "}
-                        Created At{" "}
+                        Contact Number{" "}
                       </th>
                       <th
+                        scope="col"
+                        class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                      >
+                        {" "}
+                        Facilities{" "}
+                      </th>
+                      <th
+                        scope="col"
+                        class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                      >
+                        {" "}
+                        GST / TAN{" "}
+                      </th>
+                    
+                      {/* <th
                         scope="col"
                         class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                       >
                         {" "}
                         Action
-                      </th>
+                      </th> */}
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-gray-300 ">
@@ -75,32 +98,66 @@ function Organization() {
                           <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
                             {ele?.fullName}
                           </td>
-                          <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                            {" "}
-                            {ele?.organizationId}{" "}
-                          </td>
+                          {/* <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
+                            {ele?.name}
+                          </td> */}
                           <td class=" px-5 py-3">
                             <div class="w-48 flex items-center gap-3">
                               <img
-                                src="https://pagedone.io/asset/uploads/1697536419.png"
+                                src={logo}
                                 alt="Floyd image"
+                                height={90}
+                                width={90}
                               />
+                            </div>
+                          </td>
+                          <td class=" px-5 py-3">
+                            <div class="w-48 flex items-center gap-3">
                               <div class="data">
                                 <p class="font-normal text-sm text-gray-900">
-                                  Floyd Miles
+                                  {ele?.address}
                                 </p>
                                 <p class="font-normal text-xs leading-5 text-gray-400">
                                   {" "}
-                                  floydmiles@pagedone.io{" "}
+                                  {ele?.website}
                                 </p>
                               </div>
                             </div>
                           </td>
+
                           <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                             {" "}
-                            Jun. 24, 2023{" "}
+                            {ele?.phone}
                           </td>
-                          <td className="px-5">
+
+                          <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                            <div class="w-48 flex flex-wrap items-center gap-3">
+                              {ele?.facilities?.map((facility, index) => (
+                                <span
+                                  key={index}
+                                  class="px-3 py-1 rounded-full bg-gray-100 text-gray-900 text-sm font-normal"
+                                >
+                                  {facility}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+
+                          <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                            <div class="w-48 flex items-center gap-3">
+                              <div class="data">
+                                <p class="font-normal text-sm text-gray-900">
+                                  {ele?.gst}
+                                </p>
+                                <p class="font-normal text-xs leading-5 text-gray-400">
+                                  {" "}
+                                  {ele?.tan}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* <td className="px-5">
                             <button
                               className="text-theme"
                               onClick={() => {
@@ -110,7 +167,7 @@ function Organization() {
                             >
                               <FaEdit />
                             </button>
-                          </td>
+                          </td> */}
                         </tr>
                       );
                     })}
