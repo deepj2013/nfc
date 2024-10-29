@@ -9,6 +9,8 @@ import {
 import mongoose from "mongoose";
 import CATEGORY_CHARGES  from "../constants/subscriptionCharges.js";
 import ValidatorHelper from "../helpers/validator/validatorHelper.js"
+import MemberCheckInOut from '../models/member_checkinout.js';
+import moment from 'moment';
 
 export const createMemberCategory = async (data) => {
   let sequenceId = 1;
@@ -458,12 +460,77 @@ export const updateDependentStatus = async (dependentId, status) => {
 // Get List of Members
 export const getAllMembers = async () => {
   try {
-    const members = await MemberData.find();
-    return members;
+    const membersWithBalances = await MemberData.aggregate([
+      {
+        $lookup: {
+          from: 'members_wallets', // Replace with your actual wallet collection name if different
+          localField: 'memberId', // The field in the 'MemberData' collection
+          foreignField: 'memberId', // The field in the 'Wallet' collection
+          as: 'walletInfo' // The result will be stored here
+        }
+      },
+      {
+        $unwind: {
+          path: '$walletInfo',
+          preserveNullAndEmptyArrays: true // In case a member has no wallet, preserve the document
+        }
+      },
+      {
+        $addFields: {
+          balance: { $ifNull: ['$walletInfo.balance', 0] } // If no walletInfo is found, set balance to 0
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          memberId: 1,
+          memberCategory: 1,
+          memberType: 1,
+          title: 1,
+          dateOfMembership: 1,
+          firstName: 1,
+          middleName: 1,
+          surname: 1,
+          fatherName: 1,
+          husbandName: 1,
+          spouseName: 1,
+          gender: 1,
+          dateOfBirth: 1,
+          maritalStatus: 1,
+          nationality: 1,
+          bloodGroup: 1,
+          mobileNumber: 1,
+          emailId: 1,
+          phoneNumber: 1,
+          membershipStatus: 1,
+          validUpTo: 1,
+          panNumber: 1,
+          weddingDate: 1,
+          serviceBusinessDetail: 1,
+          occupation: 1,
+          organization: 1,
+          designation: 1,
+          address: 1,
+          emergencyContactName: 1,
+          emergencyContactNumber: 1,
+          emergencyContactRelation: 1,
+          createdBy: 1,
+          updatedBy: 1,
+          dependents: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          balance: 1 // Include the wallet balance
+        }
+      }
+    ]);
+
+    return membersWithBalances;
   } catch (error) {
-    throw new Error("Error fetching members: " + error.message);
+    throw new Error('Error fetching members with balance: ' + error.message);
   }
 };
+
+
 
 // Get Dependent Related to Member
 export const getDependentsByMember = async (memberId) => {
@@ -483,20 +550,25 @@ export const getMemberById = async (memberId) => {
       throw new Error(`Member with ID ${memberId} not found`);
     }
 
-    // Manually fetch the dependents based on the dependentId stored in the member's dependents array
+    // Fetch the dependents based on the dependentId stored in the member's dependents array
     const dependents = await Dependent.find({ dependentId: { $in: member.dependents } });
 
-    // Add the dependents data to the member object
-    const memberWithDependents = {
+    // Fetch the wallet balance based on the memberId
+    const wallet = await Wallet.findOne({ memberId });
+
+    // Add the dependents data and wallet balance to the member object
+    const memberWithDependentsAndBalance = {
       ...member._doc, // Access the member's document data
       dependents, // Include the full dependent data
+      balance: wallet ? wallet.balance : 0, // Add balance if wallet exists, default to 0
     };
 
-    return memberWithDependents;
+    return memberWithDependentsAndBalance;
   } catch (error) {
     throw new Error("Error fetching member: " + error.message);
   }
 };
+
 
 // Deposit in wallet service
 export const depositInWalletService = async (data) => {
@@ -726,4 +798,169 @@ if ( transaction.chequeStatus == 'Cleared' ) {
   }
 
   return { message: `Cheque status updated to ${status}` };
+};
+
+
+// Check-in service
+export const checkInMemberService = async (memberId, createdBy, location) => {
+  // Validate if the member exists
+  const member = await MemberData.findOne({ memberId });
+
+  if (!member) {
+      throw new Error('Invalid memberId: Member does not exist');
+  }
+
+  // Check if the member is already checked in at the same location
+  const existingCheckIn = await MemberCheckInOut.findOne({ memberId: memberId, isCheckedIn: true, location });
+
+  if (existingCheckIn) {
+      throw new Error(`Member is already checked in at location: ${location}`);
+  }
+
+  // If the member is checked in at a different location, treat it as a new check-in
+  const newCheckIn = new MemberCheckInOut({
+      member_id: member._id,  // Use the _id from Member collection
+      memberId,
+      isCheckedIn: true,
+      location,
+      createdBy
+  });
+
+  await newCheckIn.save();
+  return `Member ${memberId} checked in successfully at ${location}`;
+};
+
+// Check-out service
+export const checkOutMemberService = async (memberId, updatedBy, location) => {
+  // Validate if the member exists
+  const member = await MemberData.findOne({ memberId });
+
+  if (!member) {
+      throw new Error('Invalid memberId: Member does not exist');
+  }
+
+  // Check if the member is checked in at the same location
+  const existingCheckIn = await MemberCheckInOut.findOne({ memberId: memberId, isCheckedIn: true, location });
+
+  if (!existingCheckIn) {
+      throw new Error(`Member has not checked in at location: ${location}`);
+  }
+
+  // Calculate total stay time
+  const checkOutTime = new Date();
+  const checkInTime = existingCheckIn.checkInTime;
+  const totalTimeStay = moment(checkOutTime).diff(moment(checkInTime), 'minutes');
+
+  // Update the check-out record
+  existingCheckIn.isCheckedIn = false;
+  existingCheckIn.isCheckedOut = true;
+  existingCheckIn.checkOutTime = checkOutTime;
+  existingCheckIn.totalTimeStay = totalTimeStay;
+  existingCheckIn.updatedBy = updatedBy;
+
+  await existingCheckIn.save();
+
+  return `Member ${memberId} checked out from ${location} successfully. Total stay: ${totalTimeStay} minutes.`;
+};
+
+
+export const getAllHistory = async (page, limit, startDate, endDate) => {
+ 
+  if (limit <= 0 || page <= 0) {
+      throw new Error('Invalid page or limit');
+  }
+
+  // Parse and validate the date filters if provided
+  let start = null;
+  let end = null;
+
+  if (startDate) {
+      try {
+          start = new Date(startDate);
+      } catch (error) {
+          throw new Error('Invalid start date');
+      }
+  }
+
+  if (endDate) {
+      try {
+          end = new Date(endDate);
+      } catch (error) {
+          throw new Error('Invalid end date');
+      }
+  }
+
+  // Create the aggregation pipeline
+  const pipeline = [];
+
+  // Date range filter if startDate or endDate is provided
+  if (start || end) {
+    const dateFilter = {};
+    if (start) {
+        // Ensure `start` is a valid Date object
+        dateFilter.$gte = new Date(start);
+    }
+    if (end) {
+        // Ensure `end` is a valid Date object
+        dateFilter.$lte = new Date(end);
+    }
+    pipeline.unshift({
+        $match: { checkInTime: dateFilter }
+    });
+}
+
+  // Sort the results by checkInTime (newest first)
+  pipeline.push({
+      $sort: { checkInTime: -1 }
+  });
+
+  // Pagination: skip and limit
+  pipeline.push(
+      {
+          $skip: (page - 1) * limit
+      },
+      {
+          $limit: parseInt(limit)
+      }
+  );
+console.log(pipeline)
+  // Count total records
+  const totalPipeline = [...pipeline];
+  totalPipeline.push({
+      $count: 'totalRecords'
+  });
+
+  // Execute both the aggregation and count in parallel for efficiency
+  const [history, total] = await Promise.all([
+      MemberCheckInOut.aggregate(pipeline),
+      MemberCheckInOut.aggregate(totalPipeline)
+  ]);
+
+  const totalRecords = total.length > 0 ? total[0].totalRecords : 0;
+
+  return {
+
+      history,
+      totalRecords,
+      currentPage: page,
+      totalPages: Math.ceil(totalRecords / limit)
+  };
+};
+
+
+// Get history of a single member with pagination
+export const getMemberHistory = async (memberId, page, limit) => {
+    const history = await MemberCheckInOut.find({ memberId })
+        .skip((page - 1) * limit)
+        .limit(parseInt(limit))
+        .sort({ checkInTime: -1 });
+
+    const totalRecords = await MemberCheckInOut.countDocuments({ memberId });
+
+    return {
+        history,
+        totalRecords,
+        currentPage: page,
+        totalPages: Math.ceil(totalRecords / limit)
+    };
 };

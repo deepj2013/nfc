@@ -16,7 +16,11 @@ import {
     depositInWalletController, 
     withdrawFromWalletController, 
     getTransactionHistoryController,
-    updateChequeStatusController
+    updateChequeStatusController,
+    checkInController,
+    checkOutController,
+    getMemberHistoryController,
+    getAllHistoryController
     
 } from "../controllers/memberController.js";
 
@@ -50,6 +54,17 @@ router.post('/member/wallet/withdraw',[auth],  withdrawFromWalletController);
 router.post('/member/wallet/updatechequestatus',[auth],  updateChequeStatusController);
 // Route to get transaction history
 router.get('/member/:memberId/transactions',[auth],  getTransactionHistoryController);
+
+// Check-in route
+router.post('/members/checkin',[auth], checkInController);
+// Check-out route
+router.post('/members/checkout',[auth], checkOutController);
+
+// Get history for all members
+router.get('/membercheck/inouthistory',[auth], getAllHistoryController);
+
+// Get history for a single member
+router.get('/membercheck/history/:memberId',[auth], getMemberHistoryController);
 
 
 export default router;
