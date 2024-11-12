@@ -39,7 +39,7 @@ const DepositModal = ({
   type,
   dropdownData,
 }) => {
-  console.log("ghjkl", dropdownData);
+  
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -62,7 +62,7 @@ const DepositModal = ({
     transactionRef,
     remarks,
   } = formData;
-  console.log("poiuytrewq", formData);
+  
 
   const upadteStateHandler = (e) => {
     let { name, value } = e.target;
@@ -92,7 +92,7 @@ const DepositModal = ({
   };
 
   const handleSelectChange = (e) => {
-    console.log(e.target.value);
+
     setFormData((pre) => ({ ...pre, memberId: e.target.value }));
   };
 

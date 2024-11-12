@@ -76,7 +76,7 @@ export const getMemberManagementListServices = createAsyncThunk(
     try {
       let url = `${BASE_URL}members`;
       const res = await axios.get(url);
-      console.log("poiuytrewq");
+      
       return res.data;
     } catch (error) {
       console.log("0987654321", error);
@@ -93,7 +93,7 @@ export const getDependentListServices = createAsyncThunk(
     try {
       let url = `${BASE_URL}member/${id} `;
       const res = await axios.get(url);
-      console.log("poiuytrewq");
+      
       return res.data;
     } catch (error) {
       console.log("0987654321", error);
@@ -110,7 +110,7 @@ export const addDependentServices = createAsyncThunk(
     try {
       let url = `${BASE_URL}member/${parmas?.id}/dependent`;
       const res = await axios.post(url,parmas?.payload);
-      console.log("poiuytrewq");
+     
       return res.data;
     } catch (error) {
       console.log("0987654321", error);

@@ -30,6 +30,7 @@ const dependentSchema = new Schema({
 // Define Member Schema
 const memberDataSchema = new Schema({
     memberId: { type: String, required: true, unique: true },
+    typeofmember: {type: String, required: true},
     memberCategory: { type: String, required: true },
     memberType: { type: String, required: true }, 
     profilePicture: { type: String},
