@@ -36,7 +36,7 @@ function Member() {
   const getMemberHandler = async () => {
     try {
       let response = await dispatch(getMemberCategoryServices()).unwrap();
-      console.log("refff", response);
+      
     } catch (error) {
       logger(error);
     }
@@ -44,14 +44,14 @@ function Member() {
 
   const getMembersManagementList = async () => {
     try {
-      console.log("qwertyuiop1");
+      
       let response = await dispatch(getMemberManagementListServices()).unwrap();
       const temp = response?.result.map((ele) => ({
         label: ele?.firstName,
         value: ele?.memberId,
       }));
       setDropDownData(temp);
-      console.log(temp, "sss");
+     
     } catch (error) {
       logger(error);
     }
@@ -66,19 +66,19 @@ function Member() {
   const getDelepentList = async (id) => {
     try {
       let response = await dispatch(getDependentListServices(id)).unwrap();
-      console.log(response?.result?.dependents, "ssss");
+     
       setDepositModalOpen(true);
       setDependentsList(response?.result?.dependents);
     } catch (error) {
       console.log(error);
     }
-  };
+  };  
 
   useEffect(() => {
     getMembersManagementList();
   }, []);
 
-  console.log(dependentsList);
+
 
   return (
     <div>
@@ -128,6 +128,13 @@ function Member() {
                     <thead>
                       <tr class="bg-gray-50">
                        
+                      <th
+                          scope="col"
+                          class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                        >
+                          {" "}
+                          S.no{" "}
+                        </th>
                         <th
                           scope="col"
                           class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
@@ -155,13 +162,6 @@ function Member() {
                           class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
                         >
                           {" "}
-                          Address{" "}
-                        </th>
-                        <th
-                          scope="col"
-                          class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
-                        >
-                          {" "}
                           Balance
                         </th>
 
@@ -171,6 +171,14 @@ function Member() {
                         >
                           {" "}
                           Dependents
+                        </th>
+
+                        <th
+                          scope="col"
+                          class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
+                        >
+                          {" "}
+                          Address{" "}
                         </th>
 
                         <th
@@ -187,6 +195,10 @@ function Member() {
                         return (
                           <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
                           
+                          <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                              {ind + 1}{" "}
+                              {/* {ele?.index} */}
+                            </td>
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               {/* {ind + 1}{" "} */}
                               {ele?.memberId}
@@ -198,10 +210,7 @@ function Member() {
                               {" "}
                               {ele?.mobileNumber}
                             </td>
-                            <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                              {" "}
-                              {ele?.address}
-                            </td>
+                           
                             <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               <div className="flex items-center">
                                 {/* Eye icon to toggle the visibility of balance */}
@@ -237,7 +246,10 @@ function Member() {
                               {" "}
                               {ele?.dependents?.length}
                             </td>
-
+                            <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                              {" "}
+                              {ele?.address}
+                            </td>
                             <td class="flex p-5 items-center gap-0.5">
                               <button
                                 class="p-2  rounded-full bg-white group transition-all duration-500 hover:bg-indigo-600 flex item-center"

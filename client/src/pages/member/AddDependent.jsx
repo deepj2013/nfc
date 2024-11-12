@@ -138,7 +138,7 @@ const AddDependent = ({
     setFormData((pre) => ({ ...pre, gender: e.target.value }));
   };
 
-  console.log(errors);
+
 
   return (
     <div

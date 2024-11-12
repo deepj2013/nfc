@@ -8,7 +8,7 @@ function SelectDropdown({
   placeHolder,
   errors,
 }) {
-  console.log(data);
+
   return (
     <div>
       <div className="bg-white flex-col mt-4 mb-5">

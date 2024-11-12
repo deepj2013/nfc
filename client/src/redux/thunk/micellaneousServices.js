@@ -24,7 +24,7 @@ export const getMenuByRoleServices = createAsyncThunk(
   async (payload) => {
     try {
       let userDetails = getStorageValue("userDetails");
-      console.log(userDetails.role_id, "userDetails");
+      
       let url = `${
         userDetails?.role_id == 1 ? BASE_URL_SUPER_ADMIN : BASE_URL
       }getmenubyrole`;
