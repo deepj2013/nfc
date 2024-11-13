@@ -69,6 +69,57 @@ export const createMemberServices = createAsyncThunk(
     }
   }
 );
+export const getMemberService = createAsyncThunk(
+  "getMemberService",
+  async (memberId, { rejectWithValue }) => {
+    try {
+      const url = `${BASE_URL}member/${memberId}`; // URL to fetch member data
+      const res = await axios.get(url);
+      
+      if (res.status === 200) {
+        return res.data; // Return member data if found
+      } else {
+        throw new Error("Member not found");
+      }
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Member not found");
+    }
+  }
+);
+
+export const bulkUploadMemberServices = createAsyncThunk(
+  "bulkUploadMemberServices",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const url = `${BASE_URL}bulk-uploadMember`;
+
+      // Log the payload to verify its content
+      console.log("Payload for bulk upload:", payload);
+
+      const res = await axios.post(url, payload, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Ensure form-data for file upload
+        },
+      });
+
+      // Log the backend response for debugging
+      console.log("Backend response:", res.data);
+
+      return res.data;
+    } catch (error) {
+      // Log the full error response for debugging
+      console.error("Error response from backend:", error.response);
+
+      handleError(error);
+
+      // Log the error message for further inspection
+      console.error("Error message:", error.message);
+
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 
 export const getMemberManagementListServices = createAsyncThunk(
   "getMemberManagementListServices",
@@ -79,7 +130,7 @@ export const getMemberManagementListServices = createAsyncThunk(
       
       return res.data;
     } catch (error) {
-      console.log("0987654321", error);
+      
       handleError(error);
       throw error;
     }
@@ -96,7 +147,7 @@ export const getDependentListServices = createAsyncThunk(
       
       return res.data;
     } catch (error) {
-      console.log("0987654321", error);
+      
       handleError(error);
       throw error;
     }
@@ -109,11 +160,12 @@ export const addDependentServices = createAsyncThunk(
   async (parmas) => {
     try {
       let url = `${BASE_URL}member/${parmas?.id}/dependent`;
+      console.log("dsds", parmas?.payload)
       const res = await axios.post(url,parmas?.payload);
      
       return res.data;
     } catch (error) {
-      console.log("0987654321", error);
+      
       handleError(error);
       throw error;
     }
@@ -181,6 +233,34 @@ export const addDepositServices = createAsyncThunk(
       //   console.log(error);
       handleError(error);
       throw error;
+    }
+  }
+);
+
+export const getTransactionHistoryService = createAsyncThunk(
+  "transactions/getTransactionHistory",
+  async (memberId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${BASE_URL}member/${memberId}/transactions`);
+      return response.data; // Assumes response contains a `transactions` array
+    } catch (error) {
+      handleError(error); // Log or handle error
+      return rejectWithValue(error.response?.data || "Failed to fetch transaction history.");
+    }
+  }
+);
+
+export const updateChequeStatusService = createAsyncThunk(
+  "transactions/updateChequeStatus",
+  async ({ chequeNumber, status }, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(`${BASE_URL}user/member/wallet/updatechequestatus`, {
+        status: status, // Assuming backend accepts chequeStatus as the key
+      });
+      return response.data; // Assumes backend returns updated transaction details
+    } catch (error) {
+      handleError(error); // Log or handle error
+      return rejectWithValue(error.response?.data || "Failed to update cheque status.");
     }
   }
 );

@@ -20,7 +20,9 @@ import {
   checkOutMemberService,
   getMemberHistory,
   getAllHistory,
+  bulkUploadMembers
 } from "../services/memberServices.js";
+
 
 export const createMemberCategoryController = async (req, res) => {
   try {
@@ -71,11 +73,36 @@ export const createMemberController = async (req, res) => {
   }
 };
 
+
+
+export const bulkUploadMembersController = async (req, res) => {
+  try {
+    console.log("i am in bulk upload")
+    const { members } = req.body; // Expecting members array from the CSV parsing
+    if (!members || !Array.isArray(members) || members.length === 0) {
+      return res.status(400).json({ error: 'No valid members found in the uploaded file.' });
+    }
+
+    const result = await bulkUploadMembers(members);
+    res.status(201).json({
+      message: 'Bulk members uploaded successfully',
+      totalUploaded: result.totalUploaded,
+      failedEntries: result.failedEntries,
+    });
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Create Dependent
 export const createDependentController = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await createDependent(id, req.body);
+    const data = req.body;
+    console.log(data, "controller")
+    const result = await createDependent(id, data);
+    
     res.status(201).json({ msg: "Dependent created successfully", result });
   } catch (error) {
     res.status(400).json({ error: error.message });

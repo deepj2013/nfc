@@ -7,10 +7,10 @@ import {
   MemberTransactionHistory,
 } from "../models/member_Model.js";
 import mongoose from "mongoose";
-import CATEGORY_CHARGES  from "../constants/subscriptionCharges.js";
-import ValidatorHelper from "../helpers/validator/validatorHelper.js"
-import MemberCheckInOut from '../models/member_checkinout.js';
-import moment from 'moment';
+import CATEGORY_CHARGES from "../constants/subscriptionCharges.js";
+import ValidatorHelper from "../helpers/validator/validatorHelper.js";
+import MemberCheckInOut from "../models/member_checkinout.js";
+import moment from "moment";
 
 export const createMemberCategory = async (data) => {
   let sequenceId = 1;
@@ -160,8 +160,7 @@ const calculateTotalAmount = (category, months) => {
 };
 
 // Helper function to create a wallet and initial transaction
-const createWalletAndInitialTransaction = async (member, session) => { 
-
+const createWalletAndInitialTransaction = async (member, session) => {
   const { duration, months } = calculateValidUpToAndDuration();
   const {
     totalAmount,
@@ -263,6 +262,114 @@ export const createMember = async (data) => {
   }
 };
 
+// Helper function to validate and correct memberId structure
+const validateMemberIdStructure = async (member) => {
+  const { memberCategory, memberId } = member;
+
+  let expectedPrefix = "";
+  switch (memberCategory) {
+    case "RESIDENT":
+      expectedPrefix = "MM";
+      break;
+    case "ASSOCIATE":
+      expectedPrefix = "MA";
+      break;
+    case "SENIOR_CITIZEN_RESIDENT":
+      expectedPrefix = "MMS";
+      break;
+    case "SENIOR_CITIZEN_ASSOCIATE":
+      expectedPrefix = "MAS";
+      break;
+    case "CORPORATE":
+      expectedPrefix = "MC";
+      break;
+    default:
+      expectedPrefix = "MM"; // Default to RESIDENT if not recognized
+  }
+
+  if (!memberId.startsWith(expectedPrefix)) {
+    throw new Error(
+      `Invalid MemberId format for category ${memberCategory}. Expected prefix: ${expectedPrefix}.`
+    );
+  }
+
+  const existingMember = await MemberData.findOne({ memberId });
+  if (existingMember) {
+    throw new Error(`MemberId ${memberId} already exists.`);
+  }
+};
+
+export const bulkUploadMembers = async (members) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  let totalUploaded = 0;
+  let failedEntries = [];
+
+  try {
+    for (const member of members) {
+      try {
+        // Validate the MemberId structure and uniqueness
+        await validateMemberIdStructure(member);
+
+        // Create a new member entry
+        const newMember = new MemberData(member);
+        const savedMember = await newMember.save({ session });
+
+        // Create Wallet with opening balance
+        const wallet = new Wallet({
+          member_id: savedMember._id,
+          memberId: savedMember.memberId,
+          balance: member.openingBalance || 0, // Opening balance from CSV
+          createdBy: member.createdBy,
+          updatedBy: member.updatedBy,
+        });
+        await wallet.save({ session });
+
+        // Create an initial transaction entry for opening balance
+        const transaction = new MemberTransactionHistory({
+          member_id: savedMember._id,
+          memberId: savedMember.memberId,
+          transactionDate: new Date(),
+          amount: member.openingBalance || 0,
+          transactionType: "Credit",
+          remarks: "Opening Balance Entry",
+          narration: "Initial Wallet Balance",
+          description: "Opening balance added at the time of member creation.",
+          createdBy: member.createdBy,
+          updatedBy: member.updatedBy,
+        });
+        await transaction.save({ session });
+
+        // Add dependent entries if provided
+        if (member.dependents && Array.isArray(member.dependents)) {
+          for (const dependentData of member.dependents) {
+            const newDependent = new Dependent({
+              ...dependentData,
+              member_id: savedMember._id,
+              memberId: savedMember.memberId,
+            });
+            await newDependent.save({ session });
+          }
+        }
+
+        totalUploaded++;
+      } catch (err) {
+        // Collect failed entries for reporting
+        failedEntries.push({ memberId: member.memberId, error: err.message });
+      }
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return { totalUploaded, failedEntries };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new Error("Bulk upload failed: " + error.message);
+  }
+};
 
 export const createDependent = async (memberId, dependentData) => {
   const session = await mongoose.startSession();
@@ -274,26 +381,36 @@ export const createDependent = async (memberId, dependentData) => {
     if (!member) {
       throw new Error("Member not found");
     }
-
+   
     // Validate mobile number length and digits
-    if (!dependentData.mobileNumber || !ValidatorHelper.validateMobile(dependentData.mobileNumber)) {
-      throw new Error("Mobile number must be exactly 10 digits and contain only numbers.");
+    if (
+      !dependentData.mobileNumber ||
+      !ValidatorHelper.validateMobile(dependentData.mobileNumber)
+    ) {
+      throw new Error(
+        "Mobile number must be exactly 10 digits and contain only numbers."
+      );
     }
 
     // Validate email format
-    if (dependentData.emailId && !ValidatorHelper.validateEmail(dependentData.emailId)) {
+    if (
+      dependentData.emailId &&
+      !ValidatorHelper.validateEmail(dependentData.emailId)
+    ) {
       throw new Error("Invalid email address");
     }
 
     // Convert birthDate and currentDate to Unix timestamps
     const currentDateUnix = Math.floor(Date.now() / 1000); // Current date in Unix time (seconds)
-    const birthDateUnix = Math.floor(new Date(dependentData.dateOfBirth).getTime() / 1000); // Birthdate in Unix time (seconds)
-    
+    const birthDateUnix = Math.floor(
+      new Date(dependentData.dateOfBirth).getTime() / 1000
+    ); // Birthdate in Unix time (seconds)
+
     // Calculate 18 years in seconds (18 * 365.25 days * 24 hours * 60 minutes * 60 seconds)
     const eighteenYearsInSeconds = 18 * 365.25 * 24 * 60 * 60;
 
     // Compare the current time with the birth time + 18 years
-    if ((currentDateUnix - birthDateUnix) > eighteenYearsInSeconds) {
+    if (currentDateUnix - birthDateUnix > eighteenYearsInSeconds) {
       throw new Error("Dependent cannot be registered if older than 18 years");
     }
 
@@ -307,8 +424,8 @@ export const createDependent = async (memberId, dependentData) => {
     // Create a new dependent
     const dependent = new Dependent({
       dependentId,
-      member_id: member._id,  // MongoDB ObjectId reference for the member
-      memberId: member.memberId,  // The custom member ID
+      member_id: member._id, // MongoDB ObjectId reference for the member
+      memberId: member.memberId, // The custom member ID
       ...dependentData,
     });
 
@@ -316,7 +433,7 @@ export const createDependent = async (memberId, dependentData) => {
     const savedDependent = await dependent.save({ session });
 
     // Update member with the new dependent ID
-    member.dependents.push(dependentId);  // Use generated dependentId
+    member.dependents.push(dependentId); // Use generated dependentId
     await member.save({ session });
 
     // Commit the transaction
@@ -331,7 +448,6 @@ export const createDependent = async (memberId, dependentData) => {
     throw new Error("Error creating dependent: " + error.message);
   }
 };
-
 
 // Update Member
 export const updateMember = async (id, data) => {
@@ -353,8 +469,6 @@ export const updateMember = async (id, data) => {
   }
 };
 
-
-
 // Update Dependent
 export const updateDependent = async (dependentId, data) => {
   try {
@@ -365,8 +479,13 @@ export const updateDependent = async (dependentId, data) => {
     }
 
     // Validate mobile number if provided
-    if (data.mobileNumber && !ValidatorHelper.validateMobile(data.mobileNumber)) {
-      throw new Error("Mobile number must be exactly 10 digits and contain only numbers.");
+    if (
+      data.mobileNumber &&
+      !ValidatorHelper.validateMobile(data.mobileNumber)
+    ) {
+      throw new Error(
+        "Mobile number must be exactly 10 digits and contain only numbers."
+      );
     }
 
     // Validate email if provided
@@ -376,22 +495,25 @@ export const updateDependent = async (dependentId, data) => {
 
     // Validate age based on dateOfBirth if provided (age should be <= 18)
     if (data.dateOfBirth) {
-      let birthDate = data.dateOfBirth
+      let birthDate = data.dateOfBirth;
       if (isNaN(new Date(birthDate).getTime())) {
-        throw new Error("Invalid date format. Expected format is 'dd-mm-yyyy'.");
+        throw new Error(
+          "Invalid date format. Expected format is 'dd-mm-yyyy'."
+        );
       }
 
       // Convert birthDate and currentDate to Unix timestamps
       const currentDateUnix = Math.floor(Date.now() / 1000); // Current date in Unix time (seconds)
       const birthDateUnix = Math.floor(new Date(birthDate).getTime() / 1000); // Birthdate in Unix time (seconds)
-     
-      
+
       // Calculate 18 years in seconds (18 * 365.25 days * 24 hours * 60 minutes * 60 seconds)
       const eighteenYearsInSeconds = 18 * 365.25 * 24 * 60 * 60;
 
       // Compare the current time with the birth time + 18 years
-      if ((currentDateUnix - birthDateUnix) > eighteenYearsInSeconds) {
-        throw new Error("Dependent cannot be registered if older than 18 years.");
+      if (currentDateUnix - birthDateUnix > eighteenYearsInSeconds) {
+        throw new Error(
+          "Dependent cannot be registered if older than 18 years."
+        );
       }
 
       // Store the dateOfBirth as a Unix timestamp in the data object
@@ -421,14 +543,14 @@ export const updateMemberStatus = async (id, data) => {
     let status = data.status;
     let updateBy = data.updateBy;
     const updateMember = await MemberData.findOneAndUpdate(
-      { memberId: String(id) },  // Condition to match the memberId
-      { 
-        $set: { 
-          membershipStatus: status,  // Update membership status
-          updatedBy: updateBy        // Update the updatedBy field
-        } 
+      { memberId: String(id) }, // Condition to match the memberId
+      {
+        $set: {
+          membershipStatus: status, // Update membership status
+          updatedBy: updateBy, // Update the updatedBy field
+        },
       },
-      { new: true }  // This ensures the updated document is returned
+      { new: true } // This ensures the updated document is returned
     );
 
     if (!updateMember) {
@@ -440,8 +562,6 @@ export const updateMemberStatus = async (id, data) => {
     throw new Error("Error updating member status: " + error.message);
   }
 };
-
-
 
 // Update Dependent Status
 export const updateDependentStatus = async (dependentId, status) => {
@@ -463,22 +583,22 @@ export const getAllMembers = async () => {
     const membersWithBalances = await MemberData.aggregate([
       {
         $lookup: {
-          from: 'members_wallets', // Replace with your actual wallet collection name if different
-          localField: 'memberId', // The field in the 'MemberData' collection
-          foreignField: 'memberId', // The field in the 'Wallet' collection
-          as: 'walletInfo' // The result will be stored here
-        }
+          from: "members_wallets", // Replace with your actual wallet collection name if different
+          localField: "memberId", // The field in the 'MemberData' collection
+          foreignField: "memberId", // The field in the 'Wallet' collection
+          as: "walletInfo", // The result will be stored here
+        },
       },
       {
         $unwind: {
-          path: '$walletInfo',
-          preserveNullAndEmptyArrays: true // In case a member has no wallet, preserve the document
-        }
+          path: "$walletInfo",
+          preserveNullAndEmptyArrays: true, // In case a member has no wallet, preserve the document
+        },
       },
       {
         $addFields: {
-          balance: { $ifNull: ['$walletInfo.balance', 0] } // If no walletInfo is found, set balance to 0
-        }
+          balance: { $ifNull: ["$walletInfo.balance", 0] }, // If no walletInfo is found, set balance to 0
+        },
       },
       {
         $project: {
@@ -519,18 +639,16 @@ export const getAllMembers = async () => {
           dependents: 1,
           createdAt: 1,
           updatedAt: 1,
-          balance: 1 // Include the wallet balance
-        }
-      }
+          balance: 1, // Include the wallet balance
+        },
+      },
     ]);
 
     return membersWithBalances;
   } catch (error) {
-    throw new Error('Error fetching members with balance: ' + error.message);
+    throw new Error("Error fetching members with balance: " + error.message);
   }
 };
-
-
 
 // Get Dependent Related to Member
 export const getDependentsByMember = async (memberId) => {
@@ -551,7 +669,9 @@ export const getMemberById = async (memberId) => {
     }
 
     // Fetch the dependents based on the dependentId stored in the member's dependents array
-    const dependents = await Dependent.find({ dependentId: { $in: member.dependents } });
+    const dependents = await Dependent.find({
+      dependentId: { $in: member.dependents },
+    });
 
     // Fetch the wallet balance based on the memberId
     const wallet = await Wallet.findOne({ memberId });
@@ -569,85 +689,105 @@ export const getMemberById = async (memberId) => {
   }
 };
 
-
 // Deposit in wallet service
 export const depositInWalletService = async (data) => {
-  let { memberId, amount, depositType, modeOfTransaction, transactionRef, chequeNumber, bankName, branchName,remarks } = data;
+  let {
+    memberId,
+    amount,
+    depositType,
+    modeOfTransaction,
+    transactionRef,
+    chequeNumber,
+    bankName,
+    branchName,
+    remarks,
+  } = data;
 
   // Validate required fields
   if (!memberId || !amount || !depositType || !modeOfTransaction) {
-      throw new Error('Missing required fields: memberId, amount, depositType, or modeOfTransaction');
+    throw new Error(
+      "Missing required fields: memberId, amount, depositType, or modeOfTransaction"
+    );
   }
 
   if (amount <= 0) {
-      throw new Error('Deposit amount must be greater than zero');
+    throw new Error("Deposit amount must be greater than zero");
   }
 
   // Find the member's wallet
   const wallet = await Wallet.findOne({ memberId });
   if (!wallet) {
-      throw new Error('Member wallet not found');
+    throw new Error("Member wallet not found");
   }
-  
+
   let transactionData = {
     memberId,
     member_id: wallet.member_id,
     amount,
-    transactionType: 'Credit',
+    transactionType: "Credit",
     remarks: `${remarks} `,
     modeOfTransaction,
     description: `Deposit of ${amount}, through ${modeOfTransaction} against ${depositType}`,
-    narration: `${depositType}`
-};
+    narration: `${depositType}`,
+  };
   // Check for duplicate transactions based on transactionRef, chequeNumber, or amount
   let duplicateTransaction = null;
   switch (modeOfTransaction) {
-      case 'Cash':
-          // Cash transactions might not need a duplicate check, since they don't rely on external references
-          break;
+    case "Cash":
+      // Cash transactions might not need a duplicate check, since they don't rely on external references
+      break;
 
-      case 'UPI':
-          if (!transactionRef) {
-              throw new Error('UPI transaction reference is required');
-          }
-          // Check if a transaction with the same reference already exists
-          duplicateTransaction = await MemberTransactionHistory.findOne({ transactionRef, memberId });
-          if (duplicateTransaction) {
-              throw new Error('Duplicate transaction detected for UPI reference');
-          }
-          transactionData.transactionRef =transactionRef
-          break;
+    case "UPI":
+      if (!transactionRef) {
+        throw new Error("UPI transaction reference is required");
+      }
+      // Check if a transaction with the same reference already exists
+      duplicateTransaction = await MemberTransactionHistory.findOne({
+        transactionRef,
+        memberId,
+      });
+      if (duplicateTransaction) {
+        throw new Error("Duplicate transaction detected for UPI reference");
+      }
+      transactionData.transactionRef = transactionRef;
+      break;
 
-      case 'NEFT':
-          if (!transactionRef) {
-              throw new Error('NEFT transaction reference is required');
-          }
-          // Check if a transaction with the same NEFT reference already exists
-          duplicateTransaction = await MemberTransactionHistory.findOne({ transactionRef, memberId });
-          if (duplicateTransaction) {
-              throw new Error('Duplicate transaction detected for NEFT reference');
-          }
-          transactionData.transactionRef = transactionRef
-          break;
+    case "NEFT":
+      if (!transactionRef) {
+        throw new Error("NEFT transaction reference is required");
+      }
+       // Check if a transaction with the same reference already exists
+      duplicateTransaction = await MemberTransactionHistory.findOne({
+        transactionRef,
+        memberId,
+      });
+      if (duplicateTransaction) {
+        throw new Error("Duplicate transaction detected for NEFT reference");
+      }
+      transactionData.transactionRef = transactionRef;
+      break;
 
-      case 'Cheque':
-          if (!chequeNumber || !bankName || !branchName) {
-              throw new Error('Cheque details are required');
-          }
-          // Check if a transaction with the same cheque number and memberId already exists
-          duplicateTransaction = await MemberTransactionHistory.findOne({ chequeNumber, memberId });
-          if (duplicateTransaction) {
-              throw new Error('Duplicate cheque transaction detected');
-          }
-          transactionData.chequeNumber = chequeNumber;
-          transactionData.bankName = bankName;
-          transactionData.branchName = branchName;
-          transactionData.chequeStatus = 'Pending'; // Initially set cheque status to "Pending"
-          // Do NOT update wallet balance yet, wait for cheque clearance
-          break;
+    case "Cheque":
+      if (!chequeNumber || !bankName || !branchName) {
+        throw new Error("Cheque details are required");
+      }
+      // Check if a transaction with the same cheque number and memberId already exists
+      duplicateTransaction = await MemberTransactionHistory.findOne({
+        chequeNumber,
+        memberId,
+      });
+      if (duplicateTransaction) {
+        throw new Error("Duplicate cheque transaction detected");
+      }
+      transactionData.chequeNumber = chequeNumber;
+      transactionData.bankName = bankName;
+      transactionData.branchName = branchName;
+      transactionData.chequeStatus = "Pending"; // Initially set cheque status to "Pending"
+      // Do NOT update wallet balance yet, wait for cheque clearance
+      break;
 
-      default:
-          throw new Error('Invalid mode of transaction');
+    default:
+      throw new Error("Invalid mode of transaction");
   }
 
   // Save the transaction first
@@ -655,9 +795,9 @@ export const depositInWalletService = async (data) => {
   await transaction.save();
 
   // Now, update the wallet balance for non-cheque transactions
-  if (modeOfTransaction !== 'Cheque') {
-      wallet.balance += amount;
-      await wallet.save();
+  if (modeOfTransaction !== "Cheque") {
+    wallet.balance += amount;
+    await wallet.save();
   }
 
   return { updatedBalance: wallet.balance, transactionId: transaction._id };
@@ -665,46 +805,54 @@ export const depositInWalletService = async (data) => {
 
 // Withdraw from wallet service
 export const withdrawFromWalletService = async (data) => {
-let {memberId, amount, withdrawFor, modeOfTransaction, remarks, invoiceNumber, transactionRef} = data
+  let {
+    memberId,
+    amount,
+    withdrawFor,
+    modeOfTransaction,
+    remarks,
+    invoiceNumber,
+    transactionRef,
+  } = data;
 
   if (!memberId || !amount) {
-      throw new Error('Missing required fields: memberId or amount');
+    throw new Error("Missing required fields: memberId or amount");
   }
   if (amount <= 0) {
-      throw new Error('Withdrawal amount must be greater than zero');
+    throw new Error("Withdrawal amount must be greater than zero");
   }
 
   const wallet = await Wallet.findOne({ memberId });
   if (!wallet) {
-      throw new Error('Member wallet not found');
+    throw new Error("Member wallet not found");
   }
   if (wallet.balance < amount) {
-      throw new Error('Insufficient balance in wallet');
+    throw new Error("Insufficient balance in wallet");
   }
 
   // Update wallet balance
   wallet.balance -= amount;
   await wallet.save();
 
-//   const invoiceUrl = await invoiceGenerator({
-//     memberId,
-//    invoiceNumber
-// });
- const invoiceUrl = null;
+  //   const invoiceUrl = await invoiceGenerator({
+  //     memberId,
+  //    invoiceNumber
+  // });
+  const invoiceUrl = null;
 
   // Log the transaction in member history
   const transaction = new MemberTransactionHistory({
-      memberId,
-      member_id: wallet.member_id,
-      transactionDate: Date.now(),
-      amount,
-      transactionType: 'Debit',
-      modeOfTransaction: `${modeOfTransaction}`,
-      transactionRef,
-      remarks: `${remarks}`,
-      description: `Withdrawal of ${amount} , at ${withdrawFor}`,
-      narration: `${withdrawFor}`,
-      supportDocuments: invoiceNumber
+    memberId,
+    member_id: wallet.member_id,
+    transactionDate: Date.now(),
+    amount,
+    transactionType: "Debit",
+    modeOfTransaction: `${modeOfTransaction}`,
+    transactionRef,
+    remarks: `${remarks}`,
+    description: `Withdrawal of ${amount} , at ${withdrawFor}`,
+    narration: `${withdrawFor}`,
+    supportDocuments: invoiceNumber,
   });
 
   await transaction.save();
@@ -715,91 +863,98 @@ let {memberId, amount, withdrawFor, modeOfTransaction, remarks, invoiceNumber, t
 // Get transaction history service
 export const getTransactionHistoryService = async (memberId) => {
   if (!memberId) {
-      throw new Error('Missing required field: memberId');
+    throw new Error("Missing required field: memberId");
   }
-  const member = await MemberData.findOne({memberId: memberId});
+  const member = await MemberData.findOne({ memberId: memberId });
   if (!member) {
-      throw new Error('Member not found with id : ' + memberId);
+    throw new Error("Member not found with id : " + memberId);
   }
   if (!memberId) {
-    throw new Error('Missing required field: memberId');
-}
+    throw new Error("Missing required field: memberId");
+  }
 
-  const transactions = await MemberTransactionHistory.find({ memberId }).sort({ transactionDate: -1 });
+  const transactions = await MemberTransactionHistory.find({ memberId }).sort({
+    transactionDate: -1,
+  });
   if (!transactions || transactions.length === 0) {
-      throw new Error('No transaction history found for this member');
+    throw new Error("No transaction history found for this member");
   }
 
   return transactions;
 };
 
 export const updateChequeStatusService = async (chequeNumber, status) => {
-  const validStatuses = ['Pending', 'Cleared', 'Bounced'];
+  const validStatuses = ["Pending", "Cleared", "Bounced"];
 
   if (!validStatuses.includes(status)) {
-      throw new Error('Invalid cheque status');
+    throw new Error("Invalid cheque status");
   }
 
   // Find the cheque transaction
   const transaction = await MemberTransactionHistory.findOne({ chequeNumber });
-  if (!transaction || transaction.modeOfTransaction !== 'Cheque') {
-      throw new Error('Cheque transaction not found');
+  if (!transaction || transaction.modeOfTransaction !== "Cheque") {
+    throw new Error("Cheque transaction not found");
   }
 
-if ( transaction.chequeStatus == 'Cleared' ) {
-      throw new Error('Cheque is already cleared and deposited');
+  if (transaction.chequeStatus == "Cleared") {
+    throw new Error("Cheque is already cleared and deposited");
   }
   // Update cheque status
   transaction.chequeStatus = status;
   await transaction.save();
 
   // Handle cheque clearance
-  if (status === 'Cleared') {
-      const wallet = await Wallet.findOne({ memberId: transaction.memberId });
-      if (!wallet) {
-          throw new Error('Member wallet not found');
-      }
+  if (status === "Cleared") {
+    const wallet = await Wallet.findOne({ memberId: transaction.memberId });
+    if (!wallet) {
+      throw new Error("Member wallet not found");
+    }
 
-      // Add the cheque amount to the wallet
-      wallet.balance += transaction.amount;
-      await wallet.save();
+    // Add the cheque amount to the wallet
+    wallet.balance += transaction.amount;
+    await wallet.save();
 
-      return { message: 'Cheque cleared and wallet balance updated', updatedBalance: wallet.balance };
-  } 
-  
+    return {
+      message: "Cheque cleared and wallet balance updated",
+      updatedBalance: wallet.balance,
+    };
+  }
+
   // Handle cheque bounce
-  else if (status === 'Bounced') {
-      const bounceCharge = 650; // Bounce penalty
-      const wallet = await Wallet.findOne({ memberId: transaction.memberId });
-      if (!wallet) {
-          throw new Error('Member wallet not found');
-      }
+  else if (status === "Bounced") {
+    const bounceCharge = 650; // Bounce penalty
+    const wallet = await Wallet.findOne({ memberId: transaction.memberId });
+    if (!wallet) {
+      throw new Error("Member wallet not found");
+    }
 
-      // Deduct the bounce charge, allow negative balance
-      wallet.balance -= bounceCharge;
-      await wallet.save();
+    // Deduct the bounce charge, allow negative balance
+    wallet.balance -= bounceCharge;
+    await wallet.save();
 
-      // Log the bounce penalty in the transaction history
-      const penaltyTransaction = new MemberTransactionHistory({
-          memberId: transaction.memberId,
-          member_id: transaction.member_id,
-          transactionDate: Date.now(),
-          amount: bounceCharge,
-          transactionType: 'Debit',
-          modeOfTransaction: 'Penalty',
-          remarks: 'Cheque Bounce Penalty',
-          description: `Penalty for cheque bounce of ₹${bounceCharge}`,
-          narration: 'Bounce penalty applied',
-          supportDocuments: null  // Optional, as no documents are needed for penalty
-      });
-      await penaltyTransaction.save();
+    // Log the bounce penalty in the transaction history
+    const penaltyTransaction = new MemberTransactionHistory({
+      memberId: transaction.memberId,
+      member_id: transaction.member_id,
+      transactionDate: Date.now(),
+      amount: bounceCharge,
+      transactionType: "Debit",
+      modeOfTransaction: "Penalty",
+      remarks: "Cheque Bounce Penalty",
+      description: `Penalty for cheque bounce of ₹${bounceCharge}`,
+      narration: "Bounce penalty applied",
+      supportDocuments: null, // Optional, as no documents are needed for penalty
+    });
+    await penaltyTransaction.save();
 
-      return { message: 'Cheque bounced, penalty applied, and wallet balance updated', updatedBalance: wallet.balance };
+    return {
+      message: "Cheque bounced, penalty applied, and wallet balance updated",
+      updatedBalance: wallet.balance,
+    };
   }
 
   return { message: `Cheque status updated to ${status}` };
 };
-
 
 // Check-in service
 export const checkInMemberService = async (memberId, createdBy, location) => {
@@ -807,23 +962,27 @@ export const checkInMemberService = async (memberId, createdBy, location) => {
   const member = await MemberData.findOne({ memberId });
 
   if (!member) {
-      throw new Error('Invalid memberId: Member does not exist');
+    throw new Error("Invalid memberId: Member does not exist");
   }
 
   // Check if the member is already checked in at the same location
-  const existingCheckIn = await MemberCheckInOut.findOne({ memberId: memberId, isCheckedIn: true, location });
+  const existingCheckIn = await MemberCheckInOut.findOne({
+    memberId: memberId,
+    isCheckedIn: true,
+    location,
+  });
 
   if (existingCheckIn) {
-      throw new Error(`Member is already checked in at location: ${location}`);
+    throw new Error(`Member is already checked in at location: ${location}`);
   }
 
   // If the member is checked in at a different location, treat it as a new check-in
   const newCheckIn = new MemberCheckInOut({
-      member_id: member._id,  // Use the _id from Member collection
-      memberId,
-      isCheckedIn: true,
-      location,
-      createdBy
+    member_id: member._id, // Use the _id from Member collection
+    memberId,
+    isCheckedIn: true,
+    location,
+    createdBy,
   });
 
   await newCheckIn.save();
@@ -836,20 +995,27 @@ export const checkOutMemberService = async (memberId, updatedBy, location) => {
   const member = await MemberData.findOne({ memberId });
 
   if (!member) {
-      throw new Error('Invalid memberId: Member does not exist');
+    throw new Error("Invalid memberId: Member does not exist");
   }
 
   // Check if the member is checked in at the same location
-  const existingCheckIn = await MemberCheckInOut.findOne({ memberId: memberId, isCheckedIn: true, location });
+  const existingCheckIn = await MemberCheckInOut.findOne({
+    memberId: memberId,
+    isCheckedIn: true,
+    location,
+  });
 
   if (!existingCheckIn) {
-      throw new Error(`Member has not checked in at location: ${location}`);
+    throw new Error(`Member has not checked in at location: ${location}`);
   }
 
   // Calculate total stay time
   const checkOutTime = new Date();
   const checkInTime = existingCheckIn.checkInTime;
-  const totalTimeStay = moment(checkOutTime).diff(moment(checkInTime), 'minutes');
+  const totalTimeStay = moment(checkOutTime).diff(
+    moment(checkInTime),
+    "minutes"
+  );
 
   // Update the check-out record
   existingCheckIn.isCheckedIn = false;
@@ -863,11 +1029,9 @@ export const checkOutMemberService = async (memberId, updatedBy, location) => {
   return `Member ${memberId} checked out from ${location} successfully. Total stay: ${totalTimeStay} minutes.`;
 };
 
-
 export const getAllHistory = async (page, limit, startDate, endDate) => {
- 
   if (limit <= 0 || page <= 0) {
-      throw new Error('Invalid page or limit');
+    throw new Error("Invalid page or limit");
   }
 
   // Parse and validate the date filters if provided
@@ -875,19 +1039,19 @@ export const getAllHistory = async (page, limit, startDate, endDate) => {
   let end = null;
 
   if (startDate) {
-      try {
-          start = new Date(startDate);
-      } catch (error) {
-          throw new Error('Invalid start date');
-      }
+    try {
+      start = new Date(startDate);
+    } catch (error) {
+      throw new Error("Invalid start date");
+    }
   }
 
   if (endDate) {
-      try {
-          end = new Date(endDate);
-      } catch (error) {
-          throw new Error('Invalid end date');
-      }
+    try {
+      end = new Date(endDate);
+    } catch (error) {
+      throw new Error("Invalid end date");
+    }
   }
 
   // Create the aggregation pipeline
@@ -897,70 +1061,68 @@ export const getAllHistory = async (page, limit, startDate, endDate) => {
   if (start || end) {
     const dateFilter = {};
     if (start) {
-        // Ensure `start` is a valid Date object
-        dateFilter.$gte = new Date(start);
+      // Ensure `start` is a valid Date object
+      dateFilter.$gte = new Date(start);
     }
     if (end) {
-        // Ensure `end` is a valid Date object
-        dateFilter.$lte = new Date(end);
+      // Ensure `end` is a valid Date object
+      dateFilter.$lte = new Date(end);
     }
     pipeline.unshift({
-        $match: { checkInTime: dateFilter }
+      $match: { checkInTime: dateFilter },
     });
-}
+  }
 
   // Sort the results by checkInTime (newest first)
   pipeline.push({
-      $sort: { checkInTime: -1 }
+    $sort: { checkInTime: -1 },
   });
 
   // Pagination: skip and limit
   pipeline.push(
-      {
-          $skip: (page - 1) * limit
-      },
-      {
-          $limit: parseInt(limit)
-      }
+    {
+      $skip: (page - 1) * limit,
+    },
+    {
+      $limit: parseInt(limit),
+    }
   );
-console.log(pipeline)
+  console.log(pipeline);
   // Count total records
   const totalPipeline = [...pipeline];
   totalPipeline.push({
-      $count: 'totalRecords'
+    $count: "totalRecords",
   });
 
   // Execute both the aggregation and count in parallel for efficiency
   const [history, total] = await Promise.all([
-      MemberCheckInOut.aggregate(pipeline),
-      MemberCheckInOut.aggregate(totalPipeline)
+    MemberCheckInOut.aggregate(pipeline),
+    MemberCheckInOut.aggregate(totalPipeline),
   ]);
 
   const totalRecords = total.length > 0 ? total[0].totalRecords : 0;
 
   return {
-
-      history,
-      totalRecords,
-      currentPage: page,
-      totalPages: Math.ceil(totalRecords / limit)
+    history,
+    totalRecords,
+    currentPage: page,
+    totalPages: Math.ceil(totalRecords / limit),
   };
 };
 
-
 // Get history of a single member with pagination
 export const getMemberHistory = async (memberId, page, limit) => {
-    const history = await MemberCheckInOut.find({ memberId })
-        .skip((page - 1) * limit)
-        .limit(parseInt(limit))
-        .sort({ checkInTime: -1 });
+  const history = await MemberCheckInOut.find({ memberId })
+    .skip((page - 1) * limit)
+    .limit(parseInt(limit))
+    .sort({ checkInTime: -1 });
 
-    const totalRecords = await MemberCheckInOut.countDocuments({ memberId });
+  const totalRecords = await MemberCheckInOut.countDocuments({ memberId });
 
-    return {
-        history,
-        totalRecords,
-        currentPage: page,
-        totalPages: Math.ceil(totalRecords / limit)
-    };
+  return {
+    history,
+    totalRecords,
+    currentPage: page,
+    totalPages: Math.ceil(totalRecords / limit),
+  };
 };

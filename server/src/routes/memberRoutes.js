@@ -20,9 +20,11 @@ import {
     checkInController,
     checkOutController,
     getMemberHistoryController,
-    getAllHistoryController
+    getAllHistoryController,
+    bulkUploadMembersController
     
 } from "../controllers/memberController.js";
+
 
 const router = express.Router();
 
@@ -41,6 +43,7 @@ router.put("/member/:id", [auth], updateMemberController);
 router.patch("/member/:id/status", [auth], updateMemberStatusController);
 router.get("/members", [auth], getAllMembersController);
 router.get("/member/:memberId", [auth], getMemberByIdController);
+router.post('/bulk-uploadMember', bulkUploadMembersController);
 
 // Dependent Routes
 router.post("/member/:id/dependent", [auth], createDependentController);
