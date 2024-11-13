@@ -22,7 +22,7 @@ import BulkUploadMembers from "../pages/member/BulkUploadMembers"; // Bulk Uploa
 import FacilityManagement from "../pages/facilityManagement/FacilityManagement";
 import TransactionHistory from "../pages/member/TransactionHistory";
 import MemberCheckInCheckOut from "../pages/member/MemberCheckInCheckOut";
-import EventBooking from "../pages/member/Eventbooking";
+import EventBooking from "../pages/member/EventBooking";
 
 function DashboardRoutes() {
   const [open, setOpen] = useState(true);
