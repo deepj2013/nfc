@@ -18,7 +18,9 @@ import AddMember from "../pages/member/AddMember";
 import MenuCreationList from "../pages/superAdmin/MenuCreationList";
 import MenuCreation from "../pages/superAdmin/MenuCreation";
 import CreateMember from "../pages/member/CreateMember";
+import BulkUploadMembers from "../pages/member/BulkUploadMembers"; // Bulk Upload Page
 import FacilityManagement from "../pages/facilityManagement/FacilityManagement";
+import TransactionHistory from "../pages/member/TransactionHistory";
 
 function DashboardRoutes() {
   const [open, setOpen] = useState(true);
@@ -46,6 +48,9 @@ function DashboardRoutes() {
             <Route path="/menu-creation-list" element={<MenuCreationList />} />
             <Route path="/menu-creation" element={<MenuCreation />} />
             <Route path="/create-member" element={<CreateMember />} />
+            <Route path="/bulk-upload-members" element={<BulkUploadMembers />} />
+            <Route path="/transactionHistory" element={<TransactionHistory />} />
+
             <Route
               path="/facilitymanagement"
               element={<FacilityManagement />}
