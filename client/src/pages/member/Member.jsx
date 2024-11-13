@@ -155,20 +155,8 @@ function Member() {
                           {" "}
                           Member Id{" "}
                         </th>
-                        <th
-                          scope="col"
-                          class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
-                        >
-                          {" "}
-                          Name{" "}
-                        </th>
-                        <th
-                          scope="col"
-                          class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
-                        >
-                          {" "}
-                          Phone{" "}
-                        </th>
+                        <th scope="col" class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"> Full Name &amp; Contact </th>
+                       
 
                         <th
                           scope="col"
@@ -214,13 +202,19 @@ function Member() {
                               {/* {ind + 1}{" "} */}
                               {ele?.memberId}
                             </td>
-                            <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
-                              {`${ele?.firstName} ${ele?.middleName} ${ele?.surname}`}
-                            </td>
-                            <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                              {" "}
-                              {ele?.mobileNumber}
-                            </td>
+                            
+                            <td class=" px-5 py-3">
+                                                        <div class="w-48 flex items-center gap-3">
+                                                            <img src="https://pagedone.io/asset/uploads/1697536419.png" alt="Floyd image" />
+                                                            <div class="data">
+                                                                <p class="font-normal text-sm text-gray-900">  {`${ele?.firstName} ${ele?.middleName} ${ele?.surname}`}</p>
+                                                                <p class="font-normal text-xs leading-5 text-gray-400"> {ele?.mobileNumber} </p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+
+                           
 
                             <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               <div className="flex items-center">
