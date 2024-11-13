@@ -13,6 +13,8 @@ import { logger } from "../../utils/Helper";
 import AddMember from "./AddMember";
 import { getMemberCategoryServices } from "../../redux/thunk/vendorServices";
 import { IoMdEye } from "react-icons/io";
+import { FaUsersGear } from "react-icons/fa6";
+
 import {
   getDependentListServices,
   getMemberManagementListServices,
@@ -36,7 +38,6 @@ function Member() {
   const getMemberHandler = async () => {
     try {
       let response = await dispatch(getMemberCategoryServices()).unwrap();
-      
     } catch (error) {
       logger(error);
     }
@@ -44,14 +45,12 @@ function Member() {
 
   const getMembersManagementList = async () => {
     try {
-      
       let response = await dispatch(getMemberManagementListServices()).unwrap();
       const temp = response?.result.map((ele) => ({
         label: ele?.firstName,
         value: ele?.memberId,
       }));
       setDropDownData(temp);
-     
     } catch (error) {
       logger(error);
     }
@@ -66,19 +65,17 @@ function Member() {
   const getDelepentList = async (id) => {
     try {
       let response = await dispatch(getDependentListServices(id)).unwrap();
-     
+
       setDepositModalOpen(true);
       setDependentsList(response?.result?.dependents);
     } catch (error) {
       console.log(error);
     }
-  };  
+  };
 
   useEffect(() => {
     getMembersManagementList();
   }, []);
-
-
 
   return (
     <div>
@@ -106,13 +103,30 @@ function Member() {
               name={"Deposit"}
             />
           </div>
+          <Button
+          style={"bg-purple-500"}
+              onClick={() => {
+                navigate("/transactionHistory");
+              }}
+            
+              name={"Transaction History"}
+            />
           <div className="flex gap-4">
             <Button
               onClick={() => {
                 navigate("/create-member");
               }}
-              rigntIcon={<IoAddCircleSharp className="text-2xl" />}
+              
               name={"Add Member"}
+            />
+          </div>
+          <div className="flex gap-4">
+            <Button
+              onClick={() => {
+                navigate("/bulk-upload-members"); // Route to bulk upload page
+              }}
+            
+              name={"Bulk Upload Members"}
             />
           </div>
         </div>
@@ -127,8 +141,7 @@ function Member() {
                   <table class="table-auto min-w-full rounded-xl">
                     <thead>
                       <tr class="bg-gray-50">
-                       
-                      <th
+                        <th
                           scope="col"
                           class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                         >
@@ -194,10 +207,8 @@ function Member() {
                       {membersList.map((ele, ind) => {
                         return (
                           <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
-                          
-                          <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                              {ind + 1}{" "}
-                              {/* {ele?.index} */}
+                            <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                              {ind + 1} {/* {ele?.index} */}
                             </td>
                             <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               {/* {ind + 1}{" "} */}
@@ -210,7 +221,7 @@ function Member() {
                               {" "}
                               {ele?.mobileNumber}
                             </td>
-                           
+
                             <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               <div className="flex items-center">
                                 {/* Eye icon to toggle the visibility of balance */}

@@ -1,14 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getMeasurementUnitsServices } from "../thunk/unitServices";
-import {
-  getAllVendorsServices,
-  getMemberCategoryServices,
-} from "../thunk/vendorServices";
-import { getAllProductListServices } from "../thunk/productServices";
 import {
   employeeListServices,
   getMemberManagementListServices,
   roleListServices,
+  bulkUploadMemberServices,
 } from "../thunk/useMangementServices";
 
 const initialState = {
@@ -16,62 +11,78 @@ const initialState = {
   employees: [],
   roleList: [],
   membersList: [],
+  bulkUploadStatus: "idle",
+  bulkUploadResult: null,
+  bulkUploadError: null,
+  error: null,
 };
 
-const inventarySlice = createSlice({
-  name: "INVENTARY_SLICE",
+const userManagementSlice = createSlice({
+  name: "userManagement",
   initialState,
+  reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(employeeListServices.pending, (state) => {
-      return { ...state, loading: true };
-    });
-    builder.addCase(employeeListServices.fulfilled, (state, action) => {
-      return {
-        ...state,
-        loading: false,
-        employees: action?.payload?.result,
-      };
-    });
-    builder.addCase(employeeListServices.rejected, (state, action) => {
-      console.log("ppp");
-      return { ...state, loading: false, error: "Something went wrong" };
-    });
+    builder
+      // Employee List
+      .addCase(employeeListServices.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(employeeListServices.fulfilled, (state, action) => {
+        state.loading = false;
+        state.employees = action.payload.result;
+        state.error = null;
+      })
+      .addCase(employeeListServices.rejected, (state) => {
+        state.loading = false;
+        state.error = "Something went wrong while fetching employees.";
+      })
 
-    builder.addCase(roleListServices.pending, (state) => {
-      return { ...state, loading: true };
-    });
-    builder.addCase(roleListServices.fulfilled, (state, action) => {
-      return {
-        ...state,
-        loading: false,
-        roleList: action?.payload?.result,
-      };
-    });
-    builder.addCase(roleListServices.rejected, (state, action) => {
-      console.log("ppp");
-      return { ...state, loading: false, error: "Something went wrong" };
-    });
+      // Role List
+      .addCase(roleListServices.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(roleListServices.fulfilled, (state, action) => {
+        state.loading = false;
+        state.roleList = action.payload.result;
+        state.error = null;
+      })
+      .addCase(roleListServices.rejected, (state) => {
+        state.loading = false;
+        state.error = "Something went wrong while fetching roles.";
+      })
 
-    builder.addCase(getMemberManagementListServices.pending, (state) => {
-      return { ...state, loading: true };
-    });
-    builder.addCase(
-      getMemberManagementListServices.fulfilled,
-      (state, action) => {
-        return {
-          ...state,
-          loading: false,
-          membersList: action?.payload?.result,
-        };
-      }
-    );
-    builder.addCase(
-      getMemberManagementListServices.rejected,
-      (state, action) => {
-        return { ...state, loading: false, error: "Something went wrong" };
-      }
-    );
+      // Member Management List
+      .addCase(getMemberManagementListServices.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMemberManagementListServices.fulfilled, (state, action) => {
+        state.loading = false;
+        state.membersList = action.payload.result;
+        state.error = null;
+      })
+      .addCase(getMemberManagementListServices.rejected, (state) => {
+        state.loading = false;
+        state.error = "Something went wrong while fetching members.";
+      })
+
+      // Bulk Upload Members
+      .addCase(bulkUploadMemberServices.pending, (state) => {
+        state.bulkUploadStatus = "loading";
+        state.bulkUploadError = null;
+      })
+      .addCase(bulkUploadMemberServices.fulfilled, (state, action) => {
+        state.bulkUploadStatus = "succeeded";
+        state.bulkUploadResult = action.payload;
+        state.bulkUploadError = null;
+      })
+      .addCase(bulkUploadMemberServices.rejected, (state, action) => {
+        state.bulkUploadStatus = "failed";
+        state.bulkUploadError = action.error.message;
+      });
   },
 });
 
-export default inventarySlice.reducer;
+export default userManagementSlice.reducer;

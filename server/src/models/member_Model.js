@@ -5,8 +5,8 @@ const { Schema } = mongoose;
 // Define Dependent Schema
 const dependentSchema = new Schema({
     dependentId: { type: String, required: true, unique: true },
-    member_id: {  type: mongoose.Schema.Types.ObjectId, ref: 'master_members', required: true},
-    memberId: { type: String, ref: 'master_members', required: true },
+    member_id: {  type: mongoose.Schema.Types.ObjectId,  required: true},
+    memberId: { type: String, required: true },
     firstName: { type: String, required: true },
     middleName: { type: String },
     profilePicture: { type: String},
@@ -30,7 +30,7 @@ const dependentSchema = new Schema({
 // Define Member Schema
 const memberDataSchema = new Schema({
     memberId: { type: String, required: true, unique: true },
-    typeofmember: {type: String, required: true},
+    typeofmember: {type: String},
     memberCategory: { type: String, required: true },
     memberType: { type: String, required: true }, 
     profilePicture: { type: String},
@@ -94,7 +94,7 @@ const memberTransactionHistorySchema = new Schema({
     transactionDate: { type: Date, required: true, default: Date.now },
     amount: { type: Number, required: true, default: 0 },
     transactionType: { type: String, required: true }, // Credit, Debit
-    modeOfTransaction: { type: String }, // UPI | Cheque | Cash | NEFT
+    modeOfTransaction: { type: String }, // UPI | Cheque | Cash | NEFT | OnlineBanking
     transactionRef: { type: String }, // For UPI/NEFT
     chequeNumber: { type: String }, // For Cheque
     chequeStatus: { type: String,}, // Pending | Cleared | Bounced
