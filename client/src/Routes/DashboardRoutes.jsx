@@ -23,6 +23,8 @@ import FacilityManagement from "../pages/facilityManagement/FacilityManagement";
 import TransactionHistory from "../pages/member/TransactionHistory";
 import MemberCheckInCheckOut from "../pages/member/MemberCheckInCheckOut";
 import EventBooking from "../pages/member/EventBooking";
+import ClubManagement from "../pages/dashboard/ClubManagement/ClubManagement";
+import Restaurant from "../pages/facilityManagement/Restaurant";
 
 function DashboardRoutes() {
   const [open, setOpen] = useState(true);
@@ -37,6 +39,7 @@ function DashboardRoutes() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/usermanagement" element={<Employee />} />
             <Route path="/rolemanagement" element={<Role />} />
+            <Route path="/managementcommity" element={<ClubManagement />} />
             <Route path="/organisation" element={<Organization />} />
             <Route path="/product" element={<ProductList />} />
             <Route path="/add-product" element={<AddProduct />} />
@@ -54,12 +57,8 @@ function DashboardRoutes() {
             <Route path="/transactionHistory" element={<TransactionHistory />} />
             <Route path="/membercheckinout" element={<MemberCheckInCheckOut />} />
             <Route path="/eventbookings" element={<EventBooking />} />
-
-
-            <Route
-              path="/facilitymanagement"
-              element={<FacilityManagement />}
-            />
+            <Route path="/facilitymanagement" element={<FacilityManagement />} />
+            <Route path="/restaurantmanagement" element={<Restaurant />} />
           </Routes>
         </div>
       </div>
