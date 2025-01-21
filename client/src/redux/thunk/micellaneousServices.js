@@ -45,7 +45,7 @@ export const roleCreationServices = createAsyncThunk(
       const res = await axios.post(url, payload);
       return res.data;
     } catch (error) {
-      //   console.log(error);
+        console.log(error);
       // handleError(error);
       throw error;
     }
@@ -61,7 +61,7 @@ export const getAllRoleServices = createAsyncThunk(
       const res = await axios.get(url);
       return res.data;
     } catch (error) {
-      //   console.log(error);
+        console.log(error);
       // handleError(error);
       throw error;
     }
@@ -77,7 +77,7 @@ export const createRestaurantServices = createAsyncThunk(
       const res = await axios.post(url, payload);
       return res.data;
     } catch (error) {
-      //   console.log(error);
+        console.log(error);
       // handleError(error);
       throw error;
     }
@@ -88,10 +88,10 @@ export const getAllRestaurantServices = createAsyncThunk(
   "getAllRestaurantServices",
   async () => {
     try {
-      console.log("getAllRestaurantServices");
+     
       let url = `${URL}facilities/restaurants`;
       const res = await axios.get(url);
-      console.log("getAllRestaurantServices1");
+  
 
       return res.data;
     } catch (error) {
@@ -113,9 +113,42 @@ export const updateRestaurantServices = createAsyncThunk(
       const res = await axios.put(url, payload);
       return res.data;
     } catch (error) {
-      //   console.log(error);
+        console.log(error);
       // handleError(error);
       throw error;
     }
   }
 );
+
+
+export const createRestaurantMenuServices = createAsyncThunk(
+  "createRestaurantMenuServices",
+  async (payload) => {
+    console.log("facilitiesRestaurantServices", payload);
+    try {
+      let url = `${URL}facilities/menu`;
+      const res = await axios.post(url, payload);
+      return res.data;
+    } catch (error) {
+        console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+);
+
+export const getRestaurantMenuServices =createAsyncThunk(
+  "getRestaurantMenuServices",
+  async (payload) => {
+    console.log("facilitiesRestaurantServices", payload);
+    try {
+      let url = `${URL}facilities/restaurant/${restuarantId}/menu`;
+      const res = await axios.post(url, payload);
+      return res.data;
+    } catch (error) {
+        console.log(error);
+      // handleError(error);
+      throw error;
+    }
+  }
+); 

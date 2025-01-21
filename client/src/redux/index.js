@@ -7,6 +7,7 @@ import inventaryState from "./slice/inventarySlice";
 import adminState from "./slice/adminSlice";
 import userStateMangementState from "./slice/userManagementSlice";
 import organisationMangementState from "./slice/organisationMangementSlice";
+
 export default combineReducers({
   authState,
   userState,
