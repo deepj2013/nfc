@@ -44,12 +44,10 @@ router.patch("/member/:id/status", [auth], updateMemberStatusController);
 router.get("/members", [auth], getAllMembersController);
 router.get("/member/:memberId", [auth], getMemberByIdController);
 router.post('/bulk-uploadMember', bulkUploadMembersController);
-
 // Dependent Routes
 router.post("/member/:id/dependent", [auth], createDependentController);
 router.put("/dependent/:dependentId", [auth], updateDependentController);
 router.get("/member/:id/dependents", [auth], getDependentsByMemberController);
-
 // Route to deposit money in wallet
 router.post('/member/wallet/deposit',[auth], depositInWalletController);
 // Route to withdraw money from wallet
@@ -57,7 +55,6 @@ router.post('/member/wallet/withdraw',[auth],  withdrawFromWalletController);
 router.post('/member/wallet/updatechequestatus',[auth],  updateChequeStatusController);
 // Route to get transaction history
 router.get('/member/:memberId/transactions',[auth],  getTransactionHistoryController);
-
 // Check-in route
 router.post('/members/checkin',[auth], checkInController);
 // Check-out route
