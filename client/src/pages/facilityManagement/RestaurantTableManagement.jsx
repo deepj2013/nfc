@@ -119,7 +119,7 @@ const TableManagement = () => {
     <div className="p-4">
       <div className="flex justify-between items-center mb-6 p-4 border rounded-lg shadow-md bg-white">
         <h2 className="text-2xl font-bold text-gray-800 border px-4 py-2 rounded-full">
-          {restaurant.name}
+          {restaurant?.name}
         </h2>
         <Button
           onClick={() => setModalOpen(true)}
