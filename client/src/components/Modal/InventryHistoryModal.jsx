@@ -74,40 +74,40 @@ const InventryHistoryModal = ({ isOpenHistory, onClose }) => {
 
           <div className="w-full lg:px-8 h-[400px] pb-5">
             <div className="pb-10">
-              <table class="table-auto min-w-full rounded-xl">
+              <table className="table-auto min-w-full rounded-xl">
                 <thead>
-                  <tr class="bg-gray-50">
+                  <tr className="bg-gray-50">
                     <th
                       scope="col"
-                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                      className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                     >
                       {" "}
                       Id{" "}
                     </th>
                     <th
                       scope="col"
-                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                      className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                     >
                       {" "}
                       Department{" "}
                     </th>
                     <th
                       scope="col"
-                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
+                      className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
                     >
                       {" "}
                       Quantity{" "}
                     </th>
                     <th
                       scope="col"
-                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                      className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                     >
                       {" "}
                       Remarks{" "}
                     </th>
                     <th
                       scope="col"
-                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                      className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                     >
                       {" "}
                       SKU{" "}
@@ -115,49 +115,49 @@ const InventryHistoryModal = ({ isOpenHistory, onClose }) => {
 
                     <th
                       scope="col"
-                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                      className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                     >
                       {" "}
                       Transaction Type{" "}
                     </th>
                     <th
                       scope="col"
-                      class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                      className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                     >
                       {" "}
                       Transaction Date{" "}
                     </th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-300 ">
+                <tbody className="divide-y divide-gray-300 ">
                   {historyData.map((ele, ind) => {
                     return (
-                      <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
-                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                      <tr className="bg-white transition-all duration-500 hover:bg-gray-50">
+                        <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                           {ind + 1}{" "}
                         </td>
-                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
+                        <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
                           {ele?.department}
                         </td>
 
-                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                        <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                           {" "}
                           {ele?.quantity}{" "}
                         </td>
-                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                        <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                           {" "}
                           {ele?.remarks}{" "}
                         </td>
-                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                        <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                           {" "}
                           {ele?.sku}{" "}
                         </td>
-                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                        <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                           {" "}
                           {ele?.transactionType}{" "}
                         </td>
 
-                        <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                        <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                           {" "}
                           {ele?.transactionDate}{" "}
                         </td>

@@ -1,0 +1,161 @@
+{
+ 
+  "failedEntries": [
+    {
+      "memberId": "MAL0172",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAL0173",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAL0174",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAL0175",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAL0176",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAL0177",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MA1148",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMD0161",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMD0163",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MML0031",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MML0077",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MML0094",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MM1047",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MM1578",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MM1589",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MM734",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAS1168",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAS1170",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAS1173",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAS118",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAS119",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAS1199",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAS567",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MAS723",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS008",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS052",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS1510",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS168",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS433",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS438",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS440",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS444",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS447",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS452",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS454",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS459",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS462",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS490",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    },
+    {
+      "memberId": "MMS887",
+      "error": "Required fields missing: firstName, surname, or memberCategory."
+    }
+  ]
+}

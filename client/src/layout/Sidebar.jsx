@@ -102,9 +102,9 @@ const Sidebar = ({ open, setOpen }) => {
       {/* <div onClick={()=>alert('sjs')}  className="w-screen bg-black opacity-50 absolute z-50"></div> */}
 
       {
-        <nav class=" fixed  top-0 bg-white shadow mr-64 w-full  z-30  py-3  ">
-          <div class="px-3 lg:px-6 lg:pl-3">
-            <div class="flex items-center ">
+        <nav className=" fixed  top-0 bg-white shadow mr-64 w-full  z-30  py-3  ">
+          <div className="px-3 lg:px-6 lg:pl-3">
+            <div className="flex items-center ">
               <img
                 src={Logo}
                 alt="Logo"
@@ -118,8 +118,8 @@ const Sidebar = ({ open, setOpen }) => {
                 <GiHamburgerMenu className="text-theme text-3xl" />
               </button>
 
-              <div class="flex items-center">
-                <div class="flex items-center ml-3 relative">
+              <div className="flex items-center">
+                <div className="flex items-center ml-3 relative">
                   {/* <button className="mx-5" onClick={toggleTheme}>
                     <div className="hidden dark:flex text-white">
                   <BsFillSunFill className="text-2xl" />
@@ -132,21 +132,21 @@ const Sidebar = ({ open, setOpen }) => {
                     <button
                       onClick={() => setProfileToggle(!profileToggle)}
                       type="button"
-                      class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                      className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                     >
-                      <span class="sr-only">Open user menu</span>
+                      <span className="sr-only">Open user menu</span>
                       {/* <img
-                        class="w-8 h-8 rounded-full"
+                        className="w-8 h-8 rounded-full"
                         src={userAvtar}
                         alt="user photo"
                       /> */}
                     </button>
                   </div>
                   {/* {profileToggle&&<div
-                    class="z-50  absolute top-6 right-2 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+                    className="z-50  absolute top-6 right-2 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
                   >
                    
-                    <ul class="py-1 font-normal" role="none">
+                    <ul className="py-1 font-normal" role="none">
                      
                      
                       <li
@@ -155,7 +155,7 @@ const Sidebar = ({ open, setOpen }) => {
                         }}
                       >
                         <p
-                          class="block px-4 cursor-pointer w-[100px] py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                          className="block px-4 cursor-pointer w-[100px] py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                           role="menuitem"
                         >
                           Sign out
@@ -172,7 +172,7 @@ const Sidebar = ({ open, setOpen }) => {
 
 <aside
   id="logo-sidebar"
-  class={`fixed top-0 bg-white shadow left-0 z-[999] ${
+  className={`fixed top-0 bg-white shadow left-0 z-[999] ${
     open ? "w-60" : "w-16 "
   } duration-500 h-screen top-20 rounded-e-[40px] overflow-hidden border-gray-200 lg:translate-x-0`}
   aria-label="Sidebar"

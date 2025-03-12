@@ -25,58 +25,58 @@ function Organization() {
         <p className="font-semibold h28">Organization Management</p>
       </div>
       <div className="mt-10">
-        <div class="flex flex-col">
-          <div class=" overflow-x-auto pb-4">
-            <div class="min-w-full inline-block align-middle">
-              <div class="overflow-hidden  shadow bg-white rounded-lg border-gray-300">
-                <table class="table-auto min-w-full rounded-xl">
+        <div className="flex flex-col">
+          <div className=" overflow-x-auto pb-4">
+            <div className="min-w-full inline-block align-middle">
+              <div className="overflow-hidden  shadow bg-white rounded-lg border-gray-300">
+                <table className="table-auto min-w-full rounded-xl">
                   <thead>
-                    <tr class="bg-gray-50">
+                    <tr className="bg-gray-50">
                       {/* <th
                         scope="col"
-                        class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                       >
                         {" "}
                         Organization{" "}
                       </th> */}
                       <th
                         scope="col"
-                        class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                       >
                         {" "}
                         Organization Name{" "}
                       </th>
                       <th
                         scope="col"
-                        class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                       >
                         {" "}
                         Organization LOGO{" "}
                       </th>
                       <th
                         scope="col"
-                        class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
+                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
                       >
                         {" "}
                         Adress & website{" "}
                       </th>
                       <th
                         scope="col"
-                        class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                       >
                         {" "}
                         Contact Number{" "}
                       </th>
                       <th
                         scope="col"
-                        class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                       >
                         {" "}
                         Facilities{" "}
                       </th>
                       <th
                         scope="col"
-                        class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                       >
                         {" "}
                         GST / TAN{" "}
@@ -84,25 +84,25 @@ function Organization() {
                     
                       {/* <th
                         scope="col"
-                        class="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
+                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
                       >
                         {" "}
                         Action
                       </th> */}
                     </tr>
                   </thead>
-                  <tbody class="divide-y divide-gray-300 ">
+                  <tbody className="divide-y divide-gray-300 ">
                     {organisation?.map((ele, ind) => {
                       return (
-                        <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
-                          <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
+                        <tr className="bg-white transition-all duration-500 hover:bg-gray-50">
+                          <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
                             {ele?.fullName}
                           </td>
-                          {/* <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
+                          {/* <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
                             {ele?.name}
                           </td> */}
-                          <td class=" px-5 py-3">
-                            <div class="w-48 flex items-center gap-3">
+                          <td className=" px-5 py-3">
+                            <div className="w-48 flex items-center gap-3">
                               <img
                                 src={logo}
                                 alt="Floyd image"
@@ -111,13 +111,13 @@ function Organization() {
                               />
                             </div>
                           </td>
-                          <td class=" px-5 py-3">
-                            <div class="w-48 flex items-center gap-3">
-                              <div class="data">
-                                <p class="font-normal text-sm text-gray-900">
+                          <td className=" px-5 py-3">
+                            <div className="w-48 flex items-center gap-3">
+                              <div className="data">
+                                <p className="font-normal text-sm text-gray-900">
                                   {ele?.address}
                                 </p>
-                                <p class="font-normal text-xs leading-5 text-gray-400">
+                                <p className="font-normal text-xs leading-5 text-gray-400">
                                   {" "}
                                   {ele?.website}
                                 </p>
@@ -125,17 +125,17 @@ function Organization() {
                             </div>
                           </td>
 
-                          <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                          <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                             {" "}
                             {ele?.phone}
                           </td>
 
-                          <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                            <div class="w-48 flex flex-wrap items-center gap-3">
+                          <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                            <div className="w-48 flex flex-wrap items-center gap-3">
                               {ele?.facilities?.map((facility, index) => (
                                 <span
                                   key={index}
-                                  class="px-3 py-1 rounded-full bg-gray-100 text-gray-900 text-sm font-normal"
+                                  className="px-3 py-1 rounded-full bg-gray-100 text-gray-900 text-sm font-normal"
                                 >
                                   {facility}
                                 </span>
@@ -143,13 +143,13 @@ function Organization() {
                             </div>
                           </td>
 
-                          <td class="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                            <div class="w-48 flex items-center gap-3">
-                              <div class="data">
-                                <p class="font-normal text-sm text-gray-900">
+                          <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                            <div className="w-48 flex items-center gap-3">
+                              <div className="data">
+                                <p className="font-normal text-sm text-gray-900">
                                   {ele?.gst}
                                 </p>
-                                <p class="font-normal text-xs leading-5 text-gray-400">
+                                <p className="font-normal text-xs leading-5 text-gray-400">
                                   {" "}
                                   {ele?.tan}
                                 </p>

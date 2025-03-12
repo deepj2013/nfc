@@ -125,7 +125,7 @@ app.use("/api/user/inv/", invRoutes);
 app.use("/api/user/", memberRoutes);
 app.use("/api/facilities/", facilityRoutes);
 
-app.get("/api/facilities", (req, res)=>{res.send("facility apißß")})
+
 
 app.get("/", (req, res) => {
   res.send("API is running...");

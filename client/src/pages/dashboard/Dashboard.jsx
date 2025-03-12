@@ -19,7 +19,7 @@ function Dashboard() {
           <p className="text-black font-semibold h28">
             Good Morning, <span className="text-theme">{userDetails?.userName}</span>
           </p>
-          <h5 class=" text-base  font-medium  text-grayText  mt-2">
+          <h5 className=" text-base  font-medium  text-grayText  mt-2">
             Have a nice day at work
           </h5>
         </div>

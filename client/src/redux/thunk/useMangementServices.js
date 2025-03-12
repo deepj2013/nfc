@@ -69,13 +69,33 @@ export const createMemberServices = createAsyncThunk(
     }
   }
 );
+
+
 export const getMemberService = createAsyncThunk(
   "getMemberService",
   async (memberId, { rejectWithValue }) => {
     try {
       const url = `${BASE_URL}member/${memberId}`; // URL to fetch member data
+      console.log(url,"URLS")
       const res = await axios.get(url);
       
+      if (res.status === 200) {
+        return res.data; // Return member data if found
+      } else {
+        throw new Error("Member not found");
+      }
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Member not found");
+    }
+  }
+);
+
+export const createMemberPasswordService = createAsyncThunk(
+  "createMemberPasswordservice",
+  async (payload, {rejectWithValue}) => {
+    try {
+      const url = `${BASE_URL}createmember-password`; // URL to fetch member data
+      const res = await axios.post(url,payload);
       if (res.status === 200) {
         return res.data; // Return member data if found
       } else {
@@ -223,8 +243,7 @@ export const uploadFileServices = createAsyncThunk(
 export const addDepositServices = createAsyncThunk(
   "addDepositServices",
   async (payload) => {
-    console.log("memberpayload", payload);
-
+    
     try {
       let url = `${BASE_URL}member/wallet/deposit`;
       const res = await axios.post(url, payload);

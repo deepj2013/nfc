@@ -3,7 +3,76 @@ import RestaurantTable from "../models/facility_restaurant_tables.js";
 import MenuItem from "../models/facility_restaurant_menuModel.js";
 import { getObjectId } from "../helpers/mongoose/mongooseHelpers.js";
 import Recipe from "../models/facility_restaurant_menu_receipeModel.js"
-import { get } from "mongoose";
+import Facility from "../models/facilitModel.js";
+import { v4 as uuidv4 } from "uuid"; // For generating unique numbers
+
+
+
+//service to create Facilities
+export const createFacilityService = async (facilityData) => {
+  try {
+    const { name, description, image, route } = facilityData;
+
+    // **1️⃣ Validate Required Fields**
+    if (!name || !description || !image || !route) {
+      throw new Error("All fields (name, description, image, route) are required.");
+    }
+
+    // **2️⃣ Check if Facility Already Exists (Case-Insensitive)**
+    const existingFacility = await Facility.findOne({
+      name: { $regex: new RegExp(`^${name}$`, "i") }, // Case-Insensitive Match
+    });
+
+    if (existingFacility) {
+      throw new Error("Facility with this name already exists.");
+    }
+
+    // **3️⃣ Create and Save New Facility**
+    const newFacility = new Facility({
+      name,
+      description,
+      image,
+      route,
+    });
+
+    await newFacility.save();
+    return { success: true, message: "Facility created successfully", facility: newFacility };
+
+  } catch (error) {
+    throw new Error(error.message || "Failed to create facility.");
+  }
+};
+
+// ✅ Get All Facilities
+export const getAllFacilitiesService = async () => {
+  return await Facility.find({});
+};
+
+// ✅ Get Single Facility by ID
+export const getSingleFacilityService = async (id) => {
+  const facility = await Facility.findById(id);
+  if (!facility) throw new Error("Facility not found.");
+  return facility;
+};
+
+// ✅ Update Facility by ID
+export const updateFacilityService = async (id, updateData) => {
+  const facility = await Facility.findById(id);
+  if (!facility) throw new Error("Facility not found.");
+
+  Object.assign(facility, updateData); // Update fields dynamically
+  await facility.save();
+
+  return { success: true, message: "Facility updated successfully", facility };
+};
+
+// ✅ Delete Facility by ID
+export const deleteFacilityService = async (id) => {
+  const facility = await Facility.findByIdAndDelete(id);
+  if (!facility) throw new Error("Facility not found.");
+
+  return { success: true, message: "Facility deleted successfully" };
+};
 
 // Helper function to validate restaurant data
 const validateRestaurantData = (data) => {
@@ -73,6 +142,7 @@ export const createRestaurant = async (data) => {
 
 // Update an existing restaurant with validation
 export const updateRestaurant = async (restaurantId, updateData) => {
+  console.log(updateData)
   try {
     // Validate update data
     if (updateData.type) {
@@ -123,15 +193,45 @@ export const getSingleRestaurant = async (restaurant_id) => {
   }
 };
 
-// Create a new table for a restaurant with validation
-export const createTable = async (data) => {
+
+
+// Function to generate a unique table ID with restaurant name prefix
+const generateUniqueTableId = async (restaurant_id) => {
   try {
-    if (!data.restaurant_id || !data.capacity) {
-      throw new Error("Restaurant ID and table capacity are required");
+    // Fetch restaurant data
+    const restaurant = await Restaurant.findOne({restaurant_id:restaurant_id});
+    if (!restaurant) {
+      throw new Error("Restaurant not found");
     }
 
-    // Generate the next table number
-    data.tableNumber = await getNextTableId();
+    // Extract and format restaurant name
+    let restaurantName = restaurant.name.replace(/\s+/g, "").toUpperCase(); // Remove spaces and convert to uppercase
+    restaurantName = restaurantName.substring(0, 10); // Keep only the first 5 characters to avoid excessive length
+
+    // Get the next table number for this restaurant
+    const existingTables = await RestaurantTable.countDocuments({ restaurant_id });
+    const tableNumber = existingTables + 1;
+
+    // Generate unique table ID with restaurant name, table number, and short unique code
+    return `${restaurantName}-T${tableNumber}`;
+  } catch (error) {
+    throw new Error(error.message || "Failed to generate table ID");
+  }
+};
+
+// Create a new table
+export const createTable = async (data) => {
+  try {
+    if (!data.restaurant_id || !data.seatType) {
+      throw new Error("Restaurant ID, capacity, and seat type are required");
+    }
+
+    // Generate unique table ID using restaurant name
+    data.table_id = await generateUniqueTableId(data.restaurant_id);
+
+    // Determine table number based on restaurant's existing tables
+    const existingTables = await RestaurantTable.countDocuments({ restaurant_id: data.restaurant_id });
+    data.tableNumber = existingTables + 1;
 
     // Create and save the table
     const table = new RestaurantTable(data);
@@ -144,6 +244,7 @@ export const createTable = async (data) => {
 };
 
 // Get all tables for a specific restaurant
+// Get all tables for a specific restaurant
 export const getTablesByRestaurant = async (restaurant_id) => {
   try {
     return await RestaurantTable.find({ restaurant_id });
@@ -152,15 +253,15 @@ export const getTablesByRestaurant = async (restaurant_id) => {
   }
 };
 
-// Update a table's details (table number, capacity)
+// Update a table's details
 export const updateTable = async (tableId, updateData) => {
   try {
-    if (!updateData.capacity) {
-      throw new Error("Table capacity is required for update");
+    if (!updateData.capacity || !updateData.seatType) {
+      throw new Error("Table capacity and seat type are required for update");
     }
 
     const updatedTable = await RestaurantTable.findOneAndUpdate(
-      { tableNumber: tableId },
+      { table_id: tableId },
       updateData,
       { new: true }
     );
@@ -175,15 +276,15 @@ export const updateTable = async (tableId, updateData) => {
   }
 };
 
-// Change the status of a table (Available or Occupied)
+// Change the status of a table
 export const changeTableStatus = async (tableId, status) => {
   try {
-    if (!["Available", "Occupied"].includes(status)) {
-      throw new Error('Invalid status. Must be "Available" or "Occupied".');
+    if (!["Available", "Occupied", "NotAvailable"].includes(status)) {
+      throw new Error('Invalid status. Must be "Available", "Occupied", or "NotAvailable".');
     }
 
     const updatedTable = await RestaurantTable.findOneAndUpdate(
-      { tableNumber: tableId },
+      { table_id: tableId },
       { currentStatus: status },
       { new: true }
     );
@@ -197,7 +298,6 @@ export const changeTableStatus = async (tableId, status) => {
     throw new Error(error.message || "Failed to change table status");
   }
 };
-
 // Helper function to validate menu item data
 const validateMenuItemData = async (data) => {
   const { category, name, food_type, price_info, restaurantId } = data;
@@ -207,12 +307,13 @@ const validateMenuItemData = async (data) => {
       "Missing required fields: category, name, food_type, or restaurantId"
     );
   }
-  const restaurant = await Restaurant.findOne({ restaurant_id: restaurantId }); // Find restaurant by restaurant_id
+
+  // Find restaurant by restaurant_id
+  const restaurant = await Restaurant.findOne({ restaurant_id: Number(restaurantId) });
 
   if (!restaurant) {
     throw new Error("Restaurant not found");
   }
- 
 
   // Validate food type
   const validFoodTypes = [
@@ -229,16 +330,37 @@ const validateMenuItemData = async (data) => {
     throw new Error("Invalid food type");
   }
 
-  // Validate price_info
+  // Validate price_info and Convert Numeric Fields
   if (!price_info || !Array.isArray(price_info) || price_info.length === 0) {
     throw new Error("Price information is required and must be an array");
   }
-  price_info.forEach((info) => {
-    if (info.price <= 0) {
-      throw new Error("Price must be greater than zero");
+
+  price_info.forEach((info, index) => {
+    // Ensure all numerical values are converted from strings to numbers
+    info.price = Number(info.price);
+    info.offer_price = Number(info.offer_price);
+    info.tax_percentage = Number(info.tax_percentage);
+    info.discount_percentage = Number(info.discount_percentage);
+
+    if (isNaN(info.price) || info.price <= 0) {
+      throw new Error(`Price at index ${index} must be a valid number greater than zero`);
     }
-    if (info.is_offer && info.offer_price >= info.price) {
-      throw new Error("Offer price must be lower than the original price");
+
+    if (info.is_offer) {
+      if (isNaN(info.offer_price) || info.offer_price <= 0) {
+        throw new Error(`Offer price at index ${index} must be a valid number greater than zero`);
+      }
+      if (info.offer_price >= info.price) {
+        throw new Error(`Offer price at index ${index} must be lower than the original price`);
+      }
+    }
+
+    if (isNaN(info.tax_percentage) || info.tax_percentage < 0) {
+      throw new Error(`Tax percentage at index ${index} must be a valid number`);
+    }
+
+    if (isNaN(info.discount_percentage) || info.discount_percentage < 0) {
+      throw new Error(`Discount percentage at index ${index} must be a valid number`);
     }
   });
 };
@@ -265,7 +387,7 @@ export const getMenuItemsByRestaurant = async (restaurantId) => {
     throw new Error("Restaurant ID is required");
   }
 
-  const menuItems = await MenuItem.find({ restaurantId });
+  const menuItems = await MenuItem.find({ restaurantId:restaurantId });
   const count = await MenuItem.countDocuments({ restaurantId });
 
   return { menuItems, count };
@@ -381,6 +503,7 @@ export const createRecipeForMenuItem = async (menuItemId, recipeData) => {
     ...recipeData,
     menuItemId,
   });
+  console.log(recipe, "in backend")
   await recipe.save();
   return recipe;
 };
