@@ -7,8 +7,66 @@ import {
   getTablesByRestaurant,
   updateTable,
   changeTableStatus,
-  createMenuItem, getMenuItemsByRestaurant, getAllMenuItems, updateMenuItem, createRecipeForMenuItem, getRecipeByMenuItem , getCategoriesWithMenuItems
+  createMenuItem, getMenuItemsByRestaurant, getAllMenuItems, updateMenuItem, createRecipeForMenuItem, getRecipeByMenuItem , getCategoriesWithMenuItems,
 } from "../services/facilitiesServices.js";
+import {
+  createFacilityService,
+  getAllFacilitiesService,
+  getSingleFacilityService,
+  updateFacilityService,
+  deleteFacilityService,
+} from "../services/facilitiesServices.js";
+import { successResponse, errorResponse } from "../helpers/responseHelper.js";
+
+// ✅ Create a New Facility
+export const addFacility = async (req, res) => {
+  try {
+    const result = await createFacilityService(req.body);
+    return res.status(201).json(successResponse(result.message, result.facility));
+  } catch (error) {
+    return res.status(400).json(errorResponse(error.message));
+  }
+};
+
+// ✅ Get All Facilities
+export const getAllFacilities = async (req, res) => {
+  try {
+    const facilities = await getAllFacilitiesService();
+    return res.status(200).json(successResponse("Facilities retrieved successfully", facilities));
+  } catch (error) {
+    return res.status(500).json(errorResponse(error.message));
+  }
+};
+
+// ✅ Get Single Facility
+export const getSingleFacility = async (req, res) => {
+  try {
+    const facility = await getSingleFacilityService(req.params.id);
+    return res.status(200).json(successResponse("Facility retrieved successfully", facility));
+  } catch (error) {
+    return res.status(404).json(errorResponse(error.message));
+  }
+};
+
+// ✅ Update Facility
+export const updateFacility = async (req, res) => {
+  try {
+    const result = await updateFacilityService(req.params.id, req.body);
+    return res.status(200).json(successResponse(result.message, result.facility));
+  } catch (error) {
+    return res.status(400).json(errorResponse(error.message));
+  }
+};
+
+// ✅ Delete Facility
+export const deleteFacility = async (req, res) => {
+  try {
+    const result = await deleteFacilityService(req.params.id);
+    return res.status(200).json(successResponse(result.message));
+  } catch (error) {
+    return res.status(404).json(errorResponse(error.message));
+  }
+};
 
 export const createRestaurantController = async (req, res) => {
   try {
@@ -23,6 +81,7 @@ export const updateRestaurantController = async (req, res) => {
   try {
     const restaurantId = req.params.restaurantId;
     const updatedRestaurant = await updateRestaurant(restaurantId, req.body);
+    console.log(restaurantId)
     res.status(200).json({ success: true, data: updatedRestaurant });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -56,19 +115,23 @@ export const getSingleRestaurantController = async (req, res) => {
   }
 };
 
+
+
 // Controller to create a new table
 export const createTableController = async (req, res) => {
   try {
     let tableData = req.body;
     tableData.restaurant_id = req.params.restaurantId; // Extract restaurantId from req.params
-
+    tableData.updateBy = 1
+    tableData.createBy = 1
     const table = await createTable(tableData);
     res.status(201).json({ success: true, data: table });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-// Controller to fetch all tables for a specific restaurant
+
+// Controller to fetch all tables for a restaurant
 export const getTablesByRestaurantController = async (req, res) => {
   try {
     const restaurant_id = req.params.restaurantId;
@@ -82,8 +145,8 @@ export const getTablesByRestaurantController = async (req, res) => {
 // Controller to update a table's details
 export const updateTableController = async (req, res) => {
   try {
-    const tableNumber = req.params.tableId;
-    const updatedTable = await updateTable(tableNumber, req.body);
+    const tableId = req.params.tableId;
+    const updatedTable = await updateTable(tableId, req.body);
     res.status(200).json({ success: true, data: updatedTable });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -96,14 +159,11 @@ export const changeTableStatusController = async (req, res) => {
     const tableId = req.params.tableId;
     const { status } = req.body;
 
-    // Validate status input
-    if (!["Available", "Occupied"].includes(status)) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: 'Invalid status. Must be "Available" or "Occupied".',
-        });
+    if (!["Available", "Occupied", "NotAvailable"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status. Must be "Available", "Occupied", or "NotAvailable".',
+      });
     }
 
     const updatedTable = await changeTableStatus(tableId, status);
@@ -161,6 +221,7 @@ export const updateMenuItemController = async (req, res) => {
 export const createRecipeForMenuItemController = async (req, res) => {
   try {
     const menuItemId = req.params.menuItemId;
+    console.log(menuItemId,"id", req.params)
     const recipe = await createRecipeForMenuItem(menuItemId, req.body);
     res.status(201).json({ success: true, data: recipe });
   } catch (error) {

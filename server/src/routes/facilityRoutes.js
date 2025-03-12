@@ -15,10 +15,24 @@ import {
   updateMenuItemController,
   createRecipeForMenuItemController,
   getRecipeByMenuItemController,
-  getCategoryInRestaurantController
+  getCategoryInRestaurantController,
+  addFacility,
+  getAllFacilities,
+  getSingleFacility,
+  updateFacility,
+  deleteFacility,
+
 } from "../controllers/facilitiesController.js";
 
 const router = express.Router();
+//Routes for Facilities 
+
+router.post("/addfacility", addFacility);
+router.get("/getallfacility", getAllFacilities);
+router.get("/facility/:id", getSingleFacility);
+router.put("/facility/:id", updateFacility);
+router.delete("/facility/:id", deleteFacility);
+
 // Route to create a restaurant
 router.post("/restaurant", [auth], createRestaurantController);
 // Route to update a restaurant by restaurant_id

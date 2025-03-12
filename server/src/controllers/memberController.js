@@ -20,9 +20,54 @@ import {
   checkOutMemberService,
   getMemberHistory,
   getAllHistory,
-  bulkUploadMembers
+  bulkUploadMembersService,
+  updateWalletBalanceService,
+  fetchMemberDetails,
+  createCredentials,
 } from "../services/memberServices.js";
 
+export const getMemberDetails = async (req, res) => {
+  try {
+      const { memberId, emailId, mobileNumber } = req.query;
+
+      if (!memberId && !emailId && !mobileNumber) {
+          return res.status(400).json({ success: false, message: "Provide at least one identifier (memberId, emailId, or mobileNumber)." });
+      }
+
+      const memberDetails = await fetchMemberDetails({ memberId, emailId, mobileNumber });
+
+      if (!memberDetails) {
+          return res.status(404).json({ success: false, message: "Member not found." });
+      }
+
+      return res.status(200).json({ success: true, data: memberDetails });
+  } catch (error) {
+      console.error("Error fetching member details:", error);
+      return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const createMemberPassword = async (req, res) => {
+  try {
+    const { memberId, email, mobile, password } = req.body;
+    const result = await createCredentials(memberId, email, mobile, password);
+    return res.status(201).json({ sucess:true, result});
+  } catch (error) {
+    res.status(error.httpCode || 500).json({ error: error.message });
+  }
+};
+
+export const resetMemberPassword = async (req, res) => {
+  try {
+    const { memberId, newPassword } = req.body;
+    const adminId = req.admin.id;
+
+    const result = await resetPassword(memberId, newPassword, adminId);
+    return res.status(200).json(successResponse("Password reset successfully", result));
+  } catch (error) {
+    res.status(error.httpCode || 500).json({ error: error.message });
+  }
+};
 
 export const createMemberCategoryController = async (req, res) => {
   try {
@@ -75,25 +120,8 @@ export const createMemberController = async (req, res) => {
 
 
 
-export const bulkUploadMembersController = async (req, res) => {
-  try {
-    console.log("i am in bulk upload")
-    const { members } = req.body; // Expecting members array from the CSV parsing
-    if (!members || !Array.isArray(members) || members.length === 0) {
-      return res.status(400).json({ error: 'No valid members found in the uploaded file.' });
-    }
 
-    const result = await bulkUploadMembers(members);
-    res.status(201).json({
-      message: 'Bulk members uploaded successfully',
-      totalUploaded: result.totalUploaded,
-      failedEntries: result.failedEntries,
-    });
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: error.message });
-  }
-};
+
 
 // Create Dependent
 export const createDependentController = async (req, res) => {
@@ -293,3 +321,42 @@ export const getMemberHistoryController = async (req, res) => {
     res.status(400).json({ status: "error", message: error.message });
   }
 };
+
+
+//temporary controller for bulk upload 
+export const bulkUploadMembersController = async (req, res) => {
+  try {
+      if (!req.file) {
+          return res.status(400).json({ error: 'No file uploaded' });
+      }
+
+      const result = await bulkUploadMembersService(req.file.path);
+      
+      res.status(201).json({
+          message: 'Bulk members upload completed',
+          totalUploaded: result.totalUploaded,
+          failedEntries: result.failedEntries,
+      });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+export const updateWalletBalanceController = async (req, res) => {
+  try {
+      if (!req.file) {
+          return res.status(400).json({ error: 'No file uploaded' });
+      }
+
+      const result = await updateWalletBalanceService(req.file.path);
+      
+      res.status(200).json({
+          message: 'Wallet balance update process completed',
+          totalUpdated: result.totalUpdated,
+          failedEntries: result.failedEntries,
+      });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+

@@ -1,0 +1,478 @@
+{
+  "message": "Wallet balance update process completed",
+  "totalUpdated": 1544,
+  "failedEntries": [
+    { "memberId": "MA043", "error": "Wallet not found for memberId: MA043" },
+    { "memberId": "MA091", "error": "Wallet not found for memberId: MA091" },
+    { "memberId": "MA1029", "error": "Wallet not found for memberId: MA1029" },
+    { "memberId": "MA140", "error": "Wallet not found for memberId: MA140" },
+    { "memberId": "MA349", "error": "Wallet not found for memberId: MA349" },
+    { "memberId": "MA483", "error": "Wallet not found for memberId: MA483" },
+    { "memberId": "MA497", "error": "Wallet not found for memberId: MA497" },
+    { "memberId": "MA592", "error": "Wallet not found for memberId: MA592" },
+    { "memberId": "MA669", "error": "Wallet not found for memberId: MA669" },
+    { "memberId": "MA673", "error": "Wallet not found for memberId: MA673" },
+    { "memberId": "MA889", "error": "Wallet not found for memberId: MA889" },
+    { "memberId": "MA900", "error": "Wallet not found for memberId: MA900" },
+    { "memberId": "MA991", "error": "Wallet not found for memberId: MA991" },
+    { "memberId": "MM1019", "error": "Wallet not found for memberId: MM1019" },
+    { "memberId": "MM1046", "error": "Wallet not found for memberId: MM1046" },
+    { "memberId": "MM1202", "error": "Wallet not found for memberId: MM1202" },
+    { "memberId": "MM131", "error": "Wallet not found for memberId: MM131" },
+    { "memberId": "MM1372", "error": "Wallet not found for memberId: MM1372" },
+    { "memberId": "MM1437", "error": "Wallet not found for memberId: MM1437" },
+    { "memberId": "MM153", "error": "Wallet not found for memberId: MM153" },
+    { "memberId": "MM243", "error": "Wallet not found for memberId: MM243" },
+    { "memberId": "MM526", "error": "Wallet not found for memberId: MM526" },
+    { "memberId": "MM653", "error": "Wallet not found for memberId: MM653" },
+    { "memberId": "MM737", "error": "Wallet not found for memberId: MM737" },
+    { "memberId": "MM779", "error": "Wallet not found for memberId: MM779" },
+    { "memberId": "MM924", "error": "Wallet not found for memberId: MM924" },
+    { "memberId": "MM944", "error": "Wallet not found for memberId: MM944" },
+    { "memberId": "MM945", "error": "Wallet not found for memberId: MM945" },
+    { "memberId": "MM957", "error": "Wallet not found for memberId: MM957" },
+    { "memberId": "MM984", "error": "Wallet not found for memberId: MM984" },
+    { "memberId": "MMS136", "error": "Wallet not found for memberId: MMS136" },
+    { "memberId": "MMS312", "error": "Wallet not found for memberId: MMS312" },
+    { "memberId": "MA275", "error": "Wallet not found for memberId: MA275" },
+    { "memberId": "MA668", "error": "Wallet not found for memberId: MA668" },
+    { "memberId": "MM1219", "error": "Wallet not found for memberId: MM1219" },
+    { "memberId": "MM1331", "error": "Wallet not found for memberId: MM1331" },
+    { "memberId": "MM705", "error": "Wallet not found for memberId: MM705" },
+    { "memberId": "MM954", "error": "Wallet not found for memberId: MM954" },
+    { "memberId": "MMS661", "error": "Wallet not found for memberId: MMS661" },
+    {
+      "memberId": "MAL0001",
+      "error": "Wallet not found for memberId: MAL0001"
+    },
+    {
+      "memberId": "MAL0002",
+      "error": "Wallet not found for memberId: MAL0002"
+    },
+    {
+      "memberId": "MAL0003",
+      "error": "Wallet not found for memberId: MAL0003"
+    },
+    {
+      "memberId": "MAL0004",
+      "error": "Wallet not found for memberId: MAL0004"
+    },
+    {
+      "memberId": "MAL0005",
+      "error": "Wallet not found for memberId: MAL0005"
+    },
+    {
+      "memberId": "MAL0006",
+      "error": "Wallet not found for memberId: MAL0006"
+    },
+    {
+      "memberId": "MAL0007",
+      "error": "Wallet not found for memberId: MAL0007"
+    },
+    {
+      "memberId": "MAL0008",
+      "error": "Wallet not found for memberId: MAL0008"
+    },
+    {
+      "memberId": "MAL0009",
+      "error": "Wallet not found for memberId: MAL0009"
+    },
+    {
+      "memberId": "MAL0010",
+      "error": "Wallet not found for memberId: MAL0010"
+    },
+    {
+      "memberId": "MAL0011",
+      "error": "Wallet not found for memberId: MAL0011"
+    },
+    {
+      "memberId": "MAL0012",
+      "error": "Wallet not found for memberId: MAL0012"
+    },
+    {
+      "memberId": "MAL0013",
+      "error": "Wallet not found for memberId: MAL0013"
+    },
+    {
+      "memberId": "MAL0014",
+      "error": "Wallet not found for memberId: MAL0014"
+    },
+    {
+      "memberId": "MAL0015",
+      "error": "Wallet not found for memberId: MAL0015"
+    },
+    {
+      "memberId": "MAL0016",
+      "error": "Wallet not found for memberId: MAL0016"
+    },
+    {
+      "memberId": "MAL0017",
+      "error": "Wallet not found for memberId: MAL0017"
+    },
+    {
+      "memberId": "MAL0019",
+      "error": "Wallet not found for memberId: MAL0019"
+    },
+    {
+      "memberId": "MAL0021",
+      "error": "Wallet not found for memberId: MAL0021"
+    },
+    {
+      "memberId": "MAL0022",
+      "error": "Wallet not found for memberId: MAL0022"
+    },
+    {
+      "memberId": "MAL0023",
+      "error": "Wallet not found for memberId: MAL0023"
+    },
+    {
+      "memberId": "MAL0024",
+      "error": "Wallet not found for memberId: MAL0024"
+    },
+    {
+      "memberId": "MAL0025",
+      "error": "Wallet not found for memberId: MAL0025"
+    },
+    {
+      "memberId": "MAL0026",
+      "error": "Wallet not found for memberId: MAL0026"
+    },
+    {
+      "memberId": "MAL0027",
+      "error": "Wallet not found for memberId: MAL0027"
+    },
+    {
+      "memberId": "MAL0028",
+      "error": "Wallet not found for memberId: MAL0028"
+    },
+    {
+      "memberId": "MAL0029",
+      "error": "Wallet not found for memberId: MAL0029"
+    },
+    {
+      "memberId": "MAL0030",
+      "error": "Wallet not found for memberId: MAL0030"
+    },
+    {
+      "memberId": "MAL0031",
+      "error": "Wallet not found for memberId: MAL0031"
+    },
+    {
+      "memberId": "MAL0032",
+      "error": "Wallet not found for memberId: MAL0032"
+    },
+    {
+      "memberId": "MAL0033",
+      "error": "Wallet not found for memberId: MAL0033"
+    },
+    {
+      "memberId": "MAL0034",
+      "error": "Wallet not found for memberId: MAL0034"
+    },
+    {
+      "memberId": "MAL0035",
+      "error": "Wallet not found for memberId: MAL0035"
+    },
+    {
+      "memberId": "MAL0036",
+      "error": "Wallet not found for memberId: MAL0036"
+    },
+    {
+      "memberId": "MAL0037",
+      "error": "Wallet not found for memberId: MAL0037"
+    },
+    {
+      "memberId": "MAL0039",
+      "error": "Wallet not found for memberId: MAL0039"
+    },
+    {
+      "memberId": "MAL0040",
+      "error": "Wallet not found for memberId: MAL0040"
+    },
+    {
+      "memberId": "MAL0041",
+      "error": "Wallet not found for memberId: MAL0041"
+    },
+    {
+      "memberId": "MAL0042",
+      "error": "Wallet not found for memberId: MAL0042"
+    },
+    {
+      "memberId": "MAL0043",
+      "error": "Wallet not found for memberId: MAL0043"
+    },
+    {
+      "memberId": "MAL0044",
+      "error": "Wallet not found for memberId: MAL0044"
+    },
+    {
+      "memberId": "MAL0045",
+      "error": "Wallet not found for memberId: MAL0045"
+    },
+    {
+      "memberId": "MAL0046",
+      "error": "Wallet not found for memberId: MAL0046"
+    },
+    {
+      "memberId": "MAL0047",
+      "error": "Wallet not found for memberId: MAL0047"
+    },
+    {
+      "memberId": "MAL0049",
+      "error": "Wallet not found for memberId: MAL0049"
+    },
+    {
+      "memberId": "MAL0050",
+      "error": "Wallet not found for memberId: MAL0050"
+    },
+    {
+      "memberId": "MAL0051",
+      "error": "Wallet not found for memberId: MAL0051"
+    },
+    {
+      "memberId": "MAL0052",
+      "error": "Wallet not found for memberId: MAL0052"
+    },
+    {
+      "memberId": "MAL0053",
+      "error": "Wallet not found for memberId: MAL0053"
+    },
+    {
+      "memberId": "MAL0055",
+      "error": "Wallet not found for memberId: MAL0055"
+    },
+    {
+      "memberId": "MAL0056",
+      "error": "Wallet not found for memberId: MAL0056"
+    },
+    {
+      "memberId": "MAL0057",
+      "error": "Wallet not found for memberId: MAL0057"
+    },
+    {
+      "memberId": "MAL0058",
+      "error": "Wallet not found for memberId: MAL0058"
+    },
+    {
+      "memberId": "MAL0059",
+      "error": "Wallet not found for memberId: MAL0059"
+    },
+    {
+      "memberId": "MAL0060",
+      "error": "Wallet not found for memberId: MAL0060"
+    },
+    {
+      "memberId": "MAL0061",
+      "error": "Wallet not found for memberId: MAL0061"
+    },
+    {
+      "memberId": "MAL0062",
+      "error": "Wallet not found for memberId: MAL0062"
+    },
+    {
+      "memberId": "MAL0063",
+      "error": "Wallet not found for memberId: MAL0063"
+    },
+    {
+      "memberId": "MAL0064",
+      "error": "Wallet not found for memberId: MAL0064"
+    },
+    {
+      "memberId": "MAL0065",
+      "error": "Wallet not found for memberId: MAL0065"
+    },
+    {
+      "memberId": "MAL0066",
+      "error": "Wallet not found for memberId: MAL0066"
+    },
+    {
+      "memberId": "MAL0067",
+      "error": "Wallet not found for memberId: MAL0067"
+    },
+    {
+      "memberId": "MAL0068",
+      "error": "Wallet not found for memberId: MAL0068"
+    },
+    {
+      "memberId": "MAL0069",
+      "error": "Wallet not found for memberId: MAL0069"
+    },
+    {
+      "memberId": "MAL0070",
+      "error": "Wallet not found for memberId: MAL0070"
+    },
+    {
+      "memberId": "MAL0071",
+      "error": "Wallet not found for memberId: MAL0071"
+    },
+    {
+      "memberId": "MAL0072",
+      "error": "Wallet not found for memberId: MAL0072"
+    },
+    {
+      "memberId": "MAL0073",
+      "error": "Wallet not found for memberId: MAL0073"
+    },
+    {
+      "memberId": "MAL0074",
+      "error": "Wallet not found for memberId: MAL0074"
+    },
+    {
+      "memberId": "MAL0075",
+      "error": "Wallet not found for memberId: MAL0075"
+    },
+    {
+      "memberId": "MAL0076",
+      "error": "Wallet not found for memberId: MAL0076"
+    },
+    {
+      "memberId": "MAL0077",
+      "error": "Wallet not found for memberId: MAL0077"
+    },
+    {
+      "memberId": "MAL0078",
+      "error": "Wallet not found for memberId: MAL0078"
+    },
+    {
+      "memberId": "MAL0079",
+      "error": "Wallet not found for memberId: MAL0079"
+    },
+    {
+      "memberId": "MAL0080",
+      "error": "Wallet not found for memberId: MAL0080"
+    },
+    {
+      "memberId": "MAL0081",
+      "error": "Wallet not found for memberId: MAL0081"
+    },
+    {
+      "memberId": "MAL0082",
+      "error": "Wallet not found for memberId: MAL0082"
+    },
+    {
+      "memberId": "MAL0172",
+      "error": "Wallet not found for memberId: MAL0172"
+    },
+    {
+      "memberId": "MAL0173",
+      "error": "Wallet not found for memberId: MAL0173"
+    },
+    {
+      "memberId": "MAL0174",
+      "error": "Wallet not found for memberId: MAL0174"
+    },
+    {
+      "memberId": "MAL0175",
+      "error": "Wallet not found for memberId: MAL0175"
+    },
+    {
+      "memberId": "MAL0176",
+      "error": "Wallet not found for memberId: MAL0176"
+    },
+    {
+      "memberId": "MAL0177",
+      "error": "Wallet not found for memberId: MAL0177"
+    },
+    { "memberId": "ma1085", "error": "Wallet not found for memberId: ma1085" },
+    { "memberId": "ma1102", "error": "Wallet not found for memberId: ma1102" },
+    { "memberId": "ma1115", "error": "Wallet not found for memberId: ma1115" },
+    { "memberId": "ma1118", "error": "Wallet not found for memberId: ma1118" },
+    { "memberId": "MA1148", "error": "Wallet not found for memberId: MA1148" },
+    { "memberId": "ma1166", "error": "Wallet not found for memberId: ma1166" },
+    { "memberId": "ma1174", "error": "Wallet not found for memberId: ma1174" },
+    {
+      "memberId": "MMD0161",
+      "error": "Wallet not found for memberId: MMD0161"
+    },
+    {
+      "memberId": "MMD0163",
+      "error": "Wallet not found for memberId: MMD0163"
+    },
+    {
+      "memberId": "MML0031",
+      "error": "Wallet not found for memberId: MML0031"
+    },
+    {
+      "memberId": "MML0077",
+      "error": "Wallet not found for memberId: MML0077"
+    },
+    {
+      "memberId": "MML0094",
+      "error": "Wallet not found for memberId: MML0094"
+    },
+    {
+      "memberId": "MML0246",
+      "error": "Missing required fields: memberId or walletBalance"
+    },
+    {
+      "memberId": "MML0247",
+      "error": "Missing required fields: memberId or walletBalance"
+    },
+    { "memberId": "MM1047", "error": "Wallet not found for memberId: MM1047" },
+    { "memberId": "mm1490", "error": "Wallet not found for memberId: mm1490" },
+    { "memberId": "mm1513", "error": "Wallet not found for memberId: mm1513" },
+    { "memberId": "mm1524", "error": "Wallet not found for memberId: mm1524" },
+    { "memberId": "MM1578", "error": "Wallet not found for memberId: MM1578" },
+    { "memberId": "MM1589", "error": "Wallet not found for memberId: MM1589" },
+    { "memberId": "MM734", "error": "Wallet not found for memberId: MM734" },
+    {
+      "memberId": "MAS1168",
+      "error": "Wallet not found for memberId: MAS1168"
+    },
+    {
+      "memberId": "MAS1170",
+      "error": "Wallet not found for memberId: MAS1170"
+    },
+    {
+      "memberId": "MAS1173",
+      "error": "Wallet not found for memberId: MAS1173"
+    },
+    { "memberId": "MAS118", "error": "Wallet not found for memberId: MAS118" },
+    { "memberId": "MAS119", "error": "Wallet not found for memberId: MAS119" },
+    {
+      "memberId": "MAS1199",
+      "error": "Wallet not found for memberId: MAS1199"
+    },
+    {
+      "memberId": "MAS1203",
+      "error": "Missing required fields: memberId or walletBalance"
+    },
+    { "memberId": "MAS567", "error": "Wallet not found for memberId: MAS567" },
+    { "memberId": "MAS723", "error": "Wallet not found for memberId: MAS723" },
+    { "memberId": "MMS008", "error": "Wallet not found for memberId: MMS008" },
+    { "memberId": "MMS052", "error": "Wallet not found for memberId: MMS052" },
+    {
+      "memberId": "MMS1510",
+      "error": "Wallet not found for memberId: MMS1510"
+    },
+    {
+      "memberId": "MMS1625",
+      "error": "Missing required fields: memberId or walletBalance"
+    },
+    { "memberId": "MMS168", "error": "Wallet not found for memberId: MMS168" },
+    { "memberId": "MMS433", "error": "Wallet not found for memberId: MMS433" },
+    { "memberId": "MMS438", "error": "Wallet not found for memberId: MMS438" },
+    { "memberId": "MMS440", "error": "Wallet not found for memberId: MMS440" },
+    { "memberId": "MMS444", "error": "Wallet not found for memberId: MMS444" },
+    { "memberId": "MMS447", "error": "Wallet not found for memberId: MMS447" },
+    { "memberId": "MMS452", "error": "Wallet not found for memberId: MMS452" },
+    { "memberId": "MMS454", "error": "Wallet not found for memberId: MMS454" },
+    { "memberId": "MMS459", "error": "Wallet not found for memberId: MMS459" },
+    { "memberId": "MMS462", "error": "Wallet not found for memberId: MMS462" },
+    { "memberId": "MMS490", "error": "Wallet not found for memberId: MMS490" },
+    { "memberId": "MMS887", "error": "Wallet not found for memberId: MMS887" },
+    { "memberId": "MC419A", "error": "Wallet not found for memberId: MC419A" },
+    { "memberId": "MC420A", "error": "Wallet not found for memberId: MC420A" },
+    { "memberId": "MC450A", "error": "Wallet not found for memberId: MC450A" },
+    { "memberId": "MC452A", "error": "Wallet not found for memberId: MC452A" },
+    { "memberId": "MC490A", "error": "Wallet not found for memberId: MC490A" },
+    { "memberId": "MC491A", "error": "Wallet not found for memberId: MC491A" },
+    { "memberId": "MC532A", "error": "Wallet not found for memberId: MC532A" },
+    { "memberId": "MC552A", "error": "Wallet not found for memberId: MC552A" },
+    { "memberId": "MC571A", "error": "Wallet not found for memberId: MC571A" },
+    { "memberId": "MC593A", "error": "Wallet not found for memberId: MC593A" },
+    { "memberId": "MC654A", "error": "Wallet not found for memberId: MC654A" },
+    { "memberId": "MC744A", "error": "Wallet not found for memberId: MC744A" },
+    { "memberId": "MAD0158", "error": "Wallet not found for memberId: MAD0158" }
+  ]
+}

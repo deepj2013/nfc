@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Sidebar from "../layout/Sidebar";
 import { Route, Routes } from "react-router";
 import Dashboard from "../pages/dashboard/Dashboard";
@@ -25,6 +25,11 @@ import MemberCheckInCheckOut from "../pages/member/MemberCheckInCheckOut";
 import EventBooking from "../pages/member/EventBooking";
 import ClubManagement from "../pages/dashboard/ClubManagement/ClubManagement";
 import Restaurant from "../pages/facilityManagement/Restaurant";
+import MemberAction from "../pages/member/MemberAction";
+import MenuManagement from "../pages/facilityManagement/RestaurantMenu";
+import TableManagement from "../pages/facilityManagement/RestaurantTableManagement";
+import POSBilling from "../pages/user/Biling";
+// import MemberPassword from "../pages/member/MemberPasswordModal";
 
 function DashboardRoutes() {
   const [open, setOpen] = useState(true);
@@ -54,11 +59,22 @@ function DashboardRoutes() {
             <Route path="/menu-creation" element={<MenuCreation />} />
             <Route path="/create-member" element={<CreateMember />} />
             <Route path="/bulk-upload-members" element={<BulkUploadMembers />} />
+            {/* <Route path="/memberpassword" element={<MemberPassword />} /> */}
             <Route path="/transactionHistory" element={<TransactionHistory />} />
             <Route path="/membercheckinout" element={<MemberCheckInCheckOut />} />
             <Route path="/eventbookings" element={<EventBooking />} />
             <Route path="/facilitymanagement" element={<FacilityManagement />} />
             <Route path="/restaurantmanagement" element={<Restaurant />} />
+            <Route path="/memberaction" element={<MemberAction />} />
+            <Route path="/billing" element={<POSBilling />} />
+            {/* Dynamic Routes for Restaurant Features */}
+            
+
+            <Route path="/restaurant/:restaurantId/menu" element={<MenuManagement />} />
+            <Route path="/restaurant/:restaurantId/tables" element={<TableManagement />} />
+        {/* <Route path="/restaurant/:restaurantId/pos" element={<POSPage />} />
+        <Route path="/restaurant/:restaurantId/kitchen" element={<KitchenPage />} /> */}
+
           </Routes>
         </div>
       </div>

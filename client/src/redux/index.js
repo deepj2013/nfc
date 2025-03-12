@@ -7,6 +7,12 @@ import inventaryState from "./slice/inventarySlice";
 import adminState from "./slice/adminSlice";
 import userStateMangementState from "./slice/userManagementSlice";
 import organisationMangementState from "./slice/organisationMangementSlice";
+import facilityState from "./slice/facilitySlice";
+import restaurantReducer from "./slice/restaurantSlice"; 
+import restauarantmenu from "./slice/restaurantMenuSlice";
+
+
+
 
 export default combineReducers({
   authState,
@@ -15,5 +21,8 @@ export default combineReducers({
   inventaryState,
   adminState,
   userStateMangementState,
-  organisationMangementState
+  organisationMangementState,
+  facilityState,
+  restaurant: restaurantReducer,
+  menu: restauarantmenu,
 });

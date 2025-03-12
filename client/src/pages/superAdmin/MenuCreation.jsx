@@ -199,7 +199,7 @@ function MenuCreation({ isOpen, onClose }) {
             onChange={(val) => dropDownChange(val)}
           />
           {/* <div className="mt-5">
-            <label class="block mb-2 text-sm font-medium text-gray-900 ">
+            <label className="block mb-2 text-sm font-medium text-gray-900 ">
               Submenu Name
             </label>
             <div className=" bg-white border rounded-lg p-3">
@@ -223,7 +223,7 @@ function MenuCreation({ isOpen, onClose }) {
                 <button
                   onClick={addSubmenu}
                   type="button"
-                  class="text-white px-2 py-1 bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full sm:w-auto  text-center dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-700"
+                  className="text-white px-2 py-1 bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full sm:w-auto  text-center dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-700"
                 >
                   + Add
                 </button>
@@ -453,7 +453,7 @@ function MenuCreation({ isOpen, onClose }) {
         <button
           onClick={(e) => menuCreateHandler(e)}
           type="submit"
-          class="text-white mt-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-[100%] px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          className="text-white mt-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-[100%] px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Submit
         </button>
@@ -475,8 +475,8 @@ const FormInput = ({
   errors,
 }) => {
   return (
-    <div class={twMerge("mb-5 relative", width)}>
-      <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">
+    <div className={twMerge("mb-5 relative", width)}>
+      <label for="email" className="block mb-2 text-sm font-medium text-gray-900 ">
         {placeholder}
       </label>
       <input
@@ -485,7 +485,7 @@ const FormInput = ({
         name={name}
         type={type ? type : "text"}
         id="email"
-        class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5    dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5    dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder={placeholder}
         required
         // chooseDate={date}
@@ -504,19 +504,19 @@ const Dropdown = ({ width, placeholder, data, onChange }) => {
   const [selectedVal, setSelectedVal] = useState("select");
   console.log("se", selectedVal);
   return (
-    <div class={twMerge(" text-gray-900 dark:text-gray-100 ", width)}>
-      <div class="relative w-full group">
+    <div className={twMerge(" text-gray-900 dark:text-gray-100 ", width)}>
+      <div className="relative w-full group">
         <label
           for="email"
-          class="block mb-2 text-sm font-medium text-gray-900 "
+          className="block mb-2 text-sm font-medium text-gray-900 "
         >
           {placeholder}
         </label>
 
-        <button class="py-2.5 px-3 w-full md:text-sm text-site text-black bg-transparent border border-dimmed  focus:border-brand focus:outline-none focus:ring-0 peer flex items-center justify-between rounded ">
+        <button className="py-2.5 px-3 w-full md:text-sm text-site text-black bg-transparent border border-dimmed  focus:border-brand focus:outline-none focus:ring-0 peer flex items-center justify-between rounded ">
           {selectedVal}
         </button>
-        <div class="absolute z-[99] top-[100%] left-[50%] translate-x-[-50%] rounded-md overflow-hidden shadow-lg w-full  peer-focus:visible peer-focus:opacity-100 opacity-0 invisible duration-200 p-1 bg-gray-100   border border-dimmed text-xs md:text-sm">
+        <div className="absolute z-[99] top-[100%] left-[50%] translate-x-[-50%] rounded-md overflow-hidden shadow-lg w-full  peer-focus:visible peer-focus:opacity-100 opacity-0 invisible duration-200 p-1 bg-gray-100   border border-dimmed text-xs md:text-sm">
           {data?.map((ele, ind) => {
             return (
               <div
@@ -524,7 +524,7 @@ const Dropdown = ({ width, placeholder, data, onChange }) => {
                   onChange(ele);
                   setSelectedVal(ele?.isActive);
                 }}
-                class=" w-full block cursor-pointer  text-black  hover:text-link px-3 py-2 rounded-md"
+                className=" w-full block cursor-pointer  text-black  hover:text-link px-3 py-2 rounded-md"
               >
                 {ele?.isActive}
               </div>

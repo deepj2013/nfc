@@ -1,50 +1,33 @@
 import React, { useEffect, useState } from "react";
 import ModalWrapper from "../../layout/ModalWrapper";
-import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import {
   createRestaurantServices,
   updateRestaurantServices,
 } from "../../redux/thunk/micellaneousServices";
-import { GENDER_DATA, logger, successToast } from "../../utils/Helper";
+import { logger, successToast } from "../../utils/Helper";
 import moment from "moment";
 
-export default function RestaurantModal({
-  isOpen,
-  setIsOpen,
-  onClose,
-  menuEdit,
-  types,
-}) {
-  let CUISINES_DATA = [
-    {
-      label: "Italian",
-      value: "Italian",
-    },
-    {
-      label: "Chinese",
-      value: "Chinese",
-    },
-    {
-      label: "Thai",
-      value: "Thai",
-    },
-    {
-      label: "Indian",
-      value: "Indian",
-    },
-    {
-      label: "French",
-      value: "French",
-    },
-    {
-      label: "Japanese",
-      value: "Japanese",
-    },
-    {
-      label: "Mexican",
-      value: "Mexican",
-    },
+export default function RestaurantModal({ isOpen, onClose, menuEdit, types }) {
+  const dispatch = useDispatch();
+
+  const CUISINES_DATA = [
+    { label: "Italian", value: "Italian" },
+    { label: "Chinese", value: "Chinese" },
+    { label: "Thai", value: "Thai" },
+    { label: "Indian", value: "Indian" },
+    { label: "French", value: "French" },
+    { label: "Japanese", value: "Japanese" },
+    { label: "Mexican", value: "Mexican" },
+  ];
+  const DAYS = [
+    { label: "Sunday", value: 0 },
+    { label: "Monday", value: 1 },
+    { label: "Tuesday", value: 2 },
+    { label: "Wednesday", value: 3 },
+    { label: "Thursday", value: 4 },
+    { label: "Friday", value: 5 },
+    { label: "Saturday", value: 6 },
   ];
   const [restaurantData, setRestaurantData] = useState({
     name: "",
@@ -52,379 +35,401 @@ export default function RestaurantModal({
     commissionRate: 30,
     description: "",
     cuisines: [],
-    images: ["", "", ""],
+    images: [],
     timings: [
       {
         days: [0, 1, 2, 3, 4, 5, 6],
         openingTime: "11:00",
         closingTime: "22:00",
       },
-    ],
+    ], // ✅ Ensure it's an array
     isOpen: true,
     createdBy: 1,
     updatedBy: 1,
   });
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setRestaurantData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleTypeChange = (e) => {
-    setRestaurantData((prev) => ({
-      ...prev,
-      type: e.target.value,
-    }));
-  };
-
-  const handleImageChange = (index, value) => {
-    setRestaurantData((prev) => ({
-      ...prev,
-      images: prev.images.map((img, i) => (i === index ? value : img)),
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      let response = await dispatch(
-        createRestaurantServices(restaurantData)
-      ).unwrap();
-      successToast("Category created successfully");
-      onClose();
-      console.log("response899", response);
-    } catch (error) {
-      console.log(error);
-      logger(error);
-    }
-    console.log("Submitting restaurant data:");
-    // setIsOpen(false); // Close modal after submission
-  };
-
-  const updateTiming = (field, value) => {
-    setRestaurantData((prev) => ({
-      ...prev,
-      timings: [{ ...prev.timings[0], [field]: value }],
-    }));
-  };
-
   useEffect(() => {
     if (menuEdit !== null && types === "edit") {
-      setRestaurantData((pre) => ({
-        ...pre,
-        name: menuEdit?.name,
-        type: menuEdit?.type,
-        commissionRate: menuEdit?.commissionRate,
-        description: menuEdit?.description,
-        cuisines: menuEdit?.cuisines,
-        images: menuEdit?.images,
-        timings: menuEdit?.timings,
-        isOpen: menuEdit?.isOpen,
-        updatedBy: moment(menuEdit?.updatedBy).format("YYYY-MM-DD"),
-      }));
+      setRestaurantData({
+        ...menuEdit,
+        images: menuEdit.images || [],
+        cuisines: menuEdit.cuisines || [],
+        timings: Array.isArray(menuEdit.timings)
+          ? menuEdit.timings
+          : [
+              {
+                days: [0, 1, 2, 3, 4, 5, 6],
+                openingTime: "11:00",
+                closingTime: "22:00",
+              },
+            ], // ✅ Ensure `timings` is an array
+        updatedBy: 1,
+      });
     } else {
-      setRestaurantData((prev) => ({
-        ...prev,
+      setRestaurantData({
         name: "",
-        type: "",
+        type: "Third-Party",
         commissionRate: 30,
         description: "",
         cuisines: [],
-        images: ["", "", ""],
+        images: [],
         timings: [
           {
             days: [0, 1, 2, 3, 4, 5, 6],
             openingTime: "11:00",
             closingTime: "22:00",
           },
-        ],
+        ], // ✅ Ensure default `timings`
         isOpen: true,
         createdBy: 1,
         updatedBy: 1,
-      }));
+      });
     }
   }, [isOpen]);
 
-  const updateHandler = async () => {
-    let payload = {
-      name: menuEdit?.name,
-      type: menuEdit?.type,
-      commissionRate: menuEdit?.commissionRate,
-      description: menuEdit?.description,
-      cuisines: menuEdit?.cuisines,
-      images: menuEdit?.images,
-      timings: menuEdit?.timings,
-      isOpen: menuEdit?.isOpen,
-      updatedBy: moment(menuEdit?.updatedBy).format("YYYY-MM-DD"),
-    };
+  // Handle Input Change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setRestaurantData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle Image Upload
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    const imageURLs = files.map((file) => URL.createObjectURL(file));
+    setRestaurantData((prev) => ({
+      ...prev,
+      images: [...prev.images, ...imageURLs],
+    }));
+  };
+
+  // Update Restaurant Timings
+  // Function to Toggle Day Selection
+  const toggleDay = (dayValue) => {
+    setRestaurantData((prev) => {
+      let updatedTimings = [...prev.timings];
+
+      // Check if the day is already selected
+      const existingDayIndex = updatedTimings.findIndex((t) =>
+        t.days.includes(dayValue)
+      );
+
+      if (existingDayIndex > -1) {
+        // If already present, remove that day
+        updatedTimings = updatedTimings
+          .map((t) => ({
+            ...t,
+            days: t.days.filter((d) => d !== dayValue),
+          }))
+          .filter((t) => t.days.length > 0); // Remove empty timing objects
+      } else {
+        // If not present, add a new timing entry
+        updatedTimings.push({
+          days: [dayValue],
+          openingTime: "11:00 AM",
+          closingTime: "10:00 PM",
+        });
+      }
+
+      return { ...prev, timings: updatedTimings };
+    });
+  };
+
+  // Function to Update Opening/Closing Time for a Specific Day
+  const updateTiming = (dayValue, field, value) => {
+    setRestaurantData((prev) => {
+      const updatedTimings = prev.timings.map((t) =>
+        t.days.includes(dayValue) ? { ...t, [field]: value } : t
+      );
+      return { ...prev, timings: updatedTimings };
+    });
+  };
+
+  // Handle Submit (Add or Update)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      let response = await dispatch(updateRestaurantServices(payload)).unwrap();
-      console.log("responseresponse", response);
+      if (types === "edit") {
+        await dispatch(updateRestaurantServices(restaurantData)).unwrap();
+        successToast("Restaurant updated successfully!");
+      } else {
+        await dispatch(createRestaurantServices(restaurantData)).unwrap();
+        successToast("Restaurant added successfully!");
+      }
+      onClose();
     } catch (error) {
-      console.log(error);
       logger(error);
     }
   };
 
   return (
     <ModalWrapper isOpen={isOpen} onClose={onClose}>
-      <form
-        onSubmit={types === "eidt" ? updateHandler : handleSubmit}
-        className="mt-2 text-left h-[500px] overflow-scroll"
-      >
-        <div className="mb-4">
-          <label
-            htmlFor="name"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={restaurantData.name}
-            onChange={handleInputChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+      <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg mx-auto my-10 flex flex-col md:flex-row h-[90vh]">
 
-        <div className="mb-4">
-          <label
-            htmlFor="type"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Type
-          </label>
-          <select
-            id="type"
-            name="type"
-            value={restaurantData.type}
-            onChange={handleTypeChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          >
-            <option value="Own">Own</option>
-            <option value="Partnership">Partnership</option>
-            <option value="Third-Party">Third-Party</option>
-          </select>
-        </div>
 
-        {(restaurantData.type === "Partnership" ||
-          restaurantData.type === "Third-Party") && (
-          <div className="mb-4">
-            <label
-              htmlFor="commissionRate"
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Commission Rate
-            </label>
-            <input
-              type="number"
-              id="commissionRate"
-              name="commissionRate"
-              value={restaurantData.commissionRate}
-              onChange={handleInputChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
+      <form onSubmit={handleSubmit} className="flex flex-col-reverse md:flex-col gap-6 w-full">
+          {/* 📸 Preview Section */}
+          <div className="w-full md:w-[100%] h-[35vh] bg-gray-100 p-6 rounded-lg flex-shrink-0">
+            <h3 className="text-lg font-semibold ">Preview</h3>
+            <div className="bg-white p-4 rounded-lg shadow-lg">
+              <h2 className="text-2xl font-bold text-gray-800">
+                {restaurantData.name || "Restaurant Name"}
+              </h2>
+              <p className="text-gray-600">
+                {restaurantData.description || "Description will appear here."}
+              </p>
+
+              {/* Dynamic Image Preview */}
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {restaurantData.images.length > 0 ? (
+                  restaurantData.images?.map((img, index) => (
+                    <img
+                      key={index}
+                      src={img}
+                      alt="Preview"
+                      className="w-full h-20 object-cover rounded"
+                    />
+                  ))
+                ) : (
+                  <p className="text-gray-400">No images uploaded.</p>
+                )}
+              </div>
+            </div>
           </div>
-        )}
 
-        <div className="mb-4">
-          <label
-            htmlFor="description"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={restaurantData.description}
-            onChange={handleInputChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <SelectDropdown
-          data={CUISINES_DATA}
-          handleSelectChange={(e) => {
-            const selectedOptions = Array.from(
-              e.target.selectedOptions,
-              (option) => option.value
-            );
-            setRestaurantData((prev) => ({
-              ...prev,
-              cuisines: selectedOptions, // Update the cuisines with the selected options
-            }));
-          }}
-          selected={restaurantData.cuisines} // Set the selected values
-          label={"Cuisines"}
-          placeHolder={"Cuisines"}
-        />
-
-        {restaurantData.images.map((image, index) => (
-          <div key={index} className="mb-4">
-            <label
-              htmlFor={`image-${index}`}
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Image {index + 1}
+          {/* 📝 Form Section */}
+          <div className="flex-1 h-[80vh] overflow-y-auto p-4">
+            {/* Name */}
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Name
             </label>
             <input
               type="text"
-              id={`image-${index}`}
-              value={image}
-              onChange={(e) => handleImageChange(index, e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              name="name"
+              value={restaurantData.name}
+              onChange={handleInputChange}
+              className="border rounded w-full py-2 px-3 text-gray-700 mb-3"
+              placeholder="Restaurant Name"
             />
-          </div>
-        ))}
 
-        <div className="mb-4">
-          <label
-            htmlFor="openingTime"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Opening Time
-          </label>
-          <input
-            type="time"
-            id="openingTime"
-            value={restaurantData.timings[0].openingTime}
-            onChange={(e) => updateTiming("openingTime", e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+            {/* Type */}
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Type
+            </label>
+            <select
+              name="type"
+              value={restaurantData.type}
+              onChange={handleInputChange}
+              className="border rounded w-full py-2 px-3 text-gray-700 mb-3"
+            >
+              <option value="Own">Own</option>
+              <option value="Partnership">Partnership</option>
+              <option value="Third-Party">Third-Party</option>
+            </select>
 
-        <div className="mb-4">
-          <label
-            htmlFor="closingTime"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Closing Time
-          </label>
-          <input
-            type="time"
-            id="closingTime"
-            value={restaurantData.timings[0].closingTime}
-            onChange={(e) => updateTiming("closingTime", e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+            {/* Commission Rate (Only if Partnership/Third-Party) */}
+            {(restaurantData.type === "Partnership" ||
+              restaurantData.type === "Third-Party") && (
+              <>
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  Commission Rate (%)
+                </label>
+                <input
+                  type="number"
+                  name="commissionRate"
+                  value={restaurantData.commissionRate}
+                  onChange={handleInputChange}
+                  className="border rounded w-full py-2 px-3 text-gray-700 mb-3"
+                  placeholder="Commission Rate"
+                />
+              </>
+            )}
 
-        <div className="mb-4">
-          <label
-            htmlFor="isOpen"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Is Open
-          </label>
-          <input
-            type="checkbox"
-            id="isOpen"
-            checked={restaurantData.isOpen}
-            onChange={(e) =>
-              setRestaurantData((prev) => ({
-                ...prev,
-                isOpen: e.target.checked,
-              }))
-            }
-            className="form-checkbox h-5 w-5 text-blue-600"
-          />
-        </div>
+            {/* Description */}
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={restaurantData.description}
+              onChange={handleInputChange}
+              className="border rounded w-full py-2 px-3 text-gray-700 mb-3"
+              placeholder="Write a short description"
+            />
 
-        <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Save Restaurant
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsOpen(false)}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    </ModalWrapper>
-  );
-}
+            {/* Cuisines */}
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Cuisines
+            </label>
+            <div className="border rounded w-full py-2 px-3 text-gray-700 mb-3">
+              {CUISINES_DATA.map((cuisine) => (
+                <button
+                  key={cuisine.value}
+                  type="button"
+                  onClick={() => {
+                    setRestaurantData((prev) => ({
+                      ...prev,
+                      cuisines: prev.cuisines.includes(cuisine.value)
+                        ? prev.cuisines.filter((c) => c !== cuisine.value)
+                        : [...prev.cuisines, cuisine.value],
+                    }));
+                  }}
+                  className={`m-1 px-3 py-1 border rounded ${
+                    restaurantData.cuisines.includes(cuisine.value)
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  {cuisine.label}
+                </button>
+              ))}
+            </div>
 
-// function SelectDropdown({
-//   data,
-//   handleSelectChange,
-//   selected,
-//   label,
-//   placeHolder,
-//   errors,
-// }) {
-//   console.log(data);
-//   return (
-//     <div>
-//       <div className="bg-white flex-col mt-4 mb-5">
-//         <label className="mb-5" htmlFor="employee-select">
-//           {label}{" "}
-//         </label>
-//         <select
-//           id="employee-select"
-//           onChange={handleSelectChange}
-//           className="w-full p-2 mt-2 border rounded-lg bg-gray-100"
-//           value={selected}
-//         >
-//           <option value=" ">{placeHolder}</option>
-//           {data &&
-//             data.map((item) => (
-//               <option key={item?.value} value={item?.value}>
-//                 {item?.label}
-//               </option>
-//             ))}
-//         </select>
-//         <p className="text-red-600 mt-3">{errors}</p>
-//       </div>
-//     </div>
-//   );
-// }
-
-function SelectDropdown({
-  data,
-  handleSelectChange,
-  selected,
-  label,
-  placeHolder,
-  errors,
-}) {
-  return (
-    <div>
-      <div className="bg-white flex-col mt-4 mb-5">
-        <label className="mb-5" htmlFor="employee-select">
-          {label}
-        </label>
-        <select
-          id="employee-select"
-          onChange={handleSelectChange}
-          className="w-full p-2 mt-2 border rounded-lg bg-gray-100"
-          value={selected}
-          multiple
-        >
-          <option value=" " disabled>
-            {placeHolder}
-          </option>
-          {data &&
-            data.map((item) => (
-              <option key={item?.value} value={item?.value}>
-                {item?.label}
-              </option>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Image Links
+            </label>
+            {restaurantData.images.map((image, index) => (
+              <div key={index} className="flex items-center mb-2">
+                <input
+                  type="text"
+                  value={image}
+                  onChange={(e) => {
+                    const newImages = [...restaurantData.images];
+                    newImages[index] = e.target.value;
+                    setRestaurantData((prev) => ({
+                      ...prev,
+                      images: newImages,
+                    }));
+                  }}
+                  className="border rounded w-full py-2 px-3 text-gray-700"
+                  placeholder="Enter image URL"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRestaurantData((prev) => ({
+                      ...prev,
+                      images: prev.images.filter((_, i) => i !== index),
+                    }));
+                  }}
+                  className="ml-2 text-red-500 hover:text-red-700"
+                >
+                  ❌
+                </button>
+              </div>
             ))}
-        </select>
-        <p className="text-red-600 mt-3">{errors}</p>
+            <button
+              type="button"
+              onClick={() =>
+                setRestaurantData((prev) => ({
+                  ...prev,
+                  images: [...prev.images, ""],
+                }))
+              }
+              className="mt-2 px-3 py-1 border rounded bg-green-500 text-white"
+            >
+              ➕ Add Image Link
+            </button>
+
+            <div>
+              {/* Multi-Select Days */}
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Select Open Days
+              </label>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {DAYS.map((day) => (
+                  <button
+                    key={day.value}
+                    type="button"
+                    onClick={() => toggleDay(day.value)}
+                    className={`px-3 py-1 border rounded ${
+                      Array.isArray(restaurantData.timings) &&
+                      restaurantData.timings.some((t) =>
+                        t.days.includes(day.value)
+                      )
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {day.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Show Opening & Closing Time for Selected Days */}
+              {/* Opening & Closing Time (Only Once for Selected Days) */}
+              <div className="mb-4 border p-3 rounded">
+                {/* <p className="font-bold text-gray-700">
+                  Open on:{" "}
+                  {restaurantData.timings.days
+                    .map((d) => DAYS[d].label)
+                    .join(", ")}
+                </p> */}
+
+                <div className="flex space-x-4 mt-2">
+                  {/* Opening Time */}
+                  <div className="flex flex-col">
+                    <label className="block text-gray-700 text-sm font-bold">
+                      Opening Time
+                    </label>
+                    <input
+                      type="time"
+                      value={
+                        Array.isArray(restaurantData.timings) &&
+                        restaurantData.timings.length > 0
+                          ? restaurantData.timings[0].openingTime
+                          : ""
+                      }
+                      onChange={(e) =>
+                        setRestaurantData((prev) => ({
+                          ...prev,
+                          timings: prev.timings.map((t, i) =>
+                            i === 0 ? { ...t, openingTime: e.target.value } : t
+                          ),
+                        }))
+                      }
+                      className="border rounded py-2 px-3 text-gray-700"
+                    />
+                  </div>
+
+                  {/* Closing Time */}
+                  <div className="flex flex-col">
+                    <label className="block text-gray-700 text-sm font-bold">
+                      Closing Time
+                    </label>
+                    <input
+                      type="time"
+                      value={
+                        Array.isArray(restaurantData.timings) &&
+                        restaurantData.timings.length > 0
+                          ? restaurantData.timings[0].closingTime
+                          : ""
+                      }
+                      onChange={(e) =>
+                        setRestaurantData((prev) => ({
+                          ...prev,
+                          timings: prev.timings.map((t, i) =>
+                            i === 0 ? { ...t, closingTime: e.target.value } : t
+                          ),
+                        }))
+                      }
+                      className="border rounded py-2 px-3 text-gray-700"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+            >
+              {types === "edit" ? "Update Restaurant" : "Add Restaurant"}
+            </button>
+          </div>
+        </form>
       </div>
-    </div>
+    </ModalWrapper>
   );
 }

@@ -38,7 +38,6 @@ function PublicRoutes({ setIsLogin }) {
         <Route path="/services" element={<OurServices />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/clubtour" element={<Clubtour />} />
-
         <Route path="/member-login" element={<MemberLogin setIsLogin={setIsLogin} />} />
         <Route path="/login" element={<Login setIsLogin={setIsLogin} />} />
         <Route path="/control" element={<SuperLogin setIsLogin={setIsLogin} />} />

@@ -10,7 +10,104 @@ import mongoose from "mongoose";
 import CATEGORY_CHARGES from "../constants/subscriptionCharges.js";
 import ValidatorHelper from "../helpers/validator/validatorHelper.js";
 import MemberCheckInOut from "../models/member_checkinout.js";
+import { generateUniqueMobile, generateUniqueEmail, validateMemberData, logBulkUploadResults } from '../helpers/MemberHelper/memberhelper.js';
 import moment from "moment";
+import xlsx from 'xlsx';
+import bcrypt from "bcrypt";
+import MemberCredentials from "../models/member_credentials.js";
+
+export const createCredentials = async (memberId, email, mobile, password, adminId) => {
+  if (!memberId || !email || !mobile || !password) {
+    throw new Error("All fields are required.");
+  }
+console.log(memberId, email, mobile)
+  // Check if the member exists in MasterMemberSchema
+  const member = await MemberData.findOne({ memberId:memberId, emailId:email, mobileNumber:mobile });
+  if (!member) {
+    throw new Error("Member not found.");
+  }
+
+  // Check if credentials already exist for this member
+  let credentials = await MemberCredentials.findOne({ memberId });
+  if (credentials) {
+    throw new Error("Credentials already exist for this member.");
+  }
+
+  // Hash the password
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Save credentials
+  credentials = new MemberCredentials({
+    member_id: member._id ,
+    memberId,
+    email,
+    mobile,
+    password: hashedPassword,
+    invalidLoginAttempts: 0,
+  });
+
+  await credentials.save();
+
+  return { message: "Credentials created successfully", memberId };
+};
+
+export const resetPassword = async (memberId, newPassword, adminId) => {
+  const credentials = await MemberCredentials.findOne({ memberId });
+  if (!credentials) {
+    throw new Error("Credentials not found.");
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  credentials.password = hashedPassword;
+  credentials.passwordCreatedBy = adminId;
+  credentials.invalidLoginAttempts = 0; // Reset attempts
+  await credentials.save();
+
+  return { message: "Password reset successfully", memberId };
+};
+export const fetchMemberDetails = async ({ memberId, emailId, mobileNumber }) => {
+  try {
+      const query = {};
+      if (memberId) query.memberId = memberId;
+      if (emailId) query.emailId = emailId;
+      if (mobileNumber) query.mobileNumber = mobileNumber;
+
+      const member = await MemberData.findOne(query)
+          .select("memberId memberCategory title firstName middleName surname dateOfBirth mobileNumber emailId address dependents createdAt updatedAt")
+          .lean();
+
+      if (!member) return null;
+
+      // Fetch wallet balance
+      const wallet = await Wallet.findOne({ memberId: member.memberId })
+          .select("balance")
+          .lean();
+
+      // Combine full name
+      const fullName = [member.title, member.firstName, member.middleName, member.surname]
+          .filter(Boolean)
+          .join("");
+
+      return {
+          _id: member._id,
+          memberId: member.memberId,
+          memberCategory: member.memberCategory,
+          name: fullName,
+          dateOfBirth: member.dateOfBirth,
+          mobileNumber: member.mobileNumber,
+          emailId: member.emailId,
+          address: member.address,
+          dependents: member.dependents,
+          createdAt: member.createdAt,
+          updatedAt: member.updatedAt,
+          balance: wallet ? wallet.balance : 0,
+      };
+  } catch (error) {
+      console.error("Error in fetchMemberDetails:", error);
+      throw error;
+  }
+};
+
 
 export const createMemberCategory = async (data) => {
   let sequenceId = 1;
@@ -18,6 +115,7 @@ export const createMemberCategory = async (data) => {
     const lastMember = await MemberCategory.findOne().sort({
       memberCategoryId: -1,
     });
+    
     if (lastMember) {
       sequenceId = lastMember.memberCategoryId + 1;
     }
@@ -299,77 +397,7 @@ const validateMemberIdStructure = async (member) => {
   }
 };
 
-export const bulkUploadMembers = async (members) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
 
-  let totalUploaded = 0;
-  let failedEntries = [];
-
-  try {
-    for (const member of members) {
-      try {
-        // Validate the MemberId structure and uniqueness
-        await validateMemberIdStructure(member);
-
-        // Create a new member entry
-        const newMember = new MemberData(member);
-        const savedMember = await newMember.save({ session });
-
-        // Create Wallet with opening balance
-        const wallet = new Wallet({
-          member_id: savedMember._id,
-          memberId: savedMember.memberId,
-          balance: member.openingBalance || 0, // Opening balance from CSV
-          createdBy: member.createdBy,
-          updatedBy: member.updatedBy,
-        });
-        await wallet.save({ session });
-
-        // Create an initial transaction entry for opening balance
-        const transaction = new MemberTransactionHistory({
-          member_id: savedMember._id,
-          memberId: savedMember.memberId,
-          transactionDate: new Date(),
-          amount: member.openingBalance || 0,
-          transactionType: "Credit",
-          remarks: "Opening Balance Entry",
-          narration: "Initial Wallet Balance",
-          description: "Opening balance added at the time of member creation.",
-          createdBy: member.createdBy,
-          updatedBy: member.updatedBy,
-        });
-        await transaction.save({ session });
-
-        // Add dependent entries if provided
-        if (member.dependents && Array.isArray(member.dependents)) {
-          for (const dependentData of member.dependents) {
-            const newDependent = new Dependent({
-              ...dependentData,
-              member_id: savedMember._id,
-              memberId: savedMember.memberId,
-            });
-            await newDependent.save({ session });
-          }
-        }
-
-        totalUploaded++;
-      } catch (err) {
-        // Collect failed entries for reporting
-        failedEntries.push({ memberId: member.memberId, error: err.message });
-      }
-    }
-
-    await session.commitTransaction();
-    session.endSession();
-
-    return { totalUploaded, failedEntries };
-  } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-    throw new Error("Bulk upload failed: " + error.message);
-  }
-};
 
 export const createDependent = async (memberId, dependentData) => {
   const session = await mongoose.startSession();
@@ -1125,4 +1153,113 @@ export const getMemberHistory = async (memberId, page, limit) => {
     currentPage: page,
     totalPages: Math.ceil(totalRecords / limit),
   };
+};
+
+
+//temproray Servicess
+
+export const bulkUploadMembersService = async (filePath) => {
+  console.log('Starting bulk upload process...');
+  const workbook = xlsx.readFile(filePath);
+  const sheetName = workbook.SheetNames[0];
+  const sheet = workbook.Sheets[sheetName];
+  const members = xlsx.utils.sheet_to_json(sheet);
+
+  if (!members || members.length === 0) {
+      throw new Error('Empty file uploaded');
+  }
+
+  let totalUploaded = 0;
+  let failedEntries = [];
+
+  console.log(`Total members in file: ${members.length}`);
+
+  for (const [index, member] of members.entries()) {
+      try {
+          console.log(`Processing member ${index + 1}/${members.length}:`, member);
+          
+          // Validate and assign missing fields
+          member.mobileNumber = member.mobileNumber || await generateUniqueMobile();
+          member.emailId = member.emailId || await generateUniqueEmail();
+          member.memberId = member.memberId || `AUTO_${new Date().getTime()}`;
+
+          await validateMemberData(member);
+          const existingMember = await MemberData.findOne({ memberId: member.memberId });
+
+          if (existingMember) {
+              console.log(`Skipping existing member: ${member.memberId}`);
+              failedEntries.push({ memberId: member.memberId, error: 'Member already exists' });
+              continue;
+          }
+
+          const newMember = new MemberData(member);
+          const savedMember = await newMember.save();
+          console.log(`Created new member: ${savedMember.memberId}`);
+
+          // Create Wallet
+          const wallet = new Wallet({
+              member_id: savedMember._id,
+              memberId: savedMember.memberId,
+              balance: 0,
+              createdBy: member.createdBy,
+              updatedBy: member.updatedBy,
+          });
+          await wallet.save();
+          console.log(`Wallet created for member: ${savedMember.memberId}`);
+
+          totalUploaded++;
+      } catch (error) {
+          console.error(`Error processing member ${member.memberId}:`, error.message);
+          failedEntries.push({ memberId: member.memberId, error: error.message });
+      }
+  }
+
+  console.log(`Bulk upload completed. Total Uploaded: ${totalUploaded}`);
+  logBulkUploadResults(totalUploaded, failedEntries);
+  return { totalUploaded, failedEntries };
+};
+
+export const updateWalletBalanceService = async (filePath) => {
+  console.log('Starting wallet balance update process...');
+  const workbook = xlsx.readFile(filePath);
+  const sheetName = workbook.SheetNames[0];
+  const sheet = workbook.Sheets[sheetName];
+  const walletUpdates = xlsx.utils.sheet_to_json(sheet);
+
+  if (!walletUpdates || walletUpdates.length === 0) {
+      throw new Error('Empty file uploaded');
+  }
+
+  let totalUpdated = 0;
+  let failedEntries = [];
+
+  console.log(`Total wallet updates in file: ${walletUpdates.length}`);
+
+  for (const [index, entry] of walletUpdates.entries()) {
+      try {
+          console.log(`Processing entry ${index + 1}/${walletUpdates.length}:`, entry);
+
+          if (!entry.memberId || entry.walletBalance === undefined) {
+              throw new Error('Missing required fields: memberId or walletBalance');
+          }
+
+          const wallet = await Wallet.findOne({ memberId: entry.memberId });
+
+          if (!wallet) {
+              throw new Error(`Wallet not found for memberId: ${entry.memberId}`);
+          }
+
+          wallet.balance += parseFloat(entry.walletBalance);
+          await wallet.save();
+          console.log(`Updated wallet for memberId ${entry.memberId}. New Balance: ${wallet.balance}`);
+
+          totalUpdated++;
+      } catch (error) {
+          console.error(`Error updating wallet for memberId ${entry.memberId}:`, error.message);
+          failedEntries.push({ memberId: entry.memberId, error: error.message });
+      }
+  }
+
+  console.log(`Wallet update process completed. Total Updated: ${totalUpdated}`);
+  return { totalUpdated, failedEntries };
 };
