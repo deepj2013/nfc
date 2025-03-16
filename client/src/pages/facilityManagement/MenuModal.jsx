@@ -73,11 +73,11 @@ export default function MenuModal({
 
 
   useEffect(() => {
-    console.log("Editing Menu Data in Modal:", menuEdit);
+    
     if (menuEdit && types === "edit") {
       setMenuData({
-        menuId: menuEdit._id || "",  // ✅ Ensure menuId is set only for edit mode
-        category: menuEdit.category || "",
+        menuId: menuEdit?._id || "",  // ✅ Ensure menuId is set only for edit mode
+        category: menuEdit?.category || "",
         name: menuEdit.name || "",
         description: menuEdit.description || "",
         images: menuEdit.images || [],
@@ -102,6 +102,7 @@ export default function MenuModal({
       });
     } else {
       setMenuData({
+        menuId: menuEdit?._id || "",
         category: "",
         name: "",
         description: "",
@@ -125,9 +126,9 @@ export default function MenuModal({
       });
     }
   }, [menuEdit, types, isOpen]); // ✅ Correct Dependencies
-  console.log(menuEdit)
+  
   const [menuData, setMenuData] = useState({
-    menuId: menuEdit._id,
+    menuId: menuEdit?._id || "",
     category: "",
     name: "",
     description: "",

@@ -6,6 +6,7 @@ import {
   getTablesByRestaurant,
   getRestaurantMenuServices,
 } from "../../services/facilytRestaurantTableServices";
+import { FaPlus, FaSearch } from "react-icons/fa";
 
 const POSBilling = () => {
   const [selectedRestaurant, setSelectedRestaurant] = useState("");
@@ -27,7 +28,8 @@ const POSBilling = () => {
   const [ongoingBills, setOngoingBills] = useState([]); // Default to empty array
   const [showTableView, setShowTableView] = useState(false); // Default to hidden
   const [showItemWiseView, setShowItemWiseView] = useState(false);
-  
+  const [searchQuery, setSearchQuery] = useState("")
+ 
   const calculateTotalBill = (tableId) => {
     const bill = ongoingBills.find((bill) => bill.table === tableId);
     return bill ? bill.totalAmount : 0;
@@ -54,11 +56,11 @@ const POSBilling = () => {
     const start = new Date(startTime);
     const now = new Date();
     const diff = Math.floor((now - start) / 1000); // Difference in seconds
-  
+
     const hours = Math.floor(diff / 3600);
     const minutes = Math.floor((diff % 3600) / 60);
     const seconds = diff % 60;
-  
+
     return `${hours}h ${minutes}m ${seconds}s`;
   };
   const calculateTax = (orderItems) => {
@@ -90,7 +92,6 @@ const POSBilling = () => {
 
       const menuData = await getRestaurantMenuServices(restaurantId);
       let MenusData = menuData?.data.menuItems;
-      console.log("MenuData", menuData?.data.menuItems);
       if (Array.isArray(MenusData)) {
         setMenuItems(MenusData);
         setCategories([...new Set(MenusData.map((item) => item.category))]);
@@ -145,8 +146,8 @@ const POSBilling = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-md mb-4 border">
+    <div className="p-1 bg-gray-100 min-h-screen">
+      <div className="flex items-center justify-between bg-white p-2 rounded-lg shadow-md  border">
         <div className="flex flex-col">
           <label className="text-gray-700 font-semibold">
             Select Restaurant
@@ -179,8 +180,8 @@ const POSBilling = () => {
         </div>
 
         <div className="flex flex-col">
-        <label htmlFor="memberId">Member ID</label>
-          <div className="flex items-center gap-2">
+          <label htmlFor="memberId">Member ID</label>
+          <div className="flex items-center gap-1">
             <Input
               type="text"
               className="w-40"
@@ -190,7 +191,7 @@ const POSBilling = () => {
             <Button
               name="Verify"
               onClick={handleMemberVerification}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="bg-blue-500 text-white px-1 py-2 rounded-md"
             />
           </div>
           {walletBalance !== null && (
@@ -200,8 +201,8 @@ const POSBilling = () => {
           )}
         </div>
       </div>
-      <div className="p-6 bg-gray-100 min-h-screen">
-        <div className="flex flex-wrap items-center gap-4 mb-4">
+      <div className="p-2 bg-gray-100 min-h-screen">
+        <div className="flex flex-wrap items-center gap-4">
           <div className="p-6 bg-gray-100 min-h-screen">
             {/* Category Selection */}
             <div className="flex gap-4">
@@ -223,7 +224,20 @@ const POSBilling = () => {
               </div>
 
               {/* Center - Menu Items (65%) */}
-              <div className="grid grid-cols-3 gap-4 p-4 border rounded-lg shadow-md bg-white">
+              {/* Search Bar */}
+<div className="relative mb-4">
+  <FaSearch className="absolute left-3 top-3 text-gray-500" />
+  <input
+    type="text"
+    className="w-full p-2 pl-10 border rounded-md"
+    placeholder="Search menu..."
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+  />
+</div>
+
+{/* Menu Items Grid */}
+<div className="grid grid-cols-3 gap-4 p-4 border rounded-lg shadow-md bg-white">
                 {menuItems
                   .filter(
                     (item) =>
@@ -251,11 +265,12 @@ const POSBilling = () => {
                           ? `Rs. ${item.price_info[0].offer_price}`
                           : `Rs. ${item.price_info[0].price}`}
                       </p>
-                      <Button
-                        name="Add to Order"
-                        onClick={() => openModal(item)}
-                        className="bg-blue-500 text-white px-4 py-2 mt-2 rounded-md"
-                      />
+                      <button
+  onClick={() => openModal(item)}
+  className="bg-blue-500 text-white p-2 rounded-full mt-2"
+>
+  <FaPlus />
+</button>
                     </div>
                   ))}
               </div>
@@ -270,12 +285,12 @@ const POSBilling = () => {
                   name="Table View" // Pass text as a string
                 />
 
-<Button
-  onClick={() => setShowItemWiseView(true)}
-  className="bg-gray-700 text-white px-4 py-2 rounded-md flex items-center gap-2"
-  rigntIcon={<i className="ri-file-list-line"></i>}
-  name="Item Wise View"
-/>
+                <Button
+                  onClick={() => setShowItemWiseView(true)}
+                  className="bg-gray-700 text-white px-4 py-2 rounded-md flex items-center gap-2"
+                  rigntIcon={<i className="ri-file-list-line"></i>}
+                  name="Item Wise View"
+                />
 
                 <div className="flex justify-between mb-3 border-b pb-2">
                   <button
@@ -475,10 +490,8 @@ const POSBilling = () => {
         onClick={handlePrintInvoice}
         className="bg-green-600 text-white px-6 py-3 mt-4 rounded-md w-full hover:bg-green-700 transition-all"
         rigntIcon={<i className="ri-printer-line"></i>} // Icon for printing invoice
-  name="Print Invoice"
-      >
-        
-      </Button>
+        name="Print Invoice"
+      ></Button>
       {invoiceData && (
         <div className="mt-4 p-4 border rounded shadow-md bg-white">
           <h3 className="text-xl font-bold">Invoice</h3>
