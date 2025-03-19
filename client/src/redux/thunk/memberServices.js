@@ -12,7 +12,7 @@ import {
     async (memberId, { rejectWithValue }) => {
       try {
         const url = `${BASE_URL}member/${memberId}`; // URL to fetch member data
-        console.log(url,"URLS")
+    
         const res = await axios.get(url);
         
         if (res.status === 200) {
@@ -26,11 +26,25 @@ import {
     }
   );
 
+ 
+
+export const memberCheckInOutHistory = createAsyncThunk(
+"member/checkInouthistory",
+async (payload, {rejectWithValue}) => {
+  try {
+    const response = await axios.get(`${BASE_URL}membercheck/history/${payload}`, payload);
+    // console.log(response)
+      return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response.data);
+  }
+}
+);
 export const memberCheckInService = createAsyncThunk(
   "member/checkIn",
   async (payload, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}checkin`, payload);
+      const response = await axios.post(`${BASE_URL}members/checkin`, payload);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -42,7 +56,7 @@ export const memberCheckOutService = createAsyncThunk(
   "member/checkOut",
   async (payload, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}checkout`, payload);
+      const response = await axios.post(`${BASE_URL}members/checkout`, payload);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

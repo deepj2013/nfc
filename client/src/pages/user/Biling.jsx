@@ -7,10 +7,11 @@ import {
   getRestaurantMenuServices,
 } from "../../services/facilytRestaurantTableServices";
 
-const TopBar = () => {
+const TopBar = ({ onRestaurantSelect }) => {
   const dispatch = useDispatch();
   const [memberID, setMemberID] = useState("");
   const [memberName, setMemberName] = useState("");
+  const [memberMobile, setMemberMobile] = useState("");
   const [walletBalance, setWalletBalance] = useState("");
   const [memberImage, setMemberImage] = useState(
     "https://static.vecteezy.com/system/resources/thumbnails/036/594/092/small_2x/man-empty-avatar-photo-placeholder-for-social-networks-resumes-forums-and-dating-sites-male-and-female-no-photo-images-for-unfilled-user-profile-free-vector.jpg"
@@ -19,10 +20,7 @@ const TopBar = () => {
   const [selectedRestaurant, setSelectedRestaurant] = useState("");
   const [tables, setTables] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
-  const [filteredMenu, setFilteredMenu] = useState([]);
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [tableStatus, setTableStatus] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [category, setCategories] = useState([]);
 
   useEffect(() => {
     fetchRestaurants();
@@ -37,92 +35,46 @@ const TopBar = () => {
     }
   };
 
+  // const handleRestaurantSelect = async (restaurantId) => {
+  //   if (selectedRestaurant !== restaurantId) {
+  //     setSelectedRestaurant(restaurantId);
+  //     setTables([]);
+  //   }
+  //   try {
+  //     const tableData = await getTablesByRestaurant(restaurantId);
+  //     setTables(tableData);
+
+  //     const menuData = await getRestaurantMenuServices(restaurantId);
+  //     let MenusData = menuData?.data.menuItems || [];
+
+  //     setMenuItems(MenusData);
+  //     setCategories([...new Set(MenusData.map((item) => item.category))]);
+  //   } catch (error) {
+  //     console.error("Failed to fetch tables or menu", error);
+  //     setMenuItems([]);
+  //   }
+  // };
   const handleRestaurantSelect = async (restaurantId) => {
-    if (selectedRestaurant !== restaurantId) {
-      setSelectedRestaurant(restaurantId);
-    }
+    setSelectedRestaurant(restaurantId);
+    onRestaurantSelect(restaurantId); // Send selected restaurant to parent (POSBilling)
     try {
-      const tableData = await getTablesByRestaurant(restaurantId);
-      setTables(tableData);
-
-      const menuData = await getRestaurantMenuServices(restaurantId);
-      let MenusData = menuData?.data.menuItems;
-
-      if (Array.isArray(MenusData)) {
-        setMenuItems(MenusData);
-        setCategories([...new Set(MenusData.map((item) => item.category))]);
-        
-      } else {
-        setMenuItems([]); // Ensure menuItems is always an array
-      }
+        const tableData = await getTablesByRestaurant(restaurantId);
+        setTables(tableData);
     } catch (error) {
-      console.error("Failed to fetch tables or menu", error);
-      setMenuItems([]); // Ensure menuItems is always an array
+        console.error("Failed to fetch tables", error);
     }
-  };
-
-  const handleOrderClick = async () => {
-    try {
-        const menuData = await getRestaurantMenuServices(selectedRestaurant);
-        const tables = await getTablesByRestaurant(selectedRestaurant);
-
-        let menuList = menuData?.data.menuItems || [];
-        setMenuItems(menuList);
-        setFilteredMenu(menuList); // Set for search filtering
-        setTableStatus(tables); // Store table status data
-    } catch (error) {
-        console.error("Failed to fetch menu & table status", error);
-    }
-};
-
-const handleSearch = (e) => {
-  const query = e.target.value;
-  setSearchQuery(query);
-
-  if (query.trim() === "") {
-      setFilteredMenu(menuItems); // Reset filter if empty
-  } else {
-      const regex = new RegExp(query, "i");
-      setFilteredMenu(menuItems.filter(item => regex.test(item.name)));
-  }
-};
-
-
-const handleAddItem = (item) => {
-  setSelectedItems(prev => {
-      const existing = prev.find(i => i._id === item._id);
-      if (existing) {
-          return prev.map(i =>
-              i._id === item._id ? { ...i, qty: i.qty + 1 } : i
-          );
-      }
-      return [...prev, { ...item, qty: 1, additionalInfo: "" }];
-  });
-};
-
-// Handle additional input for items
-const handleAdditionalInput = (id, value) => {
-  setSelectedItems(prev =>
-      prev.map(i => (i._id === id ? { ...i, additionalInfo: value } : i))
-  );
 };
 
   const fetchMemberDetails = async () => {
     try {
-      let memberNumber = memberID;
-      const response = await dispatch(getMemberService(memberNumber)).unwrap();
-
+      const response = await dispatch(getMemberService(memberID)).unwrap();
       if (response?.msg === "Member details fetched successfully") {
         const data = response.result;
-
-        // Construct Full Name
-        const fullName = `${data?.title || ""} ${data?.firstName || ""} ${
-          data?.middleName || ""
-        } ${data?.surname || ""}`.trim();
-
-        // Set State with Response Data
-        setMemberName(fullName);
+        setMemberName(
+          `${data?.title || ""} ${data?.firstName || ""} ${data?.middleName || ""} ${data?.surname || ""}`.trim()
+        );
         setWalletBalance(data?.balance || 0);
+        setMemberMobile(data?.mobileNumber);
         setMemberImage(
           data?.profileImage ||
             "https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745"
@@ -134,224 +86,167 @@ const handleAdditionalInput = (id, value) => {
   };
 
   return (
-    <div className="p-2 bg-gray-100 shadow-md rounded-lg w-full">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-2 bg-white p-3 rounded-lg shadow-lg text-xs">
+    <div className="p-4 bg-white shadow-lg rounded-lg">
+      {/* Top Section - Member Search */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="col-span-2 flex items-center">
-          {/* Picture Box - Reduced to 10% */}
-          <div className="border border-gray-400 w-25 h-30 flex items-center justify-center text-xs text-gray-500 bg-gray-100 rounded mr-2">
+          {/* Profile Picture */}
+          <div className="w-16 h-16 border rounded-full bg-white overflow-hidden flex items-center justify-center">
             <img
               src={memberImage}
               alt="Member"
-              className="w-full h-full object-cover rounded"
+              className="w-full h-full object-cover"
             />
           </div>
 
-          {/* Input Fields - Adjusted to 30% */}
-          <div className="w-full">
-            {/* Heading for Member Details */}
-            <h4 className="text-sm font-semibold text-gray-700 justification-center mb-2">
-              Find Member Details
-            </h4>
-
-            <div className="flex items-center mb-1">
-              <label className="w-1/4 text-xs font-medium">Mem No</label>
+          {/* Member ID Input */}
+          <div className="ml-3 w-full">
+            <label className="text-xs font-medium text-gray-700">Member ID</label>
+            <div className="flex items-center">
               <input
                 type="text"
-                className="border p-1 w-1/3 rounded text-xs"
-                placeholder="Enter Member No"
+                className="border p-2 w-3/4 rounded-md text-sm focus:ring focus:ring-blue-300"
+                placeholder="Enter Member ID"
                 value={memberID}
                 onChange={(e) => setMemberID(e.target.value)}
               />
               <button
-                className="ml-2 bg-blue-500 text-white px-2 py-1 rounded text-xs"
+                className="ml-2 bg-blue-500 text-white px-3 py-2 rounded-md text-sm hover:bg-blue-600 transition"
                 onClick={fetchMemberDetails}
               >
                 Fetch
               </button>
             </div>
-            <div className="flex items-center mb-1">
-              <label className="w-1/4 text-xs font-medium">Name</label>
-              <input
-                type="text"
-                className="border p-1 w-1/3 rounded text-xs bg-gray-200"
-                disabled
-                value={memberName}
-              />
-            </div>
-            <div className="flex items-center">
-              <label className="w-1/4 text-xs font-medium">Balance</label>
-              <input
-                type="text"
-                className="border p-1 w-1/3 rounded text-xs bg-gray-200"
-                disabled
-                value={`₹ ${walletBalance}`}
-              />
-            </div>
           </div>
         </div>
 
-        {/* Middle Section - Discounts & Coupons (25%) */}
-        <div className="col-span-1">
-          <h2 className="text-sm font-semibold">Discounts & Coupons</h2>
-          <div className="mt-1 flex items-center text-xs">
-            <input type="checkbox" className="mr-2" /> BirthDay Discount
+        {/* Member Info */}
+        {memberName && (
+          <div className="col-span-2 flex flex-col justify-center bg-gray-50 p-3 rounded-md shadow-sm">
+            <h4 className="text-md font-semibold text-gray-700">{memberName}</h4>
+            <p className="text-sm text-gray-600">📞 {memberMobile}</p>
+            <div className="mt-2 bg-white px-3 py-1 rounded-md shadow-sm text-sm">
+              <span className="text-gray-700 font-semibold">Wallet:</span>
+              <span className="text-blue-600 font-bold ml-2">₹{walletBalance}</span>
+            </div>
           </div>
-          <div className="mt-1 flex flex-wrap gap-1 text-xs">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-1" /> Comp
-            </label>
-            <label className="flex items-center text-purple-700">
-              <input type="checkbox" className="mr-1" /> Party
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-1" /> Coupon
-            </label>
-          </div>
-          <div className="mt-1">
-            <label className="block text-xs font-medium">Coupon Type</label>
-            <select className="border p-1 w-full rounded text-xs">
-              <option value="">--Select--</option>
-            </select>
-          </div>
-          <div className="mt-1">
-            <input type="checkbox" className="mr-2" /> Delivery Discount
-          </div>
+        )}
+      </div>
+
+      {/* Middle Section - Restaurant Selection */}
+      <div className="mt-4 grid grid-cols-3 gap-4">
+        {/* Restaurant Selection */}
+        <div>
+          <label className="block text-xs font-medium">Select Restaurant</label>
+          <select
+            className="border p-2 w-full rounded-md text-sm"
+            value={selectedRestaurant}
+            onChange={(e) => handleRestaurantSelect(e.target.value)}
+          >
+            <option value="">-- Select Restaurant --</option>
+            {restaurants.map((restaurant) => (
+              <option key={restaurant.restaurant_id} value={restaurant.restaurant_id}>
+                {restaurant.name}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* Right Section - Order & Billing (25%) */}
-        <div className="col-span-1">
-          <h2 className="text-sm font-semibold">Order & Billing</h2>
+        {/* Table Selection */}
+        <div>
+          <label className="block text-xs font-medium">Table Name</label>
+          <select className="border p-2 w-full rounded-md text-sm">
+            <option value="">-- Select Table --</option>
+            {tables.map((table) => (
+              <option key={table.table_id} value={table.table_id}>
+                {table.table_id}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {/* Restaurant Selection */}
-          <div className="mt-2">
-            <label className="block text-xs font-medium">
-              Select Restaurant
-            </label>
-            <select
-              className="border p-1 w-full rounded text-xs"
-              value={selectedRestaurant}
-              onChange={(e) => handleRestaurantSelect(e.target.value)}
-            >
-              <option value="">--Select Restaurant--</option>
-              {restaurants.map((restaurant) => (
-                <option key={restaurant.restaurant_id} value={restaurant.restaurant_id}>
-                  {restaurant.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Table Selection (Depends on Selected Restaurant) */}
-          <div className="mt-2">
-            <label className="block text-xs font-medium">Table Name</label>
-            <select className="border p-1 w-full rounded text-xs">
-              <option value="">--Select Table--</option>
-              {tables.map((table) => (
-                <option key={table.table_id} value={table.table_id}>
-                  {table.table_id}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Order Processing Options */}
+        {/* Order Processing Options */}
+        <div>
+          <label className="block text-xs font-medium">Order Processing</label>
           <div className="mt-1 flex flex-wrap gap-1 text-xs">
             <label className="flex items-center">
               <input type="radio" name="orderProcess" className="mr-1" /> Order
             </label>
             <label className="flex items-center">
-              <input type="radio" name="orderProcess" className="mr-1" />{" "}
-              Billing
+              <input type="radio" name="orderProcess" className="mr-1" /> Billing
             </label>
             <label className="flex items-center">
-              <input type="radio" name="orderProcess" className="mr-1" />{" "}
-              Settlement
+              <input type="radio" name="orderProcess" className="mr-1" /> Settlement
             </label>
-          </div>
-
-          {/* Remark Section */}
-          <div className="mt-1">
-            <label className="block text-xs font-medium">Remark</label>
-            <input
-              type="text"
-              className="border p-1 w-full rounded text-xs"
-              placeholder="Enter Remark"
-            />
           </div>
         </div>
       </div>
-      <div className="col-span-2 mt-4">
-    <h2 className="text-sm font-semibold">Menu & Order Selection</h2>
-
-    {/* Search Input */}
-    <input
-        type="text"
-        className="border p-2 w-full rounded text-xs mt-2"
-        placeholder="Search Menu..."
-        value={searchQuery}
-        onChange={handleSearch}
-    />
-
-    {/* Table Status */}
-    <div className="mt-2">
-        <h3 className="text-xs font-medium">Table Status</h3>
-        <ul className="text-xs">
-            {tableStatus.map((table, index) => (
-                <li key={index} className={table.isOccupied ? "text-red-600" : "text-green-600"}>
-                    {table.name}
-                </li>
-            ))}
-        </ul>
     </div>
-
-    {/* Menu Items List */}
-    <div className="grid grid-cols-3 gap-2 mt-3">
-        {filteredMenu.map(item => (
-            <button
-                key={item._id}
-                className="bg-purple-600 text-white p-2 rounded text-xs hover:bg-purple-700"
-                onClick={() => handleAddItem(item)}
-            >
-                {item.name} - ₹{item.price}
-            </button>
-        ))}
-    </div>
-
-    {/* Selected Items List */}
-    <div className="mt-4">
-        <h3 className="text-xs font-medium">Selected Items</h3>
-        {selectedItems.map(item => (
-            <div key={item._id} className="flex items-center justify-between border p-2 rounded mt-2">
-                <span className="text-xs">{item.name}</span>
-                <input
-                    type="number"
-                    className="border p-1 w-12 text-xs rounded"
-                    value={item.qty}
-                    min="1"
-                    onChange={(e) => handleAddItem({ ...item, qty: parseInt(e.target.value) })}
-                />
-                <input
-                    type="text"
-                    className="border p-1 w-32 text-xs rounded"
-                    placeholder="Additional Notes"
-                    value={item.additionalInfo}
-                    onChange={(e) => handleAdditionalInput(item._id, e.target.value)}
-                />
-            </div>
-        ))}
-    </div>
-</div>
-    </div>
-
-
-
   );
 };
 
-function POSBilling() {
+const MenuDisplay = ({ selectedRestaurant }) => {
+  const [menuItems, setMenuItems] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  useEffect(() => {
+    if (selectedRestaurant) {
+      fetchMenu(selectedRestaurant);
+    }
+  }, [selectedRestaurant]);
+
+  const fetchMenu = async (restaurantId) => {
+    try {
+      const menuData = await getRestaurantMenuServices(restaurantId);
+      let items = menuData?.data.menuItems || [];
+      setMenuItems(items);
+      setCategories([...new Set(items.map((item) => item.category))]);
+    } catch (error) {
+      console.error("Failed to fetch menu", error);
+    }
+  };
+
   return (
-    <div className="p-2">
-      <TopBar />
+    <div className="grid grid-cols-12 gap-4 mt-4">
+      {/* Left - Category List */}
+      <div className="col-span-2 bg-gray-50 p-4 rounded-md shadow-md">
+        <h4 className="text-md font-semibold mb-3">Categories</h4>
+        {categories.map((cat, index) => (
+          <button
+            key={index}
+            className={`block w-full py-1 px-2 rounded-md text-sm ${selectedCategory === cat ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
+            onClick={() => setSelectedCategory(cat)}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Middle - Menu Grid */}
+      <div className="col-span-6 grid grid-cols-3 gap-4">
+        {menuItems
+          .filter((item) => selectedCategory === "" || item.category === selectedCategory)
+          .map((item) => (
+            <div key={item.id} className="border p-3 rounded-md shadow-sm">
+              <h5 className="font-semibold">{item.name}</h5>
+              <p className="text-sm text-gray-500">₹{item.price}</p>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+};
+
+
+
+function POSBilling() {
+  const [selectedRestaurant, setSelectedRestaurant] = useState("");
+
+  return (
+    <div className="p-4 bg-gray-50 min-h-screen">
+      <TopBar onRestaurantSelect={setSelectedRestaurant} />
+      <MenuDisplay selectedRestaurant={selectedRestaurant} />
     </div>
   );
 }
