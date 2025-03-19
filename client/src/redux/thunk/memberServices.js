@@ -7,18 +7,24 @@ import {
   } from "../../utils/Urls";
 
 
-
-export const getMemberService = createAsyncThunk(
-  "member/getMember",
-  async (memberNumber, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${BASE_URL}members/${memberNumber}`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
+  export const getMemberService = createAsyncThunk(
+    "getMemberService",
+    async (memberId, { rejectWithValue }) => {
+      try {
+        const url = `${BASE_URL}member/${memberId}`; // URL to fetch member data
+        console.log(url,"URLS")
+        const res = await axios.get(url);
+        
+        if (res.status === 200) {
+          return res.data; // Return member data if found
+        } else {
+          throw new Error("Member not found");
+        }
+      } catch (error) {
+        return rejectWithValue(error.response?.data || "Member not found");
+      }
     }
-  }
-);
+  );
 
 export const memberCheckInService = createAsyncThunk(
   "member/checkIn",

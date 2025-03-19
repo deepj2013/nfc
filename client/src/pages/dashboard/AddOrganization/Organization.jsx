@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Table from "../../../components/common/Table";
 import CreateOrganization from "../../../components/Modal/CreateOrganization";
-import { IoSearch } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { organisationListservices } from "../../../redux/thunk/organizationMangementservices";
 import { FaEdit } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import logo from "../../../assets/image/logo5.jpg";
 
 function Organization() {
@@ -13,6 +12,7 @@ function Organization() {
     (state) => state.organisationMangementState
   );
   const [selectedOrganisation, setSelectedOrganisation] = useState(null);
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -21,165 +21,56 @@ function Organization() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <p className="font-semibold h28">Organization Management</p>
-      </div>
-      <div className="mt-10">
-        <div className="flex flex-col">
-          <div className=" overflow-x-auto pb-4">
-            <div className="min-w-full inline-block align-middle">
-              <div className="overflow-hidden  shadow bg-white rounded-lg border-gray-300">
-                <table className="table-auto min-w-full rounded-xl">
-                  <thead>
-                    <tr className="bg-gray-50">
-                      {/* <th
-                        scope="col"
-                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
-                      >
-                        {" "}
-                        Organization{" "}
-                      </th> */}
-                      <th
-                        scope="col"
-                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
-                      >
-                        {" "}
-                        Organization Name{" "}
-                      </th>
-                      <th
-                        scope="col"
-                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
-                      >
-                        {" "}
-                        Organization LOGO{" "}
-                      </th>
-                      <th
-                        scope="col"
-                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize min-w-[150px]"
-                      >
-                        {" "}
-                        Adress & website{" "}
-                      </th>
-                      <th
-                        scope="col"
-                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
-                      >
-                        {" "}
-                        Contact Number{" "}
-                      </th>
-                      <th
-                        scope="col"
-                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
-                      >
-                        {" "}
-                        Facilities{" "}
-                      </th>
-                      <th
-                        scope="col"
-                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
-                      >
-                        {" "}
-                        GST / TAN{" "}
-                      </th>
-                    
-                      {/* <th
-                        scope="col"
-                        className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-gray-900 capitalize"
-                      >
-                        {" "}
-                        Action
-                      </th> */}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-300 ">
-                    {organisation?.map((ele, ind) => {
-                      return (
-                        <tr className="bg-white transition-all duration-500 hover:bg-gray-50">
-                          <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
-                            {ele?.fullName}
-                          </td>
-                          {/* <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900 ">
-                            {ele?.name}
-                          </td> */}
-                          <td className=" px-5 py-3">
-                            <div className="w-48 flex items-center gap-3">
-                              <img
-                                src={logo}
-                                alt="Floyd image"
-                                height={90}
-                                width={90}
-                              />
-                            </div>
-                          </td>
-                          <td className=" px-5 py-3">
-                            <div className="w-48 flex items-center gap-3">
-                              <div className="data">
-                                <p className="font-normal text-sm text-gray-900">
-                                  {ele?.address}
-                                </p>
-                                <p className="font-normal text-xs leading-5 text-gray-400">
-                                  {" "}
-                                  {ele?.website}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-
-                          <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                            {" "}
-                            {ele?.phone}
-                          </td>
-
-                          <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                            <div className="w-48 flex flex-wrap items-center gap-3">
-                              {ele?.facilities?.map((facility, index) => (
-                                <span
-                                  key={index}
-                                  className="px-3 py-1 rounded-full bg-gray-100 text-gray-900 text-sm font-normal"
-                                >
-                                  {facility}
-                                </span>
-                              ))}
-                            </div>
-                          </td>
-
-                          <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                            <div className="w-48 flex items-center gap-3">
-                              <div className="data">
-                                <p className="font-normal text-sm text-gray-900">
-                                  {ele?.gst}
-                                </p>
-                                <p className="font-normal text-xs leading-5 text-gray-400">
-                                  {" "}
-                                  {ele?.tan}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-
-                          {/* <td className="px-5">
-                            <button
-                              className="text-theme"
-                              onClick={() => {
-                                setSelectedOrganisation(ele);
-                                setisOpen(true);
-                              }}
-                            >
-                              <FaEdit />
-                            </button>
-                          </td> */}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                {/* <Table data={organisation??[]} /> */}
+      {/* <div className="mb-6 flex items-center justify-between">
+        <p className="font-semibold text-2xl">Organization Management</p>
+      </div> */}
+      <div className="space-y-6">
+        {organisation?.map((ele, ind) => (
+          <div key={ind} className="bg-white p-6 rounded-lg shadow-md border border-gray-300 relative">
+            <button
+              className="absolute top-4 right-4 text-blue-500 hover:text-blue-700"
+              onClick={() => {
+                setSelectedOrganisation(ele);
+                setisOpen(true);
+              }}
+            >
+              <FaEdit size={20} />
+            </button>
+            <div className="flex flex-col items-center">
+              <img src={logo} alt="Organization Logo" className="w-50 h-50  mb-4" />
+            
+              <h2 className="text-2xl font-semibold text-gray-900">{ele?.fullName}</h2>
+              <a className="text-sm text-gray-500" target="_blank" href= "https://www.newfriendsclubdelhi.in/">{ele?.website}</a>
+             
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 w-full">
+              <p><strong className="text-gray-700">Address:</strong> {ele?.address}</p>
+              <p><strong className="text-gray-700">Contact Number:</strong> {ele?.phone}</p>
+              <p><strong className="text-gray-700">GST:</strong> {ele?.gst}</p>
+              <p><strong className="text-gray-700">TAN:</strong> {ele?.tan}</p>
+              <div className="md:col-span-2">
+                <strong className="text-gray-700">Facilities:</strong>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {ele?.facilities?.map((facility, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 rounded-full bg-gray-100 text-gray-900 text-sm font-normal"
+                    >
+                      {facility}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        ))}
       </div>
-
+      <button
+        className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300"
+        onClick={() => navigate("/managementcommity")}
+      >
+        Member of Clubs
+      </button>
       <CreateOrganization
         selectedOrganisation={selectedOrganisation}
         isOpen={isOpen}

@@ -8,93 +8,83 @@ import { setStorageValue } from "../../services/LocalStorageServices";
 function Login({ setIsLogin }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [username, setusername] = useState("");
-  const [password, setpassword] = useState("");
-  const loginHander = async () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const loginHandler = async () => {
     try {
-      let payload = {
-        email_id: username,
-        password: password,
-      };
-      console.log("resporty", payload);
+      setErrorMessage(""); // Reset errors before login attempt
+      let payload = { email_id: username, password };
+
+      console.log("Login Payload:", payload);
+
       let response = await dispatch(adminLoginServices(payload)).unwrap();
-      console.log("res",response)
-      if (response.msg === "Success") {
-        setStorageValue('userDetails', response?.result);
+
+      console.log("Login Response:", response);
+
+      if (response?.msg === "Success") {
+        setStorageValue("userDetails", response?.result);
         setIsLogin(true);
         navigate("/dashboard");
+      } else {
+        setErrorMessage(response?.msg || "Invalid credentials, please try again.");
       }
     } catch (error) {
+      setErrorMessage("Login failed. Please check your details and try again.");
       errorLog(error);
     }
   };
 
   return (
-    <div className="  mt-10">
-      <div className=" w-screen flex justify-center items-center ">
-        <img
-          className="w-[50%] h-full "
-          src="https://img.freepik.com/free-vector/login-concept-illustration_114360-739.jpg"
-        />
-        <div className="grid gap-8 w-[50%] px-10">
-          <div id="back-div" className="bg-gradient-to-r  rounded-[26px] m-4">
-            <div className="border-[20px] border-transparent rounded-[20px] dark:bg-gray-900 bg-white shadow-lg xl:p-10 2xl:p-10 lg:p-10 md:p-10 sm:p-2 m-2">
-              <h1 className="pt-8 pb-6 font-semibold dark:text-gray-400 text-5xl text-center cursor-default">
-                Log in
-              </h1>
-              <form action="#" method="post" className="space-y-4">
-                <div>
-                  <label for="email" className="mb-2  dark:text-gray-400 text-lg">
-                    Email
-                  </label>
-                  <input
-                    onChange={(e) => setusername(e.target.value)}
-                    value={username}
-                    id="email"
-                    className="border p-3 dark:bg-indigo-700 dark:text-gray-300  dark:border-gray-700 shadow-md placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full"
-                    type="email"
-                    placeholder="Email"
-                    required
-                  />
-                </div>
-                <div>
-                  <label for="password" className="mb-2 dark:text-gray-400 text-lg">
-                    Password
-                  </label>
-                  <input
-                    onChange={(e) => setpassword(e.target.value)}
-                    value={password}
-                    id="password"
-                    className="border p-3 shadow-md dark:bg-indigo-700 dark:text-gray-300  dark:border-gray-700 placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full"
-                    type="password"
-                    placeholder="Password"
-                    required
-                  />
-                </div>
-                <a
-                  className="group text-blue-400 transition-all duration-100 ease-in-out"
-                  href="#"
-                >
-                  <span className="bg-left-bottom bg-gradient-to-r text-sm from-blue-400 to-blue-400 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out">
-                    Forget your password?
-                  </span>
-                </a>
-              </form>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+      <div className="bg-white shadow-lg rounded-lg max-w-md w-full p-8 flex flex-col">
+        <h1 className="text-3xl font-bold text-center mb-6 text-gray-700">Log in</h1>
+        
+        {errorMessage && <p className="text-red-500 text-sm text-center mb-4">{errorMessage}</p>}
 
-              <button
-                onClick={() => {
-                  loginHander();
-                }}
-                className="bg-gradient-to-r dark:text-gray-300 from-blue-500 to-purple-500 shadow-lg mt-6 p-2 text-white rounded-lg w-full hover:scale-105 hover:from-purple-500 hover:to-blue-500 transition duration-300 ease-in-out"
-                // type=""
-              >
-                LOG IN
-              </button>
-
-              
-            </div>
+        <form className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-gray-600 text-sm font-medium">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg mt-1 focus:ring focus:ring-blue-300"
+              placeholder="Enter your email"
+              required
+            />
           </div>
-        </div>
+          <div>
+            <label htmlFor="password" className="block text-gray-600 text-sm font-medium">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg mt-1 focus:ring focus:ring-blue-300"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          <div className="text-right">
+            <a href="#" className="text-blue-500 text-sm hover:underline">
+              Forgot password?
+            </a>
+          </div>
+          <button
+            type="button"
+            onClick={loginHandler}
+            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+          >
+            LOG IN
+          </button>
+        </form>
       </div>
     </div>
   );

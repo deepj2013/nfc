@@ -1,107 +1,81 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import { adminLoginServices, superAdminLoginServices } from "../../redux/thunk/adminServices";
+import { superAdminLoginServices } from "../../redux/thunk/adminServices";
 import { errorLog } from "../../services/ErrorHandlerServices";
 import { setStorageValue } from "../../services/LocalStorageServices";
 
 function SuperLogin({ setIsLogin }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [username, setusername] = useState("");
-  const [password, setpassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const loginHander = async () => {
+  const loginHandler = async () => {
     try {
       let payload = {
         userId: username,
         password: password,
       };
-    //   console.log("resporty", payload);
       let response = await dispatch(superAdminLoginServices(payload)).unwrap();
       if (response.msg === "Success") {
-        setStorageValue('userDetails', response?.result);
+        setStorageValue("userDetails", response?.result);
         setIsLogin(true);
-        navigate("/");
+        navigate("/dashboard");
       }
     } catch (error) {
       errorLog(error);
     }
-    // if(username=='admin@123gmail.com'){
-    //   localStorage.setItem('userType','admin')
-    //   alert('rrrr')
-    // }
-    // if(username=='gatekeeper@gmail.com'){
-    //   localStorage.setItem('userType','gatekeeper')
-    // }
-    // setIsLogin(true)
   };
 
   return (
-    <div className="  mt-10">
-      <div className=" w-screen flex justify-center items-center ">
-        <img
-          className="w-[50%] h-full "
-          src="https://static.vecteezy.com/system/resources/thumbnails/005/879/539/small_2x/cloud-computing-modern-flat-concept-for-web-banner-design-man-enters-password-and-login-to-access-cloud-storage-for-uploading-and-processing-files-illustration-with-isolated-people-scene-free-vector.jpg"
-        />
-        <div className="grid gap-8 w-[50%] px-10">
-          <div id="back-div" className="bg-gradient-to-r  rounded-[26px] m-4">
-            <div className="border-[20px] border-transparent rounded-[20px] dark:bg-gray-900 bg-white shadow-lg xl:p-10 2xl:p-10 lg:p-10 md:p-10 sm:p-2 m-2">
-              <h1 className="pt-8 pb-6 font-semibold dark:text-gray-400 text-5xl text-center cursor-default">
-                Log in
-              </h1>
-              <form action="#" method="post" className="space-y-4">
-                <div>
-                  <label for="email" className="mb-2  dark:text-gray-400 text-lg">
-                    Email
-                  </label>
-                  <input
-                    onChange={(e) => setusername(e.target.value)}
-                    value={username}
-                    id="email"
-                    className="border p-3 dark:bg-indigo-700 dark:text-gray-300  dark:border-gray-700 shadow-md placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full"
-                    type="email"
-                    placeholder="Email"
-                    required
-                  />
-                </div>
-                <div>
-                  <label for="password" className="mb-2 dark:text-gray-400 text-lg">
-                    Password
-                  </label>
-                  <input
-                    onChange={(e) => setpassword(e.target.value)}
-                    value={password}
-                    id="password"
-                    className="border p-3 shadow-md dark:bg-indigo-700 dark:text-gray-300  dark:border-gray-700 placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full"
-                    type="password"
-                    placeholder="Password"
-                    required
-                  />
-                </div>
-                <a
-                  className="group text-blue-400 transition-all duration-100 ease-in-out"
-                  href="#"
-                >
-                  <span className="bg-left-bottom bg-gradient-to-r text-sm from-blue-400 to-blue-400 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out">
-                    Forget your password?
-                  </span>
-                </a>
-              </form>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-10">
+      <div className="max-w-4xl w-full bg-white dark:bg-gray-800 rounded-xl shadow-2xl flex flex-col md:flex-row overflow-hidden">
+        {/* Left Side - Image */}
+        <div className="hidden md:flex w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('https://static.vecteezy.com/system/resources/thumbnails/005/879/539/small_2x/cloud-computing-modern-flat-concept-for-web-banner-design-man-enters-password-and-login-to-access-cloud-storage-for-uploading-and-processing-files-illustration-with-isolated-people-scene-free-vector.jpg')" }}>
+        </div>
 
-              <button
-                onClick={() => {
-                  loginHander();
-                }}
-                className="bg-gradient-to-r dark:text-gray-300 from-blue-500 to-purple-500 shadow-lg mt-6 p-2 text-white rounded-lg w-full hover:scale-105 hover:from-purple-500 hover:to-blue-500 transition duration-300 ease-in-out"
-                // type=""
-              >
-                LOG IN
-              </button>
-
-
+        {/* Right Side - Form */}
+        <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
+          <h1 className="text-4xl font-extrabold text-gray-700 dark:text-gray-300 text-center">Welcome Back</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-center mt-2">Log in to access your account</p>
+          
+          <form className="mt-6 space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="email">Email</label>
+              <input
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                required
+                className="w-full p-3 border rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+              />
             </div>
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="password">Password</label>
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                required
+                className="w-full p-3 border rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+              />
+            </div>
+            <div className="text-right">
+              <a href="#" className="text-sm text-blue-500 hover:underline">Forgot password?</a>
+            </div>
+            <button
+              type="button"
+              onClick={loginHandler}
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-lg shadow-lg hover:opacity-90 transition duration-300"
+            >
+              LOG IN
+            </button>
+          </form>
         </div>
       </div>
     </div>

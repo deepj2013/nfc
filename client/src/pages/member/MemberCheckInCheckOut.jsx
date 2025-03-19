@@ -122,14 +122,78 @@ const MemberCheckInCheckOut = () => {
           />
         </div>
 
-        {memberDetails && (
-          <>
-            <p className="text-lg font-medium">Name: <span className="font-bold">{memberDetails.name}</span></p>
-            <p className="text-lg font-medium">Mobile: <span className="font-bold">{memberDetails.mobileNumber}</span></p>
-            <p className="text-lg font-medium">Member ID: <span className="font-bold">{memberDetails.memberId}</span></p>
-            <p className="text-lg font-medium">Dependents: <span className="font-bold">{memberDetails.dependents.length}</span></p>
-          </>
-        )}
+        <div className="col-span-2 flex items-center">
+  {/* Picture Box - Similar styling */}
+  <div className="border border-gray-400 w-25 h-30 flex items-center justify-center text-xs text-gray-500 bg-gray-100 rounded mr-2">
+    {memberDetails?.profilePicture ? (
+      <img
+        src={memberDetails.profilePicture}
+        alt="Member"
+        className="w-full h-full object-cover rounded"
+      />
+    ) : (
+      <span>No Image</span>
+    )}
+  </div>
+
+  {/* Input Fields - Member Details */}
+  <div className="w-full">
+    <h4 className="text-sm font-semibold text-gray-700 text-center mb-2">
+      Member Details
+    </h4>
+
+    <div className="flex items-center mb-1">
+      <label className="w-1/4 text-xs font-medium">Mem No</label>
+      <input
+        type="text"
+        className="border p-1 w-1/3 rounded text-xs bg-gray-200"
+        disabled
+        value={memberDetails?.memberId || ""}
+      />
+    </div>
+
+    <div className="flex items-center mb-1">
+      <label className="w-1/4 text-xs font-medium">Name</label>
+      <input
+        type="text"
+        className="border p-1 w-1/3 rounded text-xs bg-gray-200"
+        disabled
+        value={
+          memberDetails
+            ? [
+                memberDetails.title,
+                memberDetails.firstName,
+                memberDetails.middleName,
+                memberDetails.surname,
+              ]
+                .filter(Boolean)
+                .join(" ")
+            : ""
+        }
+      />
+    </div>
+
+    <div className="flex items-center mb-1">
+      <label className="w-1/4 text-xs font-medium">Mobile</label>
+      <input
+        type="text"
+        className="border p-1 w-1/3 rounded text-xs bg-gray-200"
+        disabled
+        value={memberDetails?.mobileNumber || ""}
+      />
+    </div>
+
+    <div className="flex items-center">
+      <label className="w-1/4 text-xs font-medium">Dependents</label>
+      <input
+        type="text"
+        className="border p-1 w-1/3 rounded text-xs bg-gray-200"
+        disabled
+        value={memberDetails?.dependents?.length || 0}
+      />
+    </div>
+  </div>
+</div>
 
         <div className="grid grid-cols-2 gap-6 mt-6">
           {/* Left Column: History */}
