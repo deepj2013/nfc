@@ -16,6 +16,7 @@ export const getRestaurantMenuServices = async (restaurant_id) => {
 // Fetch tables for a restaurant
 export const getTablesByRestaurant = async (restaurantId) => {
   try {
+    console.log(`${BASE_URL_FACILITY}restaurant/${restaurantId}/tables`)
     const response = await axios.get(`${BASE_URL_FACILITY}restaurant/${restaurantId}/tables`);
     return response.data.data;
   } catch (error) {
