@@ -21,8 +21,10 @@ import {
   getSingleFacility,
   updateFacility,
   deleteFacility,
+  bulkUploadMenu,
 
 } from "../controllers/facilitiesController.js";
+import { upload } from "../middlewares/uploadMiddlewares.js";
 
 const router = express.Router();
 //Routes for Facilities 
@@ -72,5 +74,8 @@ router.post("/menu/:menuItemId/recipe", createRecipeForMenuItemController);
 
 // Route to get a recipe by menu item
 router.get("/menu/:menuItemId/recipe", getRecipeByMenuItemController);
+
+router.post('/bulk-uploadmenu', upload.single('file'), bulkUploadMenu);
+
 
 export default router;

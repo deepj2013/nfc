@@ -13,6 +13,11 @@ import invRoutes from "./src/routes/invRoutes.js"; // Adjust the import path as 
 import memberRoutes from "./src/routes/memberRoutes.js"; // Adjust the import path as needed
 import uploadRoutes from "./src/routes/uploadRoutes.js";
 import facilityRoutes from "./src/routes/facilityRoutes.js";
+import orderRoutes from "./src/routes/orderRoutes.js";
+import billingRoutes from "./src/routes/billingRoutes.js";
+import tableRoutes from "./src/routes/TableRoutes.js";
+import kitchenRoutes from "./src/routes/kitchenRoutes.js";
+import reportRoutes from "./src/routes/reportRoutes.js"
 
 
 // Load environment variables from .env file
@@ -124,6 +129,11 @@ app.use("/api/user/", userRoutes);
 app.use("/api/user/inv/", invRoutes);
 app.use("/api/user/", memberRoutes);
 app.use("/api/facilities/", facilityRoutes);
+app.use("/api/orders/", orderRoutes);
+app.use("/api/billing", billingRoutes);
+app.use("/api/table", tableRoutes);
+app.use("/api/kitchen", kitchenRoutes)
+app.use("/api/report", reportRoutes)
 
 
 
