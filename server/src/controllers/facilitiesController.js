@@ -8,6 +8,7 @@ import {
   updateTable,
   changeTableStatus,
   createMenuItem, getMenuItemsByRestaurant, getAllMenuItems, updateMenuItem, createRecipeForMenuItem, getRecipeByMenuItem , getCategoriesWithMenuItems,
+  processMenuExcel,
 } from "../services/facilitiesServices.js";
 import {
   createFacilityService,
@@ -248,5 +249,17 @@ export const getCategoryInRestaurantController = async (req, res) => {
       res.status(200).json({ success: true, data: recipe });
     } catch (error) {
       res.status(400).json({ success: false, message: error.message });
+    }
+  };
+
+  export const bulkUploadMenu = async (req, res) => {
+    try {
+      if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+  
+      const result = await processMenuExcel(req.file.path);
+      return res.status(200).json(result);
+    } catch (error) {
+      console.error('Upload error:', error);
+      return res.status(500).json({ message: 'Server error', error: error.message });
     }
   };

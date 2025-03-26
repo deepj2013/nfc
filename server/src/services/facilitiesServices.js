@@ -5,6 +5,8 @@ import { getObjectId } from "../helpers/mongoose/mongooseHelpers.js";
 import Recipe from "../models/facility_restaurant_menu_receipeModel.js"
 import Facility from "../models/facilitModel.js";
 import { v4 as uuidv4 } from "uuid"; // For generating unique numbers
+import XLSX from 'xlsx'; // ✅ This is correct for ES Modules
+
 
 
 
@@ -515,4 +517,64 @@ export const getRecipeByMenuItem = async (menuItemId) => {
   }
 
   return await Recipe.findOne({ menuItemId });
+};
+
+
+
+export const processMenuExcel = async (filePath) => {
+  const workbook = XLSX.readFile(filePath);
+  const sheetName = workbook.SheetNames[0];
+  const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+  const results = {
+    success: [],
+    errors: []
+  };
+
+  for (const [index, row] of rows.entries()) {
+    try {
+      // Check duplicate
+      const duplicate = await MenuItem.findOne({
+        name: row.name,
+        restaurantId: row.restaurantId
+      });
+
+      if (duplicate) {
+        results.errors.push({ row: index + 2, message: `Duplicate entry for '${row.name}' in restaurant ${row.restaurantId}` });
+        continue;
+      }
+
+      // Build price_info safely
+      const price_info_entry = {};
+      if (row.price != null) price_info_entry.price = Number(row.price);
+      if (row.offer_price != null) price_info_entry.offer_price = Number(row.offer_price);
+      if (row.is_offer != null) price_info_entry.is_offer = row.is_offer;
+      if (row.tax_percentage != null) price_info_entry.tax_percentage = Number(row.tax_percentage);
+      if (row.discount_percentage != null) price_info_entry.discount_percentage = Number(row.discount_percentage);
+
+      const price_info = Object.keys(price_info_entry).length > 0 ? [price_info_entry] : [];
+
+      const newItem = new MenuItem({
+        category: row.category,
+        name: row.name,
+        description: row.description || '',
+        images: row.images ? row.images.split(',') : [],
+        food_type: row.food_type,
+        cuisines: row.cuisines || '',
+        is_available: row.is_available ?? true,
+        is_bestseller: row.is_bestseller ?? false,
+        price_info,
+        restaurantId: row.restaurantId,
+        createdBy: row.createdBy || null,
+        updatedBy: row.updatedBy || null
+      });
+
+      await newItem.save();
+      results.success.push({ row: index + 2, name: row.name });
+    } catch (err) {
+      results.errors.push({ row: index + 2, message: err.message });
+    }
+  }
+
+  return results;
 };
