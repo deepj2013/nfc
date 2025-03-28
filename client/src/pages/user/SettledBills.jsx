@@ -1,18 +1,14 @@
 import React, { useState } from "react";
+import moment from "moment";
 
-const dummySettledBills = [
-  { id: 101, table: "T1", member: "John Doe", amount: 540, date: "2025-03-18", paymentMethod: "Wallet" },
-  { id: 102, table: "T3", member: "Jane Smith", amount: 780, date: "2025-03-18", paymentMethod: "Cash" },
-  { id: 103, table: "T2", member: "Guest", amount: 320, date: "2025-03-17", paymentMethod: "Card" },
-];
-
-const SettledBills = () => {
-  const [bills, setBills] = useState(dummySettledBills);
+const SettledBills = ({ bills = [] }) => {
   const [searchDate, setSearchDate] = useState("");
 
-  const filteredBills = bills.filter((bill) => 
-    searchDate === "" || bill.date === searchDate
-  );
+  const filteredBills = bills.filter((bill) => {
+    if (!searchDate) return true;
+    const billDate = moment(bill.settledAt).format("YYYY-MM-DD");
+    return billDate === searchDate;
+  });
 
   return (
     <div>
@@ -31,24 +27,39 @@ const SettledBills = () => {
       <div className="space-y-3">
         {filteredBills.length > 0 ? (
           filteredBills.map((bill) => (
-            <div key={bill.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-md shadow">
+            <div
+              key={bill._id}
+              className="flex justify-between items-center bg-gray-50 p-3 rounded-md shadow"
+            >
               <div>
-                <h4 className="text-md font-semibold text-gray-700">Table: {bill.table}</h4>
-                <p className="text-sm text-gray-500">{bill.member} | {bill.date}</p>
+                <h4 className="text-md font-semibold text-gray-700">
+                  Table: {bill.tableId || "N/A"}
+                </h4>
+                <p className="text-sm text-gray-500">
+                  {bill.memberId || "Guest"} |{" "}
+                  {moment(bill.settledAt).format("DD-MM-YYYY")}
+                </p>
               </div>
               <div>
-                <span className="text-lg font-bold text-blue-600">₹{bill.amount}</span>
+                <span className="text-lg font-bold text-blue-600">
+                  ₹{bill.totalAmount}
+                </span>
               </div>
               <span className="text-xs px-3 py-1 font-semibold rounded-md bg-gray-700 text-white">
                 {bill.paymentMethod}
               </span>
-              <button className="ml-3 bg-green-500 text-white px-3 py-1 text-xs rounded-md hover:bg-green-600 transition">
+              <button
+                onClick={() => console.log("Print Invoice", bill._id)} // 🔁 Replace with real print trigger
+                className="ml-3 bg-green-500 text-white px-3 py-1 text-xs rounded-md hover:bg-green-600 transition"
+              >
                 Print Invoice
               </button>
             </div>
           ))
         ) : (
-          <p className="text-sm text-gray-500 text-center">No settled bills found for this date.</p>
+          <p className="text-sm text-gray-500 text-center">
+            No settled bills found for this date.
+          </p>
         )}
       </div>
     </div>

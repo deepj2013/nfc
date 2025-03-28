@@ -1,45 +1,75 @@
-import React, { useState } from "react";
+import React from "react";
+import { FaPrint, FaCheck } from "react-icons/fa";
 
-const dummyOrders = [
-  { id: 1, table: "T1", member: "John Doe", time: "12:30 PM", total: 540, status: "Pending" },
-  { id: 2, table: "T2", member: "Jane Smith", time: "12:45 PM", total: 780, status: "Preparing" },
-  { id: 3, table: "T3", member: "Guest", time: "1:00 PM", total: 320, status: "Ready" },
-];
+// Status color utility
+const getStatusColor = (status) => {
+  switch (status) {
+    case "Pending": return "bg-yellow-500";
+    case "Preparing": return "bg-blue-500";
+    case "Ready": return "bg-green-600";
+    default: return "bg-gray-400";
+  }
+};
 
-const CurrentOrders = ({ setSelectedOrder }) => {
-  const [orders, setOrders] = useState(dummyOrders);
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Pending":
-        return "bg-yellow-500";
-      case "Preparing":
-        return "bg-blue-500";
-      case "Ready":
-        return "bg-green-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
-
+const CurrentOrders = ({ orders, onPrint, onSettle }) => {
   return (
-    <div className="space-y-3">
-      {orders.map((order) => (
+    <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
+      {orders?.length === 0 && <p className="text-gray-500">No active orders.</p>}
+
+      {orders?.map((order) => (
         <div
-          key={order.id}
-          className="flex justify-between items-center bg-gray-50 p-3 rounded-md shadow cursor-pointer hover:bg-gray-200"
-          onClick={() => setSelectedOrder(order)}
+          key={order._id}
+          className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition border"
         >
-          <div>
-            <h4 className="text-md font-semibold text-gray-700">Table: {order.table}</h4>
-            <p className="text-sm text-gray-500">{order.member} | {order.time}</p>
+          {/* Header */}
+          <div className="flex justify-between items-center mb-2">
+            <div>
+              <h4 className="font-bold text-gray-700 text-sm">
+                Order: <span className="text-blue-600">#{order.orderNumber || order._id.slice(-5)}</span>
+              </h4>
+              <p className="text-sm text-gray-600">
+                Table: {order.tableId} | {order.memberId || "Guest"}
+              </p>
+            </div>
+            <span
+              className={`text-xs px-3 py-1 rounded-full text-white font-semibold ${getStatusColor(order.status)}`}
+            >
+              {order.status}
+            </span>
           </div>
-          <div>
-            <span className="text-lg font-bold text-blue-600">₹{order.total}</span>
+
+          {/* Items with Status */}
+          <div className="text-sm text-gray-700 mb-3 space-y-1">
+            {order.items.map((item, idx) => (
+              <div key={idx} className="flex justify-between items-center border-b py-1">
+                <div>
+                  <span className="font-medium">{item.name} x {item.quantity}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-600">₹{item.price * item.quantity}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full text-white ${getStatusColor(item.status)}`}>
+                    {item.status || "Pending"}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
-          <span className={`px-3 py-1 text-white text-xs font-semibold rounded-md ${getStatusColor(order.status)}`}>
-            {order.status}
-          </span>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => onPrint(order)}
+              className="flex items-center gap-2 text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded"
+            >
+              <FaPrint /> Print
+            </button>
+            <button
+              onClick={() => onSettle(order)}
+              className="flex items-center gap-2 text-sm bg-green-600 text-white hover:bg-green-700 px-3 py-1 rounded"
+            >
+              <FaCheck /> Settle
+            </button>
+          </div>
         </div>
       ))}
     </div>
