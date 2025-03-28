@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import PrintModal from "../../user/PrintModal";
 import {
   getAllRestaurantDetail,
   getTablesByRestaurant,
@@ -13,16 +14,81 @@ import {
   placeOrder,
   getAllOrders,
   getSettledBills,
+  getOrderById,
+  getInvoiceById
 } from "../../../services/posApiServices";
 
 import CurrentOrders from "../../user/CurrentOrders";
 import SettledBills from "../../user/SettledBills";
 import OrderForm from "../../user/OrderForm";
 import PaymentModal from "../../user/PaymentModal";
+import KotPrint from "../../user/KotPrint";
+import ThermalInvoice from "../../user/ThermaplePrint";
 
 const POSInchargeDashboard = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [showSettleModal, setShowSettleModal] = useState(false);
+  const [selectedOrderToSettle, setSelectedOrderToSettle] = useState(null);
+  const [showPrintModal, setShowPrintModal] = useState(false);
+  const [printContent, setPrintContent] = useState(null);
+  
+  const handleKOTPrint = async (order) => {
+    try {
+      const res = await getOrderById(order._id);
+      console.log(res.data)
+      console.log("Fetched Order for KOT Print:", res.data.result); // ✅ Log here
+      setPrintContent(<KotPrint order={res.data} />);
+      setShowPrintModal(true);
+    } catch (err) {
+      console.error("Failed to fetch order for KOT Print:", err);
+      toast.error("Failed to load order");
+    }
+  };
+ 
+  const handleInvoicePrint = async (billId) => {
+    try {
+      const res = await getInvoiceById(billId);
+      console.log(res.data.invoice)
+      let printData = res.data.invoice
+      // const { order, member, bill } = res.data;
+      setPrintContent(<ThermalInvoice data={printData}  />);
+      setShowPrintModal(true);
+    } catch (err) {
+      console.error("Error fetching invoice data:", err);
+      toast.error("Failed to load invoice data.");
+    }
+  };
+ // Inside your component
+ const dispatch = useDispatch();
+ const navigate = useNavigate();
+
+ const handlePrint = () => {
+  const content = document.getElementById("printable");
+  if (content) {
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(`
+      <html>
+        <head><title>KOT Print</title></head>
+        <body>${content.innerHTML}</body>
+        <script>
+          window.onload = function() {
+            window.print();
+            window.onafterprint = window.close;
+          };
+        </script>
+      </html>
+    `);
+    printWindow.document.close();
+  }
+};
+
+
+
+  const handleSettle = (order) => {
+    setSelectedOrderToSettle(order);
+    setShowSettleModal(true);
+  };
+
+  
 
   const [restaurants, setRestaurants] = useState([]);
   const [tables, setTables] = useState([]);
@@ -133,9 +199,11 @@ const POSInchargeDashboard = () => {
     try {
       const response = await placeOrder(payload);
       const orderId = response.data.result._id;
+      const orderNumber = response.data.result.orderNumber
 
       const billRes = await createBill({
         orderId,
+        orderNumber,
         tableId: selectedTable,
         memberId,
         totalAmount: payload.totalAmount,
@@ -143,7 +211,7 @@ const POSInchargeDashboard = () => {
 
       setBillId(billRes.data.result._id);
       toast.success("Order placed and bill generated!");
-      navigate("/Billing");
+      navigate("/dashboard");
     } catch (error) {
       toast.error(error.response?.data?.error || "Failed to place order.");
     }
@@ -302,16 +370,17 @@ const POSInchargeDashboard = () => {
             Current Orders
           </h2>
           <CurrentOrders
-            orders={currentOrders}
-            setSelectedOrder={setSelectedOrder}
-          />
+  orders={currentOrders}
+  onKOTPrint={handleKOTPrint}
+  onSettle={handleSettle}
+/>
         </div>
 
         <div className="bg-white p-4 shadow rounded-lg">
           <h2 className="text-lg font-semibold text-gray-700 mb-2">
             Settled Bills
           </h2>
-          <SettledBills bills={settledBills} />
+          <SettledBills bills={settledBills} onInvoicePrint={handleInvoicePrint} />
         </div>
       </div>
 
@@ -321,11 +390,80 @@ const POSInchargeDashboard = () => {
           setShowPaymentModal={setShowPaymentModal}
         />
       )}
+      {showSettleModal && selectedOrderToSettle && (
+  <SettleModal
+    order={selectedOrderToSettle}
+    onClose={() => {
+      setShowSettleModal(false);
+      setSelectedOrderToSettle(null);
+    }}
+  />
+)}
       {showPaymentModal && (
         <PaymentModal setShowPaymentModal={setShowPaymentModal} />
       )}
+      {showPrintModal && (
+  <PrintModal content={printContent} onClose={() => setShowPrintModal(false)} />
+)}
     </div>
   );
 };
 
 export default POSInchargeDashboard;
+
+const SettleModal = ({ order, onClose }) => {
+  const [paymentMethod, setPaymentMethod] = useState("Cash");
+
+  const handleConfirmSettlement = async () => {
+    try {
+      const res = await settleOrderAPI({ orderId: order._id, paymentMethod });
+      const billId = res.data.result.bill_id;
+  
+      toast.success("Order Settled!");
+      
+      // Attach bill ID to order so we can print it
+      const updatedOrder = { ...order, bill_id: billId };
+  
+      // Print after settling
+      onInvoicePrint(updatedOrder); // 👈 call passed down from POS dashboard
+  
+      onClose();
+    } catch (err) {
+      toast.error("Settlement failed.");
+    }
+  };
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+      <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
+        <h3 className="text-lg font-semibold mb-4">Settle Order #{order.orderNumber || order._id.slice(-5)}</h3>
+        <p className="mb-2">Total Amount: ₹{order.items.reduce((sum, i) => sum + i.price * i.quantity, 0)}</p>
+        <label className="block font-medium mb-1">Select Payment Method:</label>
+        <select
+          className="w-full border px-3 py-2 rounded mb-4"
+          value={paymentMethod}
+          onChange={(e) => setPaymentMethod(e.target.value)}
+        >
+          <option value="Cash">Cash</option>
+          <option value="Wallet">Wallet</option>
+          <option value="UPI">UPI</option>
+          <option value="Card">Card</option>
+        </select>
+
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={onClose}
+            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleConfirmSettlement}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};

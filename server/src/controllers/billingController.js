@@ -46,6 +46,7 @@ import {
   export const printInvoice = async (req, res) => {
     try {
       const result = await printInvoiceService(req.params.billId);
+      
       res.status(200).json({ msg: "Invoice ready", invoice: result });
     } catch (error) {
       res.status(500).json({ msg: "Failed to generate invoice", error: error.message });

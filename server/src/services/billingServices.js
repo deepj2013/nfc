@@ -2,11 +2,12 @@ import Billing from "../models/billingModel.js";
 import Order from "../models/orderModel.js";
 import { v4 as uuidv4 } from "uuid";
 
-export const createBillService = async ({ orderId, tableId, memberId, totalAmount }) => {
+export const createBillService = async ({ orderId, orderNumber, tableId, memberId, totalAmount }) => {
   const billNumber = "BILL-" + uuidv4().slice(0, 8).toUpperCase();
 
   const newBill = new Billing({
     orderId,
+    orderNumber,
     tableId,
     memberId,
     totalAmount,
@@ -45,11 +46,14 @@ export const getSettledBillsService = async ({ date, memberId, paymentMethod }) 
 
 
 export const printInvoiceService = async (billId) => {
-  const bill = await Billing.findById(billId).populate("orderId");
-  if (!bill) throw new Error("Bill not found");
+  
+  const bill = await Billing.findOne({ billNumber: billId }).populate("orderId");
 
+if (!bill) throw new Error("Bill not found");
+console.log(bill)
   const order = bill.orderId;
 
+console.log(order)
   const items = order.items.map((item) => {
     const total = item.price * item.quantity;
     return {

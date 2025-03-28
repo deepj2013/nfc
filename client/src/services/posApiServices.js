@@ -55,3 +55,16 @@ export const getAllOrders = async () => {
 export const getSettledBills = async () => {
   return await axios.get(`${BASE}billing/settled`);
 };
+
+export const getOrderById = async (orderId) => {
+  return await axios.get(`${BASE}orders/${orderId}`);
+  
+};
+
+export const getInvoiceById = async (billId) => {
+  return await axios.get(`${BASE}billing/print-invoice/${billId}`);
+};
+
+export const getOrgDetail = async () =>{
+  return await axios.get(`${BASE}user/organisation`)
+}
