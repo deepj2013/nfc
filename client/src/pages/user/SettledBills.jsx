@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import moment from "moment";
 
-const SettledBills = ({ bills = [] }) => {
+const SettledBills = ({ bills = [], onInvoicePrint }) => {
   const [searchDate, setSearchDate] = useState("");
 
   const filteredBills = bills.filter((bill) => {
@@ -12,9 +12,11 @@ const SettledBills = ({ bills = [] }) => {
 
   return (
     <div>
-      {/* Filter by Date */}
+      {/* Date Filter */}
       <div className="mb-3">
-        <label className="text-xs font-semibold text-gray-600">Filter by Date:</label>
+        <label className="text-xs font-semibold text-gray-600">
+          Filter by Date:
+        </label>
         <input
           type="date"
           value={searchDate}
@@ -49,7 +51,7 @@ const SettledBills = ({ bills = [] }) => {
                 {bill.paymentMethod}
               </span>
               <button
-                onClick={() => console.log("Print Invoice", bill._id)} // 🔁 Replace with real print trigger
+                onClick={() => onInvoicePrint(bill.billNumber)}
                 className="ml-3 bg-green-500 text-white px-3 py-1 text-xs rounded-md hover:bg-green-600 transition"
               >
                 Print Invoice

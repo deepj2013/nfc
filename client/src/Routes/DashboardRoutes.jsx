@@ -29,6 +29,8 @@ import MemberAction from "../pages/member/MemberAction";
 import MenuManagement from "../pages/facilityManagement/RestaurantMenu";
 import TableManagement from "../pages/facilityManagement/RestaurantTableManagement";
 import POSBilling from "../pages/user/Biling";
+import ThermalInvoice from "../pages/user/ThermaplePrint";
+import KotPrint from "../pages/user/KotPrint";
 // import MemberPassword from "../pages/member/MemberPasswordModal";
 
 function DashboardRoutes() {
@@ -67,6 +69,10 @@ function DashboardRoutes() {
             <Route path="/restaurantmanagement" element={<Restaurant />} />
             <Route path="/memberaction" element={<MemberAction />} />
             <Route path="/billing" element={<POSBilling />} />
+            
+            <Route path="/print/invoice/:billId" element={<ThermalInvoice />} />
+            <Route path="/print/kot/:orderId" element={<KotPrint />} />
+            
             {/* Dynamic Routes for Restaurant Features */}
             
 
