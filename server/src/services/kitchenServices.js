@@ -9,15 +9,30 @@ export const getKitchenOrdersService = async (restaurant_id) => {
     }).sort({ placedAt: -1 });
   };
   
-  export const updateKitchenOrderStatusService = async (orderId, status, restaurant_id) => {
+  export const updateKitchenOrderStatusService = async (orderId, status ) => {
     const valid = ["Cooking", "Ready"];
     if (!valid.includes(status)) throw new Error("Invalid status");
-  
     const order = await Order.findById(orderId);
     if (!order) throw new Error("Order not found");
-    if (order.restaurant_id !== restaurant_id) throw new Error("Unauthorized: Kitchen mismatch");
   
     order.status = status;
     return await order.save();
   };
   
+  
+
+  export const updateKitchenItemStatusService = async (itemId, orderId, status) => {
+    const validStatuses = ["Cooking", "Ready"];
+    if (!validStatuses.includes(status)) throw new Error("Invalid status");
+  
+    const order = await Order.findById(orderId);
+    if (!order) throw new Error("Order not found");
+  
+    const item = order.items.find(item => item._id.toString() === itemId);
+    if (!item) throw new Error("Item not found in the order");
+  
+    item.status = status;
+  
+    await order.save();
+    return item; // return the updated item
+  };

@@ -215,16 +215,40 @@ export const updateDepartmentService = async (department_id, data) => {
 };
 
 
-export const getAllUserService = async () =>{
+export const getAllUserService = async () => {
   try {
-    const users = await User.find();
+    const users = await User.aggregate([
+      {
+        $lookup: {
+          from: "roles",            // name of your Role collection
+          localField: "role_id",
+          foreignField: "role_id",
+          as: "role_info"
+        }
+      },
+      {
+        $unwind: {
+          path: "$role_info",
+          preserveNullAndEmptyArrays: true // still include if no matching role
+        }
+      },
+      {
+        $addFields: {
+          role_name: "$role_info.role_name" // directly add role_name
+        }
+      },
+      {
+        $project: {
+          password: 0,
+          __v: 0,
+          role_info: 0 // remove full role_info object
+        }
+      }
+    ]);
+
     return users;
   } catch (error) {
-    if (error instanceof APIError) {
-      throw error;
-    } else {
-      throw new APIError('Internal Server Error', 500, true, error.message);
-    }
+    throw new APIError("Internal Server Error", 500, true, error.message);
   }
-  }
+};
   

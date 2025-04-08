@@ -1,6 +1,9 @@
-import { getKitchenOrdersService, updateKitchenOrderStatusService } from "../services/kitchenServices.js";
+import { getKitchenOrdersService, updateKitchenItemStatusService, updateKitchenOrderStatusService } from "../services/kitchenServices.js";
+
 export const getKitchenOrders = async (req, res) => {
     try {
+     
+
       const { restaurant_id } = req.query;
       const orders = await getKitchenOrdersService(Number(restaurant_id));
       res.status(200).json(orders);
@@ -22,4 +25,19 @@ export const getKitchenOrders = async (req, res) => {
       res.status(500).json({ msg: "Failed to update status", error: error.message });
     }
   };
+
+  export const updateKitchenItemStatus = async (req, res) => {
+    try {
+      const { status } = req.body;
+      const result = await updateKitchenItemStatusService(
+        req.params.itemId,
+        req.params.orderId,
+        status,
+      );
+      res.status(200).json({ msg: "Status updated", result });
+    } catch (error) {
+      res.status(500).json({ msg: "Failed to update status", error: error.message });
+    }
+  };
+  
   

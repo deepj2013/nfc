@@ -19,7 +19,7 @@ export const placeOrder = async (req, res) => {
 // Get order by ID
 export const getOrderById = async (req, res) => {
   try {
-    console.log(req.params.orderId,"Hello")
+
     const result = await getOrderByIdService(req.params.orderId);
 
     res.status(200).json(result);

@@ -34,14 +34,22 @@ import KotPrint from "../pages/user/KotPrint";
 // import MemberPassword from "../pages/member/MemberPasswordModal";
 
 function DashboardRoutes() {
+
   const [open, setOpen] = useState(true);
+  const roleId = JSON.parse(localStorage.getItem("userDetails"))?.role_id;
+  const rolesWithoutSidebar = [13, 8]; // Hide for Kitchen & POS Incharge
+  const shouldHideSidebar = rolesWithoutSidebar.includes(roleId);
+
   return (
     <>
       <div className=" h-screen w-screen bg-bgColor ">
-        <Sidebar open={open} setOpen={setOpen} />
-        <div
-          className={twMerge("pt-24 px-2 lg:px-8", open ? "ml-60" : "ml-20")}
-        >
+      {!shouldHideSidebar && <Sidebar open={open} setOpen={setOpen} />}
+      <div
+        className={twMerge(
+          "pt-24 px-2 lg:px-8",
+          shouldHideSidebar ? "ml-0" : open ? "ml-60" : "ml-20"
+        )}
+      >
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/usermanagement" element={<Employee />} />
