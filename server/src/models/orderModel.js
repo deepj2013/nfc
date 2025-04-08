@@ -10,12 +10,17 @@ const orderSchema = new mongoose.Schema({
       name: String,
       price: Number,
       quantity: Number,
+      status: {
+        type: String,
+        enum: ["Pending", "Cooking", "Ready", "Served"],
+        default: "Pending"
+      }, 
     }
   ],
   totalAmount: { type: Number, required: true },
   status: {
     type: String,
-    enum: ["Pending", "Cooking", "Ready", "Served"],
+    enum: ["Pending","Cooking", "Ready", "Served"],
     default: "Pending"
   },
   placedAt: { type: Date, default: Date.now },

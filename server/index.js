@@ -131,9 +131,9 @@ app.use("/api/user/", memberRoutes);
 app.use("/api/facilities/", facilityRoutes);
 app.use("/api/orders/", orderRoutes);
 app.use("/api/billing", billingRoutes);
-app.use("/api/table", tableRoutes);
-app.use("/api/kitchen", kitchenRoutes)
-app.use("/api/report", reportRoutes)
+app.use("/api/table/", tableRoutes);
+app.use("/api/kitchen/", kitchenRoutes)
+app.use("/api/report/", reportRoutes)
 
 
 

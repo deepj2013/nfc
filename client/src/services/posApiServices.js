@@ -68,3 +68,21 @@ export const getInvoiceById = async (billId) => {
 export const getOrgDetail = async () =>{
   return await axios.get(`${BASE}user/organisation`)
 }
+
+export const getKitchenOrders = async (restaurantId) => {
+  return await axios.get(`${BASE}kitchen/orders`, {
+    params: {
+      restaurant_id: restaurantId
+    }
+  });
+};
+// export const getKitchenOrders = async (restaurantId) =>{ return await axios.get(`${BASE}kitchen/orders/${restaurantId}`) }
+
+export const updateKitchenOrderStatus = async (orderId, payload) => {
+  console.log(orderId, "dat", payload)
+  return await axios.patch(`${BASE}kitchen/update-status/${orderId}`, payload);
+};
+
+export const updateKitchenOrderItemStatus = async (itemId,orderId, payload) => {
+  return await axios.patch(`${BASE}kitchen/update-itemstatus/${orderId}/${itemId}`, payload);
+};

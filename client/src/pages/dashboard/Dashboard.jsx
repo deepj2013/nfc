@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getStorageValue } from "../../services/LocalStorageServices";
 import POSInchargeDashboard from "./DashboardComponent/PosInchargeDashboard";
 import UniversalAdminDashboard from "./DashboardComponent/UniversalAdminDashboard";
@@ -11,9 +11,6 @@ import EventManagerDashboard from "./DashboardComponent/EventManagerDashboard";
 import BookingManagerDashboard from "./DashboardComponent/BookingManagerDashboard";
 import KitchenDashboard from "./DashboardComponent/KitchenDashboard";
 import BowlingInchargeDashboard from "./DashboardComponent/BowlingInchargeDashboard";
-// import CircleChart from "../../components/common/CircleChart";
-// import DetailCard from "../../components/dashboard/DetailCard";
-// import Table from "../../components/common/Table";
 
 function Dashboard() {
   const [userDetails, setUserDetails] = useState(null);
@@ -21,7 +18,7 @@ function Dashboard() {
 
   useEffect(() => {
     let getUserDetail = getStorageValue("userDetails");
-  
+
     if (getUserDetail) {
       setUserDetails(getUserDetail);
       setRoleId(getUserDetail.role_id); // Directly setting roleId from local storage
@@ -58,27 +55,28 @@ function Dashboard() {
 
   return (
     <div className="h-screen overflow-scroll">
-      <div className="flex justify-between bg-white mb-6 items-center relative h-40 p-4 rounded-2xl shadow-lg">
-        <div className="flex items-center gap-4">
-          <img src={
-              "https://preclinic.dreamstechnologies.com/html/template/assets/img/morning-img-01.png"
-            } alt="Welcome" className="h-24 w-24 rounded-full" />
-          <div>
-            <p className="text-black font-semibold text-2xl">
-              Good Morning, <span className="text-theme">{userDetails?.userName}</span>
+      <div className="bg-white mb-6 p-4 rounded-2xl shadow-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:h-40">
+     
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <img
+            src="https://preclinic.dreamstechnologies.com/html/template/assets/img/morning-img-01.png"
+            alt="Welcome"
+            className="h-20 w-20 sm:h-24 sm:w-24 rounded-full"
+          />
+          <div className="text-center sm:text-left">
+            <p className="text-black font-semibold text-xl sm:text-2xl">
+              Good Morning,{" "}
+              <span className="text-theme">
+                {userDetails?.userName || "Guest"}
+              </span>
             </p>
-            <h5 className="text-base font-medium text-grayText mt-2">
+            <h5 className="text-sm sm:text-base font-medium text-grayText mt-2">
               Have a nice day at work
             </h5>
           </div>
         </div>
       </div>
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-        <DetailCard />
-        <Chart />
-        <CircleChart />
-        <Table />
-      </div> */}
+      
       {renderDashboard()}
     </div>
   );
