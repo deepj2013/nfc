@@ -206,25 +206,27 @@ function Member() {
                               {ele?.memberId}
                             </td>
 
-                            <td className=" px-5 py-3">
-                              <div className="w-48 flex items-center gap-3">
-                                <img
-                                  src="https://pagedone.io/asset/uploads/1697536419.png"
-                                  alt="Floyd image"
-                                />
-                                <div className="data">
-                                  <p className="font-normal text-sm text-gray-900">
-                                    {`${ele?.firstName ?? ""} ${
-                                      ele?.middleName ?? ""
-                                    } ${ele?.surname ?? ""}`.trim()}
-                                  </p>
-                                  <p className="font-normal text-xs leading-5 text-gray-400">
-                                    {" "}
-                                    {ele?.mobileNumber}{" "}
-                                  </p>
-                                </div>
-                              </div>
-                            </td>
+                            <td className="px-5 py-3">
+  <div className="w-48 flex items-center gap-3">
+    <img
+      className="w-10 h-10 rounded-full object-cover"
+      src={
+        ele?.profilePicture
+          ? `https://api.newfriendsclubdelhi.in/api/utility/file/${ele.profilePicture.replace('/uploads/', '')}`
+          : 'https://cdn.pixabay.com/photo/2019/08/11/18/59/icon-4399701_1280.png' // fallback
+      }
+      alt={ele?.firstName}
+    />
+    <div className="data">
+      <p className="font-normal text-sm text-gray-900">
+        {`${ele?.firstName ?? ''} ${ele?.middleName ?? ''} ${ele?.surname ?? ''}`.trim()}
+      </p>
+      <p className="font-normal text-xs leading-5 text-gray-400">
+        {ele?.mobileNumber}
+      </p>
+    </div>
+  </div>
+</td>
 
                             <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               <div className="flex items-center">
