@@ -122,7 +122,7 @@ mongoose
 // Routes
 app.use("/api/utility/", uploadRoutes)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
+app.use('/memberpics', express.static(path.join(__dirname, 'uploads', 'memberpics')));
 
 app.use("/api/admin/", adminRoutes);
 app.use("/api/user/", userRoutes);

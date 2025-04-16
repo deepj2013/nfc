@@ -190,3 +190,86 @@
     }
   ]
 }
+
+📸 Members WITH pictures: 1177
+[
+  'MAL0083', 'MAL0086', 'MAL0087', 'MAL0088', 'MAL0089', 'MAL0094',
+  'MAL0095', 'MAL0098', 'MAL0102', 'MAL0105', 'MAL0106', 'MAL0113',
+  'MAL0114', 'MAL0117', 'MAL0118', 'MAL0120', 'MAL0121', 'MAL0122',
+  'MAL0123', 'MAL0124', 'MAL0126', 'MAL0127', 'MAL0128', 'MAL0129',
+  'MAL0130', 'MAL0131', 'MAL0132', 'MAL0133', 'MAL0134', 'MAL0135',
+  'MAL0136', 'MAL0137', 'MAL0138', 'MAL0139', 'MAL0140', 'MAL0141',
+  'MAL0142', 'MAL0143', 'MAL0144', 'MAL0145', 'MAL0146', 'MAL0147',
+  'MAL0148', 'MAL0149', 'MAL0150', 'MAL0151', 'MAL0152', 'MAL0153',
+  'MAL0154', 'MAL0155', 'MAL0156', 'MAL0157', 'MAL0158', 'MAL0159',
+  'MAL0160', 'MAL0161', 'MAL0163', 'MAL0164', 'MAL0165', 'MAL0166',
+  'MAL0167', 'MAL0168', 'MAL0169', 'MAL0170', 'MAL0171', 'MAL0178',
+  'MAL0179', 'MAL0180', 'MAL0181', 'MAL0182', 'MAL0183', 'MAL0184',
+  'MAL0185', 'MA085',   'MA1002',  'MA1010',  'MA1011',  'MA1016',
+  'MA1018',  'MA1024',  'MA1025',  'MA1031',  'MA1033',  'MA1039',
+  'MA1047',  'MA1049',  'MA1051',  'MA1052',  'MA1055',  'MA1056',
+  'MA1058',  'MA1059',  'MA1070',  'MA1074',  'MA1079',  'MA108',
+  'MA1084',  'MA1085',  'MA1088',  'MA1089',
+  ... 1077 more items
+]
+
+❌ Members MISSING pictures: 381
+[
+  'MAL0084', 'MAL0085', 'MAL0090', 'MAL0091', 'MAL0092', 'MAL0093',
+  'MAL0096', 'MAL0099', 'MAL0100', 'MAL0101', 'MAL0103', 'MAL0104',
+  'MAL0107', 'MAL0108', 'MAL0109', 'MAL0111', 'MAL0115', 'MAL0116',
+  'MAL0119', 'MAL0186', 'MAL0187', 'MAL0188', 'MAL0189', 'MAL0190',
+  'MAL0191', 'MAL0192', 'MA031',   'MA049',   'MA1060',  'MA1129',
+  'MA1131',  'MA1132',  'MA1133',  'MA1134',  'MA1135',  'MA1137',
+  'MA1138',  'MA1139',  'MA1140',  'MA1141',  'MA1143',  'MA1145',
+  'MA1146',  'MA1147',  'MA1149',  'MA1150',  'MA1152',  'MA1154',
+  'MA1155',  'MA1156',  'MA1157',  'MA1158',  'MA1159',  'MA1160',
+  'MA1161',  'MA1163',  'MA1164',  'MA1166',  'MA1167',  'MA1169',
+  'MA1171',  'MA1174',  'MA1175',  'MA1176',  'MA1177',  'MA1178',
+  'MA1179',  'MA1181',  'MA1182',  'MA1183',  'MA1184',  'MA1185',
+  'MA1186',  'MA1187',  'MA1188',  'MA1189',  'MA1190',  'MA1191',
+  'MA1193',  'MA1194',  'MA1195',  'MA1196',  'MA1197',  'MA1200',
+  'MA1201',  'MA1202',  'MA1203',  'MA1204',  'MA1205',  'MA1206',
+  'MA1207',  'MA412',   'MA572',   'MA819',   'MMD0159', 'MMD0169',
+  'MMD0134', 'MMD0160', 'MMD0162', 'MMD0166',
+  ... 281 more items
+]
+
+🧟 Orphan Pictures (no matching member in DB): 757
+[
+  'MA004.JPG',         'MA022.JPG',         'MA026.JPG',
+  'MA039.JPG',         'MA059.JPG',         'MA063.JPG',
+  'MA067.JPG',         'MA075.JPG',         'MA080.JPG',
+  'MA081.JPG',         'MA082.JPG',         'MA086.JPG',
+  'MA087.JPG',         'MA089.JPG',         'MA096.JPG',
+  'MA1003.JPG',        'MA1006.JPG',        'MA1008.JPG',
+  'MA1009.JPG',        'MA1013.JPG',        'MA1026.JPG',
+  'MA1027.JPG',        'MA1032.JPG',        'MA1034.JPG',
+  'MA1036.JPG',        'MA1038.JPG',        'MA1045.JPG',
+  'MA1053.JPG',        'MA1057.JPG',        'MA1071.JPG',
+  'MA1072.JPG',        'MA1073.JPG',        'MA1078.JPG',
+  'MA1080.JPG',        'MA1109.JPG',        'MA1111.JPG',
+  'MA1117.JPG',        'MA112.JPG',         'MA1122 SPOUSE.JPG',
+  "MA1122'1.JPG",      'MA1123 SPOUSE.JPG', "MA1123'1.JPG",
+  'MA1123.JPG',        'MA1124 SPOUSE.JPG', "MA1124'1.JPG",
+  'MA1125 SPOUSE.JPG', "MA1125'1.JPG",      'MA1126 SPOUSE.JPG',
+  "MA1126'1.JPG",      'MA1126.JPG',        'MA1127 SPOUSE.JPG',
+  "MA1127'1.JPG",      'MA1128 SPOUSE.JPG', "MA1128'1.JPG",
+  'MA115.JPG',         'MA117.JPG',         'MA127.JPG',
+  'MA129.JPG',         'MA131.JPG',         'MA133.JPG',
+  'MA137.JPG',         'MA139.JPG',         'MA140.JPG',
+  'MA167.JPG',         'MA174.JPG',         'MA175.JPG',
+  'MA176.JPG',         'MA179.JPG',         'MA184.JPG',
+  'MA185.JPG',         'MA189.JPG',         'MA191.JPG',
+  'MA204.JPG',         'MA225.JPG',         'MA230.JPG',
+  'MA233.JPG',         'MA238.JPG',         'MA245.JPG',
+  'MA248.JPG',         'MA251.JPG',         'MA254.JPG',
+  'MA260.JPG',         'MA261.JPG',         'MA266.JPG',
+  'MA268.JPG',         'MA274.JPG',         'MA275.JPG',
+  'MA277.JPG',         'MA279.JPG',         'MA280.JPG',
+  'MA283.JPG',         'MA287.JPG',         'MA288.JPG',
+  'MA292.JPG',         'MA305.JPG',         'MA311.JPG',
+  'MA312.JPG',         'MA325.JPG',         'MA326.JPG',
+  'MA328.JPG',
+  ... 657 more items
+]
