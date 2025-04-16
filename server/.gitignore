@@ -27,4 +27,8 @@ dist-ssr
 # Ignore zip files and uploads
 *.zip
 /uploads/
+<<<<<<< HEAD
 /server/uploads/
+=======
+/server/uploads/
+>>>>>>> fc017fa (fix pull puss issue)
