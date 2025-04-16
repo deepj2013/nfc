@@ -665,6 +665,7 @@ export const getAllMembers = async () => {
           createdBy: 1,
           updatedBy: 1,
           dependents: 1,
+          profilePicture:1,
           createdAt: 1,
           updatedAt: 1,
           balance: 1, // Include the wallet balance
