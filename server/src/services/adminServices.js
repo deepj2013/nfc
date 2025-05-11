@@ -4,6 +4,12 @@ import UniversalAdmin from "../models/universalAdminModel.js"
 import {getTokenOfUserService, generateTokenService} from "../services/authServices.js"
 import Department from "../models/deptartmentModel.js"
 import User from "../models/userModel.js"
+import UserAssignment from "../models/UserAssignment.js"
+import Role from "../models/roleModel.js"
+import Restaurant from "../models/facility_restaurantModel.js"
+import Kitchen from "../models/Kitchenmodel.js"
+import publicwebsiteFunctionModel from "../models/publicwebsiteFunctionModel.js"
+import PublicFunctionModel from "../models/publicwebsiteFunctionModel.js"
 
 //#region Admin Signup Service
 export const adminSignUpService = async (name, email, password) => {
@@ -97,6 +103,7 @@ const generateDepartmentId = async () => {
 
   const lastIdNumber = parseInt(lastDepartment.department_id.substring(3), 10);
   const newIdNumber = lastIdNumber + 1;
+
   return `DEP${String(newIdNumber).padStart(3, '0')}`;
 };
 
@@ -117,6 +124,7 @@ export const createDepartmentService = async (data) => {
 
     // Generate a new department ID
     const department_id = await generateDepartmentId();
+    
 
     // Create a new department
     const newDepartment = new Department({
@@ -252,3 +260,147 @@ export const getAllUserService = async () => {
   }
 };
   
+
+
+
+export const assignUserToEntityService = async (payload) => {
+  const {
+    user_id,
+    role_id,
+    restaurant_id,
+    kitchen_code,
+    department_id,
+    designation,
+    assigned_by
+  } = payload;
+
+  // 1️⃣ Basic Required Fields Validation
+  if (!user_id || !role_id || !designation || !assigned_by) {
+    throw new APIError("Missing required fields", 400);
+  }
+
+  // 2️⃣ Check if User Exists
+  const user = await User.findOne({ user_id });
+  if (!user) throw new APIError(`User with ID ${user_id} does not exist`, 404);
+
+  // 3️⃣ Check if Role Exists
+  const role = await Role.findOne({ role_id });
+  if (!role) throw new APIError(`Role with ID ${role_id} does not exist`, 404);
+
+  // 4️⃣ If restaurant_id is present, validate it
+  if (restaurant_id) {
+    const restaurant = await Restaurant.findOne({ restaurant_id });
+    if (!restaurant) throw new APIError(`Restaurant with ID ${restaurant_id} does not exist`, 404);
+  }
+
+  // 5️⃣ If kitchen_code is present, validate it
+  if (kitchen_code) {
+    const kitchen = await Kitchen.findOne({ kitchen_code });
+    if (!kitchen) throw new APIError(`Kitchen with code ${kitchen_code} does not exist`, 404);
+  }
+
+  // 6️⃣ If department_id is present, validate it
+  if (department_id) {
+    const department = await Department.findOne({ department_id });
+    if (!department) throw new APIError(`Department with ID ${department_id} does not exist`, 404);
+  }
+
+  // 7️⃣ Check for Duplicate Assignment
+  const existing = await UserAssignment.findOne({
+    user_id,
+    role_id,
+    restaurant_id: restaurant_id || null,
+    department_id: department_id || null,
+  });
+
+  if (existing) {
+    throw new APIError("User is already assigned to this role/entity", 409);
+  }
+
+  // 8️⃣ Save Assignment
+  const assignment = new UserAssignment(payload);
+  return await assignment.save();
+};
+
+export const createFunctionService = async (payload) => {
+  const { title, date, galleryImages } = payload;
+
+  // 1️⃣ Validate Required Fields
+  if (!title || !date || !galleryImages || !Array.isArray(galleryImages) || galleryImages.length === 0) {
+    throw new APIError('Missing required fields: title, date, or images', 400);
+  }
+
+  // 2️⃣ Check for Duplicate Title (Optional)
+  const exists = await PublicFunctionModel.findOne({ title, date });
+  if (exists) {
+    throw new APIError('A function with the same title and date already exists', 409);
+  }
+
+  // 3️⃣ Save Function
+  const newFunction = new PublicFunctionModel({
+    title,
+    date,
+    galleryImages
+  });
+
+  return await newFunction.save();
+};
+
+export const getAllFunctionsService = async () => {
+  return await PublicFunctionModel.find().sort({ date: -1 });
+};
+
+export const updateFunctionById = async (id, payload) => {
+  const { title, date, galleryImages = [], mode = 'append' } = payload;
+
+  const existing = await PublicFunctionModel.findById(id);
+  if (!existing) throw new Error('Function not found');
+
+  existing.title = title || existing.title;
+  existing.date = date || existing.date;
+
+  if (mode === 'replace') {
+    // Fully replace gallery
+    existing.galleryImages = galleryImages;
+  } else {
+    // Merge new images with existing
+    const existingSet = new Set(existing.galleryImages);
+    galleryImages.forEach((img) => existingSet.add(img));
+    existing.galleryImages = Array.from(existingSet);
+  }
+
+  return await existing.save();
+};
+
+
+
+
+// For preview (first image only + title + date)
+export const getFunctionPreviewWithImage = async (page, limit) => {
+  const skip = (page - 1) * limit;
+
+  const result = await PublicFunctionModel.aggregate([
+    { $sort: { date: -1 } },
+    { $skip: skip },
+    { $limit: limit },
+    {
+      $project: {
+        title: 1,
+        date: 1,
+        previewImage: { $arrayElemAt: ['$galleryImages', 0] }
+      }
+    }
+  ]);
+
+  return result;
+};
+
+// For full data (galleryImages, etc.)
+export const getFunctionListWithPagination = async (page, limit) => {
+  const skip = (page - 1) * limit;
+  return await publicwebsiteFunctionModel.find({})
+    .sort({ date: -1 })
+    .skip(skip)
+    .limit(limit)
+    .select('_id title date galleryImages');
+};

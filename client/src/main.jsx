@@ -20,7 +20,7 @@ if (typeof global === 'undefined') {
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <Router>
@@ -29,5 +29,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       </PersistGate>
       <ToastContainer />
     </Provider>
-  </React.StrictMode>
+  
 );

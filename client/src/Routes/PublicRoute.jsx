@@ -11,6 +11,7 @@ import Occasions from '../pages/homepage/occasions';
 import OurServices from '../pages/homepage/ourservices';
 import ContactUs from '../pages/homepage/contact';
 import Clubtour from '../pages/homepage/clubtour';
+import Function from '../pages/homepage/function';
 
 function PublicRoutes({ setIsLogin }) {
  
@@ -33,11 +34,13 @@ function PublicRoutes({ setIsLogin }) {
       <Route element={<PublicPage />}>
       
         <Route path="/" element={<Home />} />
+        <Route path="/occasions" element={<Function />} />
         <Route path="/about" element={<About />} />
-        <Route path='/occasions' element={<Occasions />} />
+        <Route path='/function' element={<Occasions />} />
         <Route path="/services" element={<OurServices />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/clubtour" element={<Clubtour />} />
+
         <Route path="/member-login" element={<MemberLogin setIsLogin={setIsLogin} />} />
         <Route path="/login" element={<Login setIsLogin={setIsLogin} />} />
         <Route path="/control" element={<SuperLogin setIsLogin={setIsLogin} />} />

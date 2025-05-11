@@ -31,13 +31,14 @@ import TableManagement from "../pages/facilityManagement/RestaurantTableManageme
 import POSBilling from "../pages/user/Biling";
 import ThermalInvoice from "../pages/user/ThermaplePrint";
 import KotPrint from "../pages/user/KotPrint";
+import WebsiteContent from "../pages/websiteContent/websitecontent";
 // import MemberPassword from "../pages/member/MemberPasswordModal";
 
 function DashboardRoutes() {
 
   const [open, setOpen] = useState(true);
   const roleId = JSON.parse(localStorage.getItem("userDetails"))?.role_id;
-  const rolesWithoutSidebar = [13, 8]; // Hide for Kitchen & POS Incharge
+  const rolesWithoutSidebar = [13, 8, 7 ]; // Hide for Kitchen & POS Incharge
   const shouldHideSidebar = rolesWithoutSidebar.includes(roleId);
 
   return (
@@ -80,6 +81,7 @@ function DashboardRoutes() {
             
             <Route path="/print/invoice/:billId" element={<ThermalInvoice />} />
             <Route path="/print/kot/:orderId" element={<KotPrint />} />
+            <Route path="/website-content" element={<WebsiteContent />} />
             
             {/* Dynamic Routes for Restaurant Features */}
             

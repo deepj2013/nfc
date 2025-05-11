@@ -8,12 +8,19 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+let functionUploadCounter = 1;
 // Define storage strategy for multer
 const storage = multer.diskStorage({
+   
     destination: (req, file, cb) => {
         let folder = 'uploads';
         if (file.mimetype.startsWith('image/')) {
-            folder = 'uploads/images';
+            const type = req.body.type || req.query.type;
+            if (type) {
+                folder = 'uploads/functionpics';
+            } else {
+                folder = 'uploads/memberpics';
+            }
         } else if (file.mimetype === 'application/pdf') {
             folder = 'uploads/pdfs';
         } else if (
@@ -26,10 +33,29 @@ const storage = multer.diskStorage({
         }
         cb(null, folder);
     },
+
+
     filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        const name = path.basename(file.originalname, ext);
-        cb(null, `${name}-${Date.now()}${ext}`);
+      const ext = path.extname(file.originalname).toLowerCase();
+      const rawName = path.basename(file.originalname, ext).replace(/\s+/g, '').toLowerCase();
+    
+      const type = req.query.type || req.body.type;
+    
+      if (type ) {
+        const functionName = (req.query.functionName || 'function')
+          .trim()
+          .replace(/\s+/g, '')
+          .toLowerCase();
+    
+        const now = new Date();
+        const ddmmyyyy = `${String(now.getDate()).padStart(2, '0')}${String(now.getMonth() + 1).padStart(2, '0')}${now.getFullYear()}`;
+    
+        const serial = String(functionUploadCounter++).padStart(3, '0');
+        const finalName = `${functionName}_${ddmmyyyy}_${serial}${ext}`;
+        cb(null, finalName);
+      } else {
+        cb(null, `${rawName}-${Date.now()}${ext}`);
+      }
     }
 });
 

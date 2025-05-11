@@ -1,4 +1,4 @@
-import { getKitchenOrdersService, updateKitchenItemStatusService, updateKitchenOrderStatusService } from "../services/kitchenServices.js";
+import { createKitchenService, getAllKitchenService, getKitchenOrdersService, updateKitchenItemStatusService, updateKitchenOrderStatusService, updateKitchenService } from "../services/kitchenServices.js";
 
 export const getKitchenOrders = async (req, res) => {
     try {
@@ -40,4 +40,40 @@ export const getKitchenOrders = async (req, res) => {
     }
   };
   
+
+
+  export const createKitchen = async (req, res) => {
+    try {
+      const payload = { ...req.body, created_by: req.user?.user_id || 0 };
+      const result = await createKitchenService (payload);
+      res.status(201).json({ success: true, result });
+    } catch (error) {
+      res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || "Internal Server Error",
+        error: error.stack,
+      });
+    }
+  };
+  
+  export const getKitchens = async (req, res) => {
+    try {
+      const kitchens = await getAllKitchenService();
+      res.status(200).json({ success: true, kitchens });
+    } catch (error) {
+      res.status(error.statusCode || 500).json({ success: false, message: error.message });
+    }
+  };
+  
+  export const updateKitchen = async (req, res) => {
+    try {
+      const result = await updateKitchenService(req.params.id, {
+        ...req.body,
+        updated_by: req.user?.user_id || 0,
+      });
+      res.status(200).json({ success: true, result });
+    } catch (error) {
+      res.status(error.statusCode || 500).json({ success: false, message: error.message });
+    }
+  };
   

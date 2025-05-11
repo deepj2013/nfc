@@ -15,7 +15,6 @@ import ModalWrapper from "../../layout/ModalWrapper";
 import AddDependent from "./AddDependent";
 import MemberPasswordModal from "./MemberPasswordModal";
 
-
 function Member() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -122,7 +121,11 @@ function Member() {
             />
           </div>
           <div className="flex gap-4">
-            <Button style={"bg-fuchsia-950 "} onClick={() => setIsPasswordModalOpen(true)} name="Reset Password" />
+            <Button
+              style={"bg-fuchsia-950 "}
+              onClick={() => setIsPasswordModalOpen(true)}
+              name="Reset Password"
+            />
           </div>
         </div>
       </div>
@@ -207,26 +210,31 @@ function Member() {
                             </td>
 
                             <td className="px-5 py-3">
-  <div className="w-48 flex items-center gap-3">
-    <img
-      className="w-10 h-10 rounded-full object-cover"
-      src={
-        ele?.profilePicture
-          ? `https://api.newfriendsclubdelhi.in/api/utility/file/${ele.profilePicture.replace('/uploads/', '')}`
-          : 'https://cdn.pixabay.com/photo/2019/08/11/18/59/icon-4399701_1280.png' // fallback
-      }
-      alt={ele?.firstName}
-    />
-    <div className="data">
-      <p className="font-normal text-sm text-gray-900">
-        {`${ele?.firstName ?? ''} ${ele?.middleName ?? ''} ${ele?.surname ?? ''}`.trim()}
-      </p>
-      <p className="font-normal text-xs leading-5 text-gray-400">
-        {ele?.mobileNumber}
-      </p>
-    </div>
-  </div>
-</td>
+                              <div className="w-48 flex items-center gap-3">
+                                <img
+                                  className="w-10 h-10 rounded-full object-cover"
+                                  src={
+                                    ele?.profilePicture
+                                      ? `https://api.newfriendsclubdelhi.in/api/utility/file/${ele.profilePicture.replace(
+                                          "/uploads/",
+                                          ""
+                                        )}`
+                                      : "https://cdn.pixabay.com/photo/2019/08/11/18/59/icon-4399701_1280.png" // fallback
+                                  }
+                                  alt={ele?.firstName}
+                                />
+                                <div className="data">
+                                  <p className="font-normal text-sm text-gray-900">
+                                    {`${ele?.firstName ?? ""} ${
+                                      ele?.middleName ?? ""
+                                    } ${ele?.surname ?? ""}`.trim()}
+                                  </p>
+                                  <p className="font-normal text-xs leading-5 text-gray-400">
+                                    {ele?.mobileNumber}
+                                  </p>
+                                </div>
+                              </div>
+                            </td>
 
                             <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                               <div className="flex items-center">
@@ -387,10 +395,10 @@ function Member() {
           </div>
         </div>
       </ModalWrapper>
-      <MemberPasswordModal 
-  isOpen={isPasswordModalOpen} 
-  onClose={() => setIsPasswordModalOpen(false)} 
-/>
+      <MemberPasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+      />
 
       <DepositModal
         dropdownData={dropdownData}

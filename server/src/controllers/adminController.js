@@ -5,6 +5,12 @@ import {
   getAllDepartmentsService,
   updateDepartmentService,
   getAllUserService,
+  assignUserToEntityService,
+  createFunctionService,
+  getAllFunctionsService,
+  updateFunctionById,
+  getFunctionPreviewWithImage,
+  getFunctionListWithPagination,
 } from "../services/adminServices.js";
 
 export const adminSignupController = async (req, res, next) => {
@@ -71,5 +77,87 @@ export const getAllUserController = async (req, res) => {
       .json({ msg: "Sucess", result });
   } catch (error) {
     res.status(error.httpCode || 500).json({ error: error.message });
+  }
+};
+
+export const assignUserToEntityController = async (req, res) => {
+  try {
+    const result = await assignUserToEntityService(req.body);
+    res.status(200).json({ message: "User assigned successfully", result });
+  } catch (error) {
+    console.error("❌ Assignment Error:", error);  // ✅ LOG THE REAL ERROR
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+      error: error.stack,
+    });
+  }
+};
+
+export const createFunctionController = async (req, res) => {
+  try {
+    const result = await createFunctionService(req.body);
+    res.status(200).json({ message: 'Function created successfully', result });
+  } catch (error) {
+    console.error('❌ Function Creation Error:', error);
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || 'Internal Server Error',
+      error: error.stack,
+    });
+  }
+};
+
+export const getAllFunctionsController = async (req, res) => {
+  try {
+    const result = await getAllFunctionsService();
+    res.status(200).json({ message: 'Function list retrieved', result });
+  } catch (error) {
+    console.error('❌ Function Fetch Error:', error);
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || 'Internal Server Error',
+      error: error.stack,
+    });
+  }
+};
+
+
+export const getPublicFunctionsController = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+
+    const [preview, functions] = await Promise.all([
+      getFunctionPreviewWithImage(page, limit),
+      getFunctionListWithPagination(page, limit)
+    ]);
+
+    res.status(200).json({
+      message: 'Public functions fetched successfully',
+      preview,
+      functions
+    });
+  } catch (error) {
+    console.error('❌ Public Function Fetch Error:', error);
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || 'Internal Server Error',
+      error: error.stack,
+    });
+  }
+};
+
+
+export const updateFunctionController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatePayload = req.body;
+
+    const updated = await updateFunctionById(id, updatePayload);
+    res.status(200).json({ success: true, result: updated });
+  } catch (err) {
+    console.error('Error updating function:', err);
+    res.status(500).json({ success: false, message: err.message || 'Server Error' });
   }
 };
