@@ -33,8 +33,8 @@ const FunctionForm = ({ editData, onBack }) => {
   const handleFiles = async (fileList) => {
     try {
       const files = Array.from(fileList);
-      if (files.length > 20) {
-        alert("You can upload a maximum of 20 files at once.");
+      if (files.length > 50) {
+        alert("You can upload a maximum of 40 files at once.");
         return;
       }
 
@@ -124,7 +124,7 @@ const FunctionForm = ({ editData, onBack }) => {
         />
 
         <p className="text-sm text-gray-500">
-          📌 <strong>Note:</strong> You can upload <strong>up to 20 images</strong> per session.
+          📌 <strong>Note:</strong> You can upload <strong>up to 50 images</strong> per session.
         </p>
 
         {/* Upload Section */}
@@ -137,7 +137,7 @@ const FunctionForm = ({ editData, onBack }) => {
           <div className="flex flex-col items-center gap-1 text-sm">
             <span className="font-medium">Click to browse or Drag & Drop Images</span>
             <span className="text-xs text-gray-400">
-              Accepted formats: JPG, PNG. Max: 20 images
+              Accepted formats: JPG, PNG. Max: 50 images
             </span>
           </div>
           <input
