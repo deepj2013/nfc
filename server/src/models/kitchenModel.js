@@ -32,5 +32,5 @@ const kitchenSchema = new mongoose.Schema({
 });
 
 
-const Kitchen = mongoose.model("Kitchen", kitchenSchema);
-export default Kitchen;
+
+export default mongoose.models.Kitchen || mongoose.model("Kitchen", kitchenSchema);
