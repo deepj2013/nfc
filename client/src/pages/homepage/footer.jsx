@@ -15,22 +15,32 @@ const Footer = () => {
         </div>
 
         {/* Navigation Section */}
-        <div className="footer-section">
-          <h3 className="text-white text-lg font-semibold mb-2">Navigation</h3>
-          <ul className="space-y-1">
-            <li><a href="/" className="hover:text-teal-400">Home</a></li>
-            <li><a href="/about" className="hover:text-teal-400">About Club</a></li>
-            <li><a href="/services" className="hover:text-teal-400">Services</a></li>
-            <li><a href="/gallery" className="hover:text-teal-400">Club Tour</a></li>
-            <li><a href="/affiliations" className="hover:text-teal-400">Affiliations</a></li>
-            <li><a href="/contact" className="hover:text-teal-400">Contact Us</a></li>
-           
-            <li><a href="/login" className="hover:text-teal-400">Office Login</a></li>
-           
+        <div className="flex flex-col md:flex-row justify-between gap-10 footer-section">
 
+{/* Left Column: Navigation */}
+<div>
+  <h3 className="text-white text-lg font-semibold mb-2">Navigation</h3>
+  <ul className="space-y-1">
+    <li><a href="/" className="hover:text-teal-400">Home</a></li>
+    <li><a href="/about" className="hover:text-teal-400">About Club</a></li>
+    <li><a href="/services" className="hover:text-teal-400">Services</a></li>
+    <li><a href="/gallery" className="hover:text-teal-400">Club Tour</a></li>
+    <li><a href="/affiliations" className="hover:text-teal-400">Affiliations</a></li>
+    <li><a href="/contact" className="hover:text-teal-400">Contact Us</a></li>
+    <li><a href="/login" className="hover:text-teal-400">Office Login</a></li>
+  </ul>
+</div>
 
-          </ul>
-        </div>
+{/* Right Column: Policies */}
+<div>
+  <h3 className="text-white text-lg font-semibold mb-2">Policies</h3>
+  <ul className="space-y-1">
+    <li><a href="/privacy-policy" className="hover:text-teal-400">Privacy Policy</a></li>
+    <li><a href="/refund-policy" className="hover:text-teal-400">Refund Policy</a></li>
+  </ul>
+</div>
+
+</div>
 
         {/* Info Section with Social Media */}
         <div className="footer-section">

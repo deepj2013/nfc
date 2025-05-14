@@ -31,7 +31,7 @@ import TableManagement from "../pages/facilityManagement/RestaurantTableManageme
 import POSBilling from "../pages/user/Biling";
 import ThermalInvoice from "../pages/user/ThermaplePrint";
 import KotPrint from "../pages/user/KotPrint";
-import WebsiteContent from "../pages/websiteContent/websitecontent";
+import WebsiteContent from "../pages/websiteContent/WebsiteContent.jsx";
 // import MemberPassword from "../pages/member/MemberPasswordModal";
 
 function DashboardRoutes() {
