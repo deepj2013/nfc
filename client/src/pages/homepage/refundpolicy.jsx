@@ -40,7 +40,9 @@ const RefundPolicy = () => {
           <p>
             To request a refund, contact us with your full name, order details, and the reason for your request. We aim to respond within 2–3 business days.
           </p>
-
+          <p>
+            Refund if approved will be processed and credited to your source account wiht in 7 to 8 working days
+          </p>
           <p className="mt-4 font-bold">4. Exceptions</p>
           <p>
             We reserve the right to grant refunds or credits at our sole discretion, in circumstances that warrant exceptions to this policy.
