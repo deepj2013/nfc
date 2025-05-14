@@ -1,5 +1,5 @@
 import Order from "../models/orderModel.js";
-import Kitchen from "../models/Kitchenmodel.js";
+import Kitchen from "../models/kitchenmodel.js";
 import APIError from "../exception/errorHandler.js";
 
 export const createKitchenService = async (payload) => {

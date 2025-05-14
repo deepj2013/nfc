@@ -33,23 +33,7 @@ const app = express();
 app.options("*", cors({ origin: '*', optionsSuccessStatus: 200 }));
 app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
 
-// // Allow all origins for preflight (OPTIONS) requests
-// app.options("*", cors()); 
 
-// // Apply CORS globally before defining routes
-// app.use(cors({
-//   origin: '*', // Allow all origins
-//   methods: 'GET,POST,PUT,PATCH,DELETE', // Allow all relevant HTTP methods
-//   allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
-//   optionsSuccessStatus: 200 // For legacy browsers
-// }));
-
-// app.use(cors({
-//   origin: 'http://localhost:5173',  // Replace '*' with specific origin
-//   credentials: true,
-//   methods: 'GET, POST, OPTIONS',
-//   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-// }));
 
 // Routes
 app.get('/api/data', (req, res) => {

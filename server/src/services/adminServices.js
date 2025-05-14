@@ -7,7 +7,7 @@ import User from "../models/userModel.js"
 import UserAssignment from "../models/UserAssignment.js"
 import Role from "../models/roleModel.js"
 import Restaurant from "../models/facility_restaurantModel.js"
-import Kitchen from "../models/Kitchenmodel.js"
+import Kitchen from "../models/kitchenmodel.js"
 import publicwebsiteFunctionModel from "../models/publicwebsiteFunctionModel.js"
 import PublicFunctionModel from "../models/publicwebsiteFunctionModel.js"
 
