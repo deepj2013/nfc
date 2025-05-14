@@ -12,6 +12,9 @@ import OurServices from '../pages/homepage/ourservices';
 import ContactUs from '../pages/homepage/contact';
 import Clubtour from '../pages/homepage/clubtour';
 import Function from '../pages/homepage/function';
+import PrivacyPolicy from '../pages/homepage/privacy';
+import TermsAndPrivacy from '../pages/homepage/privacy';
+import RefundPolicy from '../pages/homepage/refundpolicy';
 
 function PublicRoutes({ setIsLogin }) {
  
@@ -40,7 +43,8 @@ function PublicRoutes({ setIsLogin }) {
         <Route path="/services" element={<OurServices />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/clubtour" element={<Clubtour />} />
-
+        <Route path="/privacypolicy" element={<TermsAndPrivacy />} />
+        <Route path="/refundpolicy" element={<RefundPolicy />} />
         <Route path="/member-login" element={<MemberLogin setIsLogin={setIsLogin} />} />
         <Route path="/login" element={<Login setIsLogin={setIsLogin} />} />
         <Route path="/control" element={<SuperLogin setIsLogin={setIsLogin} />} />
