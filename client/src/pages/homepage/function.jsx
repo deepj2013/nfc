@@ -16,7 +16,7 @@ const Function = () => {
     const isLocalhost = window.location.hostname.includes("localhost");
     return isLocalhost
       ? "http://localhost:5100/api/public/occasionlist"
-      : "https://api.newfriendsclubdelhi.in/public/functions";
+      : "https://api.newfriendsclubdelhi.in/api/public/occasionlist";
   };
 
   const fetchPublicFunctions = async (pageNum = 1) => {
