@@ -1,6 +1,6 @@
 import path from 'path';
 // import { BASE } from '../../../../client/src/utils/Urls.js';
-const BASE = "https://api.newfriendsclubdelhi.in/api"
+const BASE = "https://api.newfriendsclubdelhi.in/"
 
 export const handleFileUpload = async (file) => {
     if (!file) {
