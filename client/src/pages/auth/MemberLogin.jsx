@@ -39,7 +39,7 @@ function MemberLogin({ setIsLogin }) {
         <form className="space-y-4">
           <div>
             <label htmlFor="email" className="block mb-2 text-lg text-gray-700 dark:text-gray-400">
-              Email
+              Email / MemberID / RegisterNumber
             </label>
             <input
               onChange={(e) => setUsername(e.target.value)}

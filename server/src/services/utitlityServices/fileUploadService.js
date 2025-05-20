@@ -1,12 +1,13 @@
 import path from 'path';
+import { BASE } from '../../../../client/src/utils/Urls';
 
 export const handleFileUpload = async (file) => {
     if (!file) {
         throw new Error('No file uploaded.');
     }
-console.log(`Uploading file ${process.env.BASE_URL}`)
+console.log(`Uploading file ${BASE}`)
     // Construct the file URL
-    const fileUrl = `${process.env.BASE_URL}/uploads/${file.path.replace('uploads/', '')}`;
+    const fileUrl = `${BASE}/uploads/${file.path.replace('uploads/', '')}`;
     
     return { fileUrl };
 };
