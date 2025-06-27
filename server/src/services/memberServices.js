@@ -20,36 +20,45 @@ export const createCredentials = async (memberId, email, mobile, password, admin
   if (!memberId || !email || !mobile || !password) {
     throw new Error("All fields are required.");
   }
-console.log(memberId, email, mobile)
+
   // Check if the member exists in MasterMemberSchema
-  const member = await MemberData.findOne({ memberId:memberId, emailId:email, mobileNumber:mobile });
+  const member = await MemberData.findOne({ memberId, emailId: email, mobileNumber: mobile });
   if (!member) {
     throw new Error("Member not found.");
-  }
-
-  // Check if credentials already exist for this member
-  let credentials = await MemberCredentials.findOne({ memberId });
-  if (credentials) {
-    throw new Error("Credentials already exist for this member.");
   }
 
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Save credentials
-  credentials = new MemberCredentials({
-    member_id: member._id ,
-    memberId,
-    email,
-    mobile,
-    password: hashedPassword,
-    invalidLoginAttempts: 0,
-  });
+  // Check if credentials already exist
+  let credentials = await MemberCredentials.findOne({ memberId });
 
-  await credentials.save();
+  if (credentials) {
+    // Update existing credentials
+    credentials.password = hashedPassword;
+    credentials.email = email;
+    credentials.mobile = mobile;
+    credentials.invalidLoginAttempts = 0; // optional reset
+    await credentials.save();
 
-  return { message: "Credentials created successfully", memberId };
+    return { message: "Credentials updated successfully", memberId };
+  } else {
+    // Create new credentials
+    credentials = new MemberCredentials({
+      member_id: member._id,
+      memberId,
+      email,
+      mobile,
+      password: hashedPassword,
+      invalidLoginAttempts: 0,
+    });
+
+    await credentials.save();
+
+    return { message: "Credentials created successfully", memberId };
+  }
 };
+
 
 export const resetPassword = async (memberId, newPassword, adminId) => {
   const credentials = await MemberCredentials.findOne({ memberId });
@@ -705,18 +714,24 @@ export const getMemberById = async (memberId) => {
     // Fetch the wallet balance based on the memberId
     const wallet = await Wallet.findOne({ memberId });
 
-    // Add the dependents data and wallet balance to the member object
-    const memberWithDependentsAndBalance = {
-      ...member._doc, // Access the member's document data
-      dependents, // Include the full dependent data
-      balance: wallet ? wallet.balance : 0, // Add balance if wallet exists, default to 0
+    // Check if credentials exist
+    const credentials = await MemberCredentials.findOne({ memberId });
+    const isCredentials = !!credentials; // true if found, false otherwise
+
+    // Construct final response
+    const memberWithDetails = {
+      ...member._doc,              // base member data
+      dependents,                  // list of dependent documents
+      balance: wallet?.balance || 0, // wallet balance or 0
+      isCredentials,              // true/false based on credential presence
     };
 
-    return memberWithDependentsAndBalance;
+    return memberWithDetails;
   } catch (error) {
     throw new Error("Error fetching member: " + error.message);
   }
 };
+
 
 // Deposit in wallet service
 export const depositInWalletService = async (data) => {
@@ -1156,8 +1171,6 @@ export const getMemberHistory = async (memberId, page, limit) => {
   };
 };
 
-
-//temproray Servicess
 
 export const bulkUploadMembersService = async (filePath) => {
   console.log('Starting bulk upload process...');

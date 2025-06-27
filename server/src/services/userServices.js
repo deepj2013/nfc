@@ -3,7 +3,6 @@ import { comparePassword, encryptPassword } from "../helpers/passwordEncryption/
 import {getTokenOfUserService, generateTokenService} from "../services/authServices.js"
 import User from "../models/userModel.js"
 
-
 export const createUserService = async (userData) => {
     try {
         // Validation for required fields
@@ -43,7 +42,6 @@ export const createUserService = async (userData) => {
         throw new APIError(error.name, error.httpCode || 500, error.isOperational || true, error.message || 'Internal Server Error');
     }
 };
-
 
 export const userLoginService = async (email_id, password) => {
     try {

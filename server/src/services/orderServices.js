@@ -49,7 +49,6 @@ export const updateOrderStatusService = async (orderId, status) => {
     throw new Error("Error updating order status: " + err.message);
   }
 };
-
 // Get orders for kitchen
 export const getKitchenOrdersService = async () => {
   try {

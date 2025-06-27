@@ -32,6 +32,7 @@ import POSBilling from "../pages/user/Biling";
 import ThermalInvoice from "../pages/user/ThermaplePrint";
 import KotPrint from "../pages/user/KotPrint";
 import WebsiteContent from "../pages/websiteContent/WebsiteContent.jsx";
+import MemberInfo from "../pages/receptions/MemberInfo.jsx";
 // import MemberPassword from "../pages/member/MemberPasswordModal";
 
 function DashboardRoutes() {
@@ -78,6 +79,7 @@ function DashboardRoutes() {
             <Route path="/restaurantmanagement" element={<Restaurant />} />
             <Route path="/memberaction" element={<MemberAction />} />
             <Route path="/billing" element={<POSBilling />} />
+            <Route path="/memberinfo" element={<MemberInfo />} />
             
             <Route path="/print/invoice/:billId" element={<ThermalInvoice />} />
             <Route path="/print/kot/:orderId" element={<KotPrint />} />

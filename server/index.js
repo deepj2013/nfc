@@ -18,7 +18,8 @@ import orderRoutes from "./src/routes/orderRoutes.js";
 import billingRoutes from "./src/routes/billingRoutes.js";
 import tableRoutes from "./src/routes/TableRoutes.js";
 import kitchenRoutes from "./src/routes/kitchenRoutes.js";
-import reportRoutes from "./src/routes/reportRoutes.js"
+import reportRoutes from "./src/routes/reportRoutes.js";
+import memberUserRoutes from "./src/routes/memberUserRoutes.js"
 
 
 // Load environment variables from .env file
@@ -111,6 +112,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/memberpics', express.static(path.join(__dirname, 'uploads', 'memberpics')));
 app.use('/functionpics', express.static(path.join(__dirname, 'uploads', 'functionpic')));
 app.use("/api/admin/", adminRoutes);
+app.use("/member/api/", memberUserRoutes);
 
 app.use("/api/user/", userRoutes);
 app.use("/api/user/inv/", invRoutes);

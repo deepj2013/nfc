@@ -31,7 +31,8 @@ export const generateTokenService = async (userId) => {
     }
 }
 //#endregion
-//#region Get Token Of User
+
+//#region Get Token Of ClubMember
 export const getTokenOfUserService = async (userId) => {
         try {
         //#region Token Pipeline

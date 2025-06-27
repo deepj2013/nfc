@@ -10,7 +10,8 @@ invalidLoginAttempts: { type: Number, default: 0 }, // Track failed login attemp
 }, { timestamps: true });
 
 
-const MemberCredentials = mongoose.model("member_credentials", CredentialsSchema);
+const 
+MemberCredentials = mongoose.model("member_credentials", CredentialsSchema);
 
 
 export default MemberCredentials;  

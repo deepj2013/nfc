@@ -42,9 +42,6 @@ export const getSettledBillsService = async ({ date, memberId, paymentMethod }) 
   return await Billing.find(query).sort({ settledAt: -1 });
 };
 
-
-
-
 export const printInvoiceService = async (billId) => {
   
   const bill = await Billing.findOne({ billNumber: billId }).populate("orderId");

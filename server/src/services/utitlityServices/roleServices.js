@@ -1,5 +1,6 @@
 import Role from '../../models/roleModel.js';
 // import { getRoleMenus } from '../../helpers/utilityHelper/roleHelper.js'
+
 export const createRoleService = async (roleData) => {
     // Find the last role by sorting role_id in descending order
     const lastRole = await Role.findOne().sort({ role_id: -1 }).exec();
@@ -12,8 +13,6 @@ export const createRoleService = async (roleData) => {
     const role = new Role(roleData);
     return await role.save();
 };
-
-
 
 export const getRoleService = async () => {
     const pipeline = [

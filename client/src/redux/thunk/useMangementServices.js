@@ -96,7 +96,8 @@ export const createMemberPasswordService = createAsyncThunk(
     try {
       const url = `${BASE_URL}createmember-password`; // URL to fetch member data
       const res = await axios.post(url,payload);
-      if (res.status === 200) {
+      console.log(res,"in services")
+      if (res.status === 201) {
         return res.data; // Return member data if found
       } else {
         throw new Error("Member not found");

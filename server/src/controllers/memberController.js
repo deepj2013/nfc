@@ -29,17 +29,13 @@ import {
 export const getMemberDetails = async (req, res) => {
   try {
       const { memberId, emailId, mobileNumber } = req.query;
-
       if (!memberId && !emailId && !mobileNumber) {
           return res.status(400).json({ success: false, message: "Provide at least one identifier (memberId, emailId, or mobileNumber)." });
       }
-
       const memberDetails = await fetchMemberDetails({ memberId, emailId, mobileNumber });
-
       if (!memberDetails) {
           return res.status(404).json({ success: false, message: "Member not found." });
       }
-
       return res.status(200).json({ success: true, data: memberDetails });
   } catch (error) {
       console.error("Error fetching member details:", error);
@@ -51,7 +47,7 @@ export const createMemberPassword = async (req, res) => {
   try {
     const { memberId, email, mobile, password } = req.body;
     const result = await createCredentials(memberId, email, mobile, password);
-    return res.status(201).json({ sucess:true, result});
+    return res.status(201).json({ success:true, result});
   } catch (error) {
     res.status(error.httpCode || 500).json({ error: error.message });
   }

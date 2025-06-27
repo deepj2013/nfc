@@ -73,7 +73,6 @@ export const getKitchenOrdersService = async (restaurant_id) => {
   };
   
   
-
   export const updateKitchenItemStatusService = async (itemId, orderId, status) => {
     const validStatuses = ["Cooking", "Ready"];
     if (!validStatuses.includes(status)) throw new Error("Invalid status");

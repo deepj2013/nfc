@@ -2,7 +2,6 @@ import AccessControl from './../../models/accessModel.js'
 
 export const createAccessServices = async (acessData) => {
     try {
-      console.log(acessData);
       const access = new AccessControl(acessData);
       return await access.save();
     } catch (err) {

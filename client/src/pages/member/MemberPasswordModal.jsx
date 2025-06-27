@@ -25,12 +25,19 @@ const MemberPasswordModal = ({ isOpen, onClose }) => {
       errorToast("Please enter a valid Member ID.");
       return;
     }
-
+  
     setIsVerifying(true);
     try {
       const response = await dispatch(getMemberService(memberId)).unwrap();
-      successToast("Member verified successfully!");
-
+      console.log(response);
+  
+      // Check if credentials already exist
+      if (response.result?.isCredentials) {
+        successToast("Password already generated. You can proceed to reset.");
+      } else {
+        successToast("Member verified successfully!");
+      }
+  
       setMemberData(response.result || {}); // Store member details
       setError("");
     } catch (error) {
@@ -41,6 +48,7 @@ const MemberPasswordModal = ({ isOpen, onClose }) => {
       setIsVerifying(false);
     }
   };
+  
 
   // 🔹 Create Member Password via Redux Thunk
   const updatePasswordHandler = async () => {
@@ -70,8 +78,8 @@ const MemberPasswordModal = ({ isOpen, onClose }) => {
 
       // Call Redux Thunk Service Instead of Fetch API
       const response = await dispatch(createMemberPasswordService(payload)).unwrap();
-
-      if (response.success) {
+        console.log("Response from createMemberPasswordService:", response.success);
+      if (response.success===true) {
         successToast("Password updated successfully!");
         onClose();
       } else {

@@ -60,9 +60,6 @@ const result = await AccessControl.aggregate(pipeline).exec();
 return result;
 };
 
-
-
-
 export const getAllMenus = async () => {
   return await Menu.find({ isActive: 1 });
 };

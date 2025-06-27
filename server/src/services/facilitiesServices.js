@@ -435,7 +435,7 @@ export const getAllMenuItems = async () => {
   return await MenuItem.find({});
 };
 
-// Update a menu item
+
 // Update a menu item
 export const updateMenuItem = async (menuItemId, updateData) => {
   try {

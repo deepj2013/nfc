@@ -94,7 +94,6 @@ export const adminLoginService = async (userId, password) => {
 }
 //#endregion
 
-
 const generateDepartmentId = async () => {
   const lastDepartment = await Department.findOne().sort({ department_id: -1 }).exec();
 
@@ -262,8 +261,6 @@ export const getAllUserService = async () => {
 };
   
 
-
-
 export const assignUserToEntityService = async (payload) => {
   const {
     user_id,
@@ -372,9 +369,6 @@ export const updateFunctionById = async (id, payload) => {
 
   return await existing.save();
 };
-
-
-
 
 // For preview (first image only + title + date)
 export const getFunctionPreviewWithImage = async (page, limit) => {

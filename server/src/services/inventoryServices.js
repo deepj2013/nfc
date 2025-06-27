@@ -1085,7 +1085,6 @@ export const getProductHistoryService = async (sku) => {
   }
 };
 
-
 // Utility function to create date ranges
 const getDateRange = (period) => {
   const now = new Date();
