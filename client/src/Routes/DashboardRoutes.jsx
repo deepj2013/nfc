@@ -33,18 +33,22 @@ import ThermalInvoice from "../pages/user/ThermaplePrint";
 import KotPrint from "../pages/user/KotPrint";
 import WebsiteContent from "../pages/websiteContent/WebsiteContent.jsx";
 import MemberInfo from "../pages/receptions/MemberInfo.jsx";
+import { getStorageValue } from "../services/LocalStorageServices.js";
 // import MemberPassword from "../pages/member/MemberPasswordModal";
 
 function DashboardRoutes() {
-
   const [open, setOpen] = useState(true);
-  const roleId = JSON.parse(localStorage.getItem("userDetails"))?.role_id;
-  const rolesWithoutSidebar = [13, 8, 7 ]; // Hide for Kitchen & POS Incharge
+
+  // ✅ Get user details from either source
+  const userDetails = getStorageValue("userDetails") || getStorageValue("memberDetails");
+  const roleId = userDetails?.role_id || 0;
+
+  // ✅ Hide sidebar for some roles
+  const rolesWithoutSidebar = [13, 8, 7]; // Kitchen, POS Incharge, Captain
   const shouldHideSidebar = rolesWithoutSidebar.includes(roleId);
 
   return (
-    <>
-      <div className=" h-screen w-screen bg-bgColor ">
+    <div className="h-screen w-screen bg-bgColor">
       {!shouldHideSidebar && <Sidebar open={open} setOpen={setOpen} />}
       <div
         className={twMerge(
@@ -52,52 +56,44 @@ function DashboardRoutes() {
           shouldHideSidebar ? "ml-0" : open ? "ml-60" : "ml-20"
         )}
       >
-          <Routes>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/usermanagement" element={<Employee />} />
-            <Route path="/rolemanagement" element={<Role />} />
-            <Route path="/managementcommity" element={<ClubManagement />} />
-            <Route path="/organisation" element={<Organization />} />
-            <Route path="/product" element={<ProductList />} />
-            <Route path="/add-product" element={<AddProduct />} />
-            <Route path="/category" element={<Category />} />
-            <Route path="/inventorymanagement" element={<Inventory />} />
-            <Route path="/units" element={<Units />} />
-            <Route path="/vendor" element={<Vendor />} />
-            <Route path="/add-vender" element={<AddVender />} />
-            <Route path="/members" element={<Member />} />
-            <Route path="/add-member" element={<AddMember />} />
-            <Route path="/menu-creation-list" element={<MenuCreationList />} />
-            <Route path="/menu-creation" element={<MenuCreation />} />
-            <Route path="/create-member" element={<CreateMember />} />
-            <Route path="/bulk-upload-members" element={<BulkUploadMembers />} />
-            {/* <Route path="/memberpassword" element={<MemberPassword />} /> */}
-            <Route path="/transactionHistory" element={<TransactionHistory />} />
-            <Route path="/membercheckinout" element={<MemberCheckInCheckOut />} />
-            <Route path="/eventbookings" element={<EventBooking />} />
-            <Route path="/facilitymanagement" element={<FacilityManagement />} />
-            <Route path="/restaurantmanagement" element={<Restaurant />} />
-            <Route path="/memberaction" element={<MemberAction />} />
-            <Route path="/billing" element={<POSBilling />} />
-            <Route path="/memberinfo" element={<MemberInfo />} />
-            
-            <Route path="/print/invoice/:billId" element={<ThermalInvoice />} />
-            <Route path="/print/kot/:orderId" element={<KotPrint />} />
-            <Route path="/website-content" element={<WebsiteContent />} />
-            
-            {/* Dynamic Routes for Restaurant Features */}
-            
-
-            <Route path="/restaurant/:restaurantId/menu" element={<MenuManagement />} />
-            <Route path="/restaurant/:restaurantId/tables" element={<TableManagement />} />
-        {/* <Route path="/restaurant/:restaurantId/pos" element={<POSPage />} />
-        <Route path="/restaurant/:restaurantId/kitchen" element={<KitchenPage />} /> */}
-
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/usermanagement" element={<Employee />} />
+          <Route path="/rolemanagement" element={<Role />} />
+          <Route path="/managementcommity" element={<ClubManagement />} />
+          <Route path="/organisation" element={<Organization />} />
+          <Route path="/product" element={<ProductList />} />
+          <Route path="/add-product" element={<AddProduct />} />
+          <Route path="/category" element={<Category />} />
+          <Route path="/inventorymanagement" element={<Inventory />} />
+          <Route path="/units" element={<Units />} />
+          <Route path="/vendor" element={<Vendor />} />
+          <Route path="/add-vender" element={<AddVender />} />
+          <Route path="/members" element={<Member />} />
+          <Route path="/add-member" element={<AddMember />} />
+          <Route path="/menu-creation-list" element={<MenuCreationList />} />
+          <Route path="/menu-creation" element={<MenuCreation />} />
+          <Route path="/create-member" element={<CreateMember />} />
+          <Route path="/bulk-upload-members" element={<BulkUploadMembers />} />
+          <Route path="/transactionHistory" element={<TransactionHistory />} />
+          <Route path="/membercheckinout" element={<MemberCheckInCheckOut />} />
+          <Route path="/eventbookings" element={<EventBooking />} />
+          <Route path="/facilitymanagement" element={<FacilityManagement />} />
+          <Route path="/restaurantmanagement" element={<Restaurant />} />
+          <Route path="/memberaction" element={<MemberAction />} />
+          <Route path="/billing" element={<POSBilling />} />
+          <Route path="/memberinfo" element={<MemberInfo />} />
+          <Route path="/print/invoice/:billId" element={<ThermalInvoice />} />
+          <Route path="/print/kot/:orderId" element={<KotPrint />} />
+          <Route path="/website-content" element={<WebsiteContent />} />
+          <Route path="/restaurant/:restaurantId/menu" element={<MenuManagement />} />
+          <Route path="/restaurant/:restaurantId/tables" element={<TableManagement />} />
+        </Routes>
       </div>
-    </>
+    </div>
   );
 }
 
 export default DashboardRoutes;
+
+

@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()],
   assetsInclude: ['**/*.JPG', '**/*.jpg', '**/*.jpeg', '**/*.png', '**/*.gif', '**/*.doc'], // Include all image formats you use
   server: {
+    historyApiFallback: true,
     proxy: {
       '/api': {
         target: 'http://localhost:5000',
@@ -14,3 +15,5 @@ export default defineConfig({
     },
   },
 });
+
+

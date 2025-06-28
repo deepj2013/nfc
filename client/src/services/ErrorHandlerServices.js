@@ -1,5 +1,5 @@
-// import { toast } from "react-toastify";
-// import { errorTost } from "../Utils/Helper";
+
+import { errorToast } from "../utils/Helper.js";
 
 export const handleError = (err) => {
   try {
@@ -9,15 +9,15 @@ export const handleError = (err) => {
     } else if (err.response.data.errors) {
       console.log(err);
       err.response.data.errors.map((d, i) => {
-        // toast.error(d.msg);
+        errorToast(d.msg);
       })
     }
     else {
-      console.log(err);
+      errorToast(err);
     }
   } catch (error) {
     // toast.error('Something went wrong')
-    console.log(error);
+    errorToast(error);
     // errorTost()÷
   }
 

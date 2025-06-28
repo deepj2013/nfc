@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import  { useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import PublicPage from '../pages/homepage/publicpage';
 import Home from '../pages/homepage/home';
@@ -12,9 +12,10 @@ import OurServices from '../pages/homepage/ourservices';
 import ContactUs from '../pages/homepage/contact';
 import Clubtour from '../pages/homepage/clubtour';
 import Function from '../pages/homepage/function';
-import PrivacyPolicy from '../pages/homepage/privacy';
+// import PrivacyPolicy from '../pages/homepage/privacy';
 import TermsAndPrivacy from '../pages/homepage/privacy';
 import RefundPolicy from '../pages/homepage/refundpolicy';
+import ForgotPassword from '../pages/auth/ForgotPassword';
 
 function PublicRoutes({ setIsLogin }) {
  
@@ -48,6 +49,7 @@ function PublicRoutes({ setIsLogin }) {
         <Route path="/member-login" element={<MemberLogin setIsLogin={setIsLogin} />} />
         <Route path="/login" element={<Login setIsLogin={setIsLogin} />} />
         <Route path="/control" element={<SuperLogin setIsLogin={setIsLogin} />} />
+        <Route path="/forgot-password/:type" element={<ForgotPassword />} />
       </Route>
       {/* Handle other routes or a 404 page if needed */}
     </Routes>

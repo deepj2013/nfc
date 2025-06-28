@@ -60,7 +60,7 @@ morgan.token(
 );
 
 // Define a custom format that includes the custom token
-// const customFormat = '[:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :message';
+
 app.use(
   morgan((tokens, req, res) => {
     return JSON.stringify({

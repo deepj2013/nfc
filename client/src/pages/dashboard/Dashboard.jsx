@@ -11,8 +11,16 @@ import EventManagerDashboard from "./DashboardComponent/EventManagerDashboard";
 import BookingManagerDashboard from "./DashboardComponent/BookingManagerDashboard";
 import KitchenDashboard from "./DashboardComponent/KitchenDashboard";
 import BowlingInchargeDashboard from "./DashboardComponent/BowlingInchargeDashboard";
+import { MemberDashboard } from "./DashboardComponent/MemberDashboard";
 
 function Dashboard() {
+  useEffect(() => {
+    let user = getStorageValue("userDetails") || getStorageValue("memberDetails");
+    if (user) {
+      setUserDetails(user);
+      setRoleId(user.role_id || 0);
+    }
+  }, []);
   const [userDetails, setUserDetails] = useState(null);
   const [roleId, setRoleId] = useState(null);
 
@@ -49,7 +57,7 @@ function Dashboard() {
       case 14:
         return <BowlingInchargeDashboard />;
       default:
-        return <p className="text-gray-500">No Dashboard Available</p>;
+        return <MemberDashboard />; // Default to MemberDashboard if no role matches
     }
   };
 
