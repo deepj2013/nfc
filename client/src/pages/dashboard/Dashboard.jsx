@@ -15,7 +15,8 @@ import { MemberDashboard } from "./DashboardComponent/MemberDashboard";
 
 function Dashboard() {
   useEffect(() => {
-    let user = getStorageValue("userDetails") || getStorageValue("memberDetails");
+    let user =
+      getStorageValue("userDetails") || getStorageValue("memberDetails");
     if (user) {
       setUserDetails(user);
       setRoleId(user.role_id || 0);
@@ -29,9 +30,26 @@ function Dashboard() {
 
     if (getUserDetail) {
       setUserDetails(getUserDetail);
-      setRoleId(getUserDetail.role_id); // Directly setting roleId from local storage
+      setRoleId(Number(getUserDetail.role_id)); // Directly setting roleId from local storage
     }
   }, []); // R
+
+  const getISTGreeting = () => {
+    const now = new Date();
+
+    // Convert to IST (UTC+5:30)
+    const utcOffsetInMinutes = now.getTimezoneOffset(); // e.g., -330 for IST
+    const istOffsetInMinutes = 330; // IST is UTC+5:30
+    const istTime = new Date(
+      now.getTime() + (istOffsetInMinutes + utcOffsetInMinutes) * 60000
+    );
+
+    const hour = istTime.getHours();
+
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    return "Good Evening";
+  };
   const renderDashboard = () => {
     switch (roleId) {
       case 1:
@@ -56,24 +74,25 @@ function Dashboard() {
         return <KitchenDashboard />;
       case 14:
         return <BowlingInchargeDashboard />;
+      case 16:
+        return <MemberDashboard />
       default:
-        return <MemberDashboard />; // Default to MemberDashboard if no role matches
+        return <p className="text-gray-500">No Dashboard Available</p>; // Default to MemberDashboard if no role matches
     }
   };
 
   return (
     <div className="h-screen overflow-scroll">
       <div className="bg-white mb-6 p-4 rounded-2xl shadow-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:h-40">
-     
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <img
-            src="https://preclinic.dreamstechnologies.com/html/template/assets/img/morning-img-01.png"
+            src="https://www.shareicon.net/data/512x512/2017/02/15/878685_user_512x512.png"
             alt="Welcome"
             className="h-20 w-20 sm:h-24 sm:w-24 rounded-full"
           />
           <div className="text-center sm:text-left">
             <p className="text-black font-semibold text-xl sm:text-2xl">
-              Good Morning,{" "}
+              {getISTGreeting()},{" "}
               <span className="text-theme">
                 {userDetails?.userName || "Guest"}
               </span>
@@ -84,7 +103,7 @@ function Dashboard() {
           </div>
         </div>
       </div>
-      
+
       {renderDashboard()}
     </div>
   );

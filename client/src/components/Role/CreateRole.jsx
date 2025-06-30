@@ -1,166 +1,178 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaXmark } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
-import Input from "../common/Input";
-import Button from "../common/Button";
-import { twMerge } from "tailwind-merge";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getStorageValue } from "../../services/LocalStorageServices";
 import { roleCreationServices } from "../../redux/thunk/micellaneousServices";
+import { successToast, errorToast } from "../../utils/Helper";
+import axios from "axios";
+import { employeeListServices } from "../../redux/thunk/useMangementServices";
 
-const CreateRole = ({ isOpen, onClose, setFeedBackModal }) => {
-  const navigate = useNavigate();
+const LEVEL_OPTIONS = ["Organisation", "Department"];
+
+const CreateRole = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
-  let userDetails = getStorageValue("userDetails");
+  const userDetails = getStorageValue("userDetails");
 
   const [formData, setFormData] = useState({
     role_name: "",
     role_description: "",
-    is_active: null,
+    is_active: true,
     level: "",
-    supervisor: null,
-    created_by: userDetails?.role_id,
-    updated_by: userDetails?.role_id,
-    errors: {},
+    supervisor: "",
+    created_by:"",
+    update_by:""
   });
-  const { role_name, role_description, is_active, level, supervisor, errors } =
-    formData;
 
-  const upadteStateHandler = (e) => {
-    let { name, value } = e.target;
-    setFormData((pre) => ({ ...pre, [name]: value }));
+  const [supervisorList, setSupervisorList] = useState([]);
+  const [errors, setErrors] = useState({});
+
+  // Fetch supervisors once
+  useEffect(() => {
+    const fetchSupervisors = async () => {
+      try {
+        const res = await dispatch(employeeListServices()).unwrap();
+        setSupervisorList(res.result || []);
+      } catch (err) {
+        console.error("Error fetching supervisors", err);
+      }
+    };
+    fetchSupervisors();
+  }, [dispatch]);
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.role_name.trim())
+      newErrors.role_name = "Role name is required.";
+    if (!formData.role_description.trim())
+      newErrors.role_description = "Description is required.";
+    if (!formData.level) newErrors.level = "Level is required.";
+    if (!formData.supervisor) newErrors.supervisor = "Select a supervisor.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleValidation = () => {
-    let error = {};
-    let formIsValid = true;
-
-    if (!role_name || !role_name.trim()) {
-      error.role_nameError = " * First name can't be empty";
-      formIsValid = false;
-    }
-
-    if (!role_description || !role_description.trim()) {
-      error.role_descriptionError = " * Smiddle name can't be empty";
-      formIsValid = false;
-    }
-
-    if (!is_active || !is_active.trim()) {
-      error.is_activeError = " * Surname can't be empty";
-      formIsValid = false;
-    }
-    if (!level || !level.trim()) {
-      error.levelError = " * Father Name can't be empty";
-      formIsValid = false;
-    }
-    if (!supervisor || !supervisor.trim()) {
-      error.supervisorError = " * Husband Name can't be empty";
-      formIsValid = false;
-    }
-
-    setFormData((prev) => ({ ...prev, errors: error }));
-    return formIsValid;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const roleCreationHandler = async (e) => {
+  const handleToggle = () => {
+    setFormData((prev) => ({ ...prev, is_active: !prev.is_active }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let formIsValid = handleValidation();
-    if (!formIsValid) {
-      return;
-    }
+    if (!validateForm()) return;
+
+    const payload = {
+      ...formData,
+      created_by: userDetails?.user_id,
+      updated_by: userDetails?.user_id,
+    };
+
     try {
-      delete [formData.errors];
-      let response = await dispatch(roleCreationServices(formData)).unwrap();
-      successToast("Add Sucessfully");
-      // navigate("/members");
-    } catch (error) {
-      console.log(error);
-      logger(error);
+      await dispatch(roleCreationServices(payload)).unwrap();
+      successToast("Role created successfully.");
+      onClose();
+    } catch (err) {
+      console.error("Role creation error:", err);
+      errorToast("Something went wrong while creating the role.");
     }
   };
 
   return (
     <div
-      className={`fixed w-full inset-0 flex items-center justify-center z-[999] transition-opacity duration-300 ${
-        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-      }`}
+      className={`fixed inset-0 z-[999] ${
+        isOpen ? "flex" : "hidden"
+      } items-center justify-center`}
     >
-      <div
-        className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ${
-          isOpen ? "opacity-100" : "opacity-0"
-        }`}
-        // onClick={onClose}
-      ></div>
-      <div
-        className={`bg-white  overflow-scroll w-[95vw] lg:w-[500px] py-4 rounded-lg h-[95vh] lg:h-auto  shadow-xl transform transition-transform duration-300 ${
-          isOpen ? "translate-y-0" : "translate-y-full"
-        }`}
-        style={{ minHeight: "100px" }}
-      >
+      <div className="fixed inset-0 bg-black/40" onClick={onClose}></div>
+      <div className="relative bg-white w-[95vw] max-w-md p-6 rounded-lg shadow-lg z-10 max-h-[95vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="text-2xl absolute right-2 top-2 text-secondry"
+          className="absolute top-2 right-2 text-gray-600"
         >
-          <FaXmark />
+          <FaXmark size={20} />
         </button>
-        <div className="p-4 flex flex-col items-center">
-          <h2 className="text-2xl  w-full font-medium lg:px-10">
-            Role Creation
-          </h2>
-          {/* <img className="w-64  h-32 my-6 object-cover" src={TeacherFeedback}/> */}
-          <p className="text-xl mt-4 w-full"></p>
-          <div className="w-full lg:px-10">
-            <FormInput
-              errors={errors.role_nameError}
-              //   width={"w-[30%]"}
-              placeholder={"Role name"}
-              value={role_name}
-              name={"role_name"}
-              onChange={upadteStateHandler}
-            />
-            <FormInput
-              errors={errors.role_descriptionError}
-              //   width={"w-[30%]"}
-              placeholder={"Role Description"}
-              value={role_description}
-              name={"role_description"}
-              onChange={upadteStateHandler}
-            />
-            <FormInput
-              errors={errors.is_activeError}
-              //   width={"w-[30%]"}
-              placeholder={"Isactive"}
-              value={is_active}
-              name={"is_active"}
-              onChange={upadteStateHandler}
-            />
-            <FormInput
-              errors={errors.levelError}
-              //   width={"w-[30%]"}
-              placeholder={"level"}
-              value={level}
-              name={"level"}
-              onChange={upadteStateHandler}
-            />
+        <h2 className="text-xl font-bold mb-4">Create Role</h2>
 
-            <FormInput
-              errors={errors.supervisorError}
-              //   width={"w-[30%]"}
-              placeholder={"supervisor"}
-              value={supervisor}
-              name={"supervisor"}
-              onChange={upadteStateHandler}
-            />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <FormInput
+            label="Role Name"
+            name="role_name"
+            value={formData.role_name}
+            onChange={handleChange}
+            error={errors.role_name}
+          />
+          <FormInput
+            label="Role Description"
+            name="role_description"
+            value={formData.role_description}
+            onChange={handleChange}
+            error={errors.role_description}
+          />
 
-            <button
-              onClick={(e) => roleCreationHandler(e)}
-              type="submit"
-              className="text-white mt-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          <div>
+            <label className="block mb-1 font-medium">Level</label>
+            <select
+              name="level"
+              value={formData.level}
+              onChange={handleChange}
+              className="w-full border rounded px-3 py-2"
             >
-              Submit
-            </button>
+              <option value="">Select Level</option>
+              {LEVEL_OPTIONS.map((level) => (
+                <option key={level} value={level}>
+                  {level}
+                </option>
+              ))}
+            </select>
+            {errors.level && (
+              <p className="text-red-500 text-sm">{errors.level}</p>
+            )}
           </div>
-        </div>
+
+          <div>
+            <label className="block mb-1 font-medium">Supervisor</label>
+            <select
+              name="supervisor"
+              value={formData.supervisor}
+              onChange={handleChange}
+              className="w-full border rounded px-3 py-2"
+            >
+              <option value="">Select Supervisor</option>
+              {/* Universal Admin (manually added) */}
+              <option value="1">Universal Admin (admin@nfc.in)</option>
+
+              {/* Supervisor list from API */}
+              {supervisorList.map((user) => (
+                <option key={user.user_id} value={user.user_id}>
+                  {user.user_name || user.userName || user.email}
+                </option>
+              ))}
+            </select>
+            {errors.supervisor && (
+              <p className="text-red-500 text-sm">{errors.supervisor}</p>
+            )}
+          </div>
+
+          <div className="flex items-center gap-3">
+            <label className="font-medium">Is Active</label>
+            <input
+              type="checkbox"
+              checked={formData.is_active}
+              onChange={handleToggle}
+              className="h-5 w-5"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700 transition"
+          >
+            Submit
+          </button>
+        </form>
       </div>
     </div>
   );
@@ -168,38 +180,16 @@ const CreateRole = ({ isOpen, onClose, setFeedBackModal }) => {
 
 export default CreateRole;
 
-const FormInput = ({
-  width,
-  showButton,
-  placeholder,
-  name,
-  onChange,
-  value,
-  type,
-  errors,
-}) => {
-  return (
-    <div className={twMerge("mb-5 relative", width)}>
-      <label for="email" className="block mb-2 text-sm font-medium text-gray-900 ">
-        {placeholder}
-      </label>
-      <input
-        onChange={onChange}
-        value={value}
-        name={name}
-        type={type ? type : "text"}
-        id="email"
-        className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5    dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder={placeholder}
-        required
-        // chooseDate={date}
-      />
-      <span style={{ color: "red" }}>{errors}</span>
-      {showButton && (
-        <button className="text-sm bg-theme text-white absolute top-[34px] p-1.5 right-2 rounded-lg ">
-          Genrate Code
-        </button>
-      )}
-    </div>
-  );
-};
+const FormInput = ({ label, name, value, onChange, error }) => (
+  <div>
+    <label className="block mb-1 font-medium">{label}</label>
+    <input
+      type="text"
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="w-full border rounded px-3 py-2"
+    />
+    {error && <p className="text-red-500 text-sm">{error}</p>}
+  </div>
+);

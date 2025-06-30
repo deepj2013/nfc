@@ -12,6 +12,7 @@ function MemberLogin({ setIsLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  
 
   const loginHandler = async () => {
     try {
@@ -24,7 +25,10 @@ function MemberLogin({ setIsLogin }) {
       const response = await dispatch(memberLoginServices(payload)).unwrap();
 
       if (response?.status === 200) {
-        setStorageValue("memberDetails", response); // You can use response.result if needed
+        setStorageValue("memberDetails", {
+          ...response,
+          role_id: 16
+        }); // You can use response.result if needed
         localStorage.setItem("isMemberLoggedIn", "true"); // 🔐 For persistence
         setIsLogin(true);
         navigate("/dashboard");
