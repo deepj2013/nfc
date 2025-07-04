@@ -20,6 +20,8 @@ export const adminLoginServices = createAsyncThunk(
   }
 );
 
+
+
 export const superAdminLoginServices = createAsyncThunk(
   "superAdminLoginServices",
   async (payload) => {
@@ -61,6 +63,19 @@ export const getAllMenuServices = createAsyncThunk(
     } catch (error) {
       handleError(error);
       throw error;
+    }
+  }
+);
+
+
+export const updateRoleAccessControlServices = createAsyncThunk(
+  "role/updateAccessControl",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${BASE_URL_SUPER_ADMIN}accesscontrol/update`, payload); // ⬅️ Update this URL if needed
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || "Server Error");
     }
   }
 );

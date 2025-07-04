@@ -6,6 +6,7 @@ import Recipe from "../models/facility_restaurant_menu_receipeModel.js"
 import Facility from "../models/facilitModel.js";
 import { v4 as uuidv4 } from "uuid"; // For generating unique numbers
 import XLSX from 'xlsx'; // ✅ This is correct for ES Modules
+import QRCode from 'qrcode';
 
 
 
@@ -225,17 +226,29 @@ const generateUniqueTableId = async (restaurant_id) => {
 export const createTable = async (data) => {
   try {
     if (!data.restaurant_id || !data.seatType) {
-      throw new Error("Restaurant ID, capacity, and seat type are required");
+      throw new Error("Restaurant ID and seat type are required");
     }
 
-    // Generate unique table ID using restaurant name
+    // Generate table ID
     data.table_id = await generateUniqueTableId(data.restaurant_id);
 
-    // Determine table number based on restaurant's existing tables
+    // Determine next table number
     const existingTables = await RestaurantTable.countDocuments({ restaurant_id: data.restaurant_id });
     data.tableNumber = existingTables + 1;
 
-    // Create and save the table
+    // Prepare QR payload
+    const qrPayload = {
+      tableNumber: data.tableNumber,
+      restaurantId: data.restaurant_id,
+      tableId: data.table_id
+    };
+
+    const qrText = JSON.stringify(qrPayload);
+    const qrImageData = await QRCode.toDataURL(qrText); // Generate base64 image
+
+    data.qr_code = qrImageData; // Store base64 QR in DB
+
+    // Save to DB
     const table = new RestaurantTable(data);
     await table.save();
 

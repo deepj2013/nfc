@@ -148,7 +148,6 @@ export const getMemberManagementListServices = createAsyncThunk(
     try {
       let url = `${BASE_URL}members`;
       const res = await axios.get(url);
-      
       return res.data;
     } catch (error) {
       

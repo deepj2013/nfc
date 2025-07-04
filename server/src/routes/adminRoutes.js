@@ -3,7 +3,7 @@ import {createOrganisationController,updateOrganisationController, findAllOrgani
 import { adminLoginController, adminSignupController, createDepartmentController, getAllDepartmentController, updateDepartmentController, getAllUserController, assignUserToEntityController, createFunctionController, getAllFunctionsController, updateFunctionController } from '../controllers/adminController.js'
 import { createMenuController, getMenusByRoleController,getAllMenusController } from '../controllers/utilityControllers/menuController.js'
 import { createRoleController, getRoleController } from '../controllers/utilityControllers/roleController.js'
-import { createAccessController } from '../controllers/utilityControllers/accessController.js'
+import { createAccessController, updateAccessController } from '../controllers/utilityControllers/accessController.js'
 import { createUserController } from '../controllers/userController.js'
 import { adminAuth } from '../middlewares/adminAuth.js'
 import { auth } from '../middlewares/auth.js'
@@ -30,6 +30,7 @@ router.get('/getallmenu',[adminAuth] , getAllMenusController )
 router.post('/createrole',[adminAuth] , createRoleController )
 router.get('/getrole',[adminAuth] , getRoleController )
 router.post('/accesscontrol',[adminAuth], createAccessController);
+router.post('/accesscontrol/update',[adminAuth], updateAccessController);
 router.post('/getmenubyrole', [adminAuth], getMenusByRoleController)
 
 router.post('/createusers', [adminAuth], createUserController)

@@ -20,6 +20,8 @@ import tableRoutes from "./src/routes/TableRoutes.js";
 import kitchenRoutes from "./src/routes/kitchenRoutes.js";
 import reportRoutes from "./src/routes/reportRoutes.js";
 import memberUserRoutes from "./src/routes/memberUserRoutes.js"
+import ManagingCommitteeRoutes from "./src/routes/managingCommitteeRoutes.js";
+
 
 
 // Load environment variables from .env file
@@ -123,8 +125,16 @@ app.use("/api/billing", billingRoutes);
 app.use("/api/table/", tableRoutes);
 app.use("/api/kitchen/", kitchenRoutes)
 app.use("/api/report/", reportRoutes)
+app.use("/api/mgmt/", ManagingCommitteeRoutes)
 
 
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  const message = err.message || "Internal Server Error";
+
+  console.error("💥 Error:", message); // Add log
+  return res.status(status).json({ msg: "Error", error: message });
+});
 
 app.get("/", (req, res) => {
   res.send("API is running...");

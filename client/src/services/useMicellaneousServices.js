@@ -44,6 +44,11 @@ export const getAllFunctions = async () => {
   return res.data.result; // ✅ extract `result` array from `res.data`
 };
   
+// export const getAllsideMenu = async () => {
+//   const res = await axios.get(`${BASE}admin/getallmenu`);
+//   return res.data.result;
+// }
+
   // Create new function
   export const createFunction = async (payload, token) => {
     console.log(token)

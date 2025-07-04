@@ -30,7 +30,7 @@ const TableManagement = () => {
   const [occupiedData, setOccupiedData] = useState({});
   const [menuItems, setMenuItems] = useState([]);
   const [occupiedTimers, setOccupiedTimers] = useState({});
-  
+
   const handleChairClick = (table) => {
     if (table.currentStatus === "Occupied") {
       const confirmChange = window.confirm(
@@ -210,6 +210,19 @@ const TableManagement = () => {
                     T-{table.tableNumber}
                   </span>
                 </div>
+                {table.qr_code && (
+                <div className="mt-3 text-center">
+                  <img
+                    src={table.qr_code}
+                    alt={`QR for Table ${table.tableNumber}`}
+                    className="w-24 h-24 mx-auto"
+                  />
+                  <p className="text-sm font-medium text-gray-700 mt-1">
+                    Table QR
+                  </p>
+                </div>
+              )}
+
 
                 {/* Right Chair */}
                 <button
@@ -236,7 +249,7 @@ const TableManagement = () => {
                   />
                 ))}
               </div>
-
+             
               {/* Timer Display if Occupied */}
               {table.currentStatus === "Occupied" && (
                 <div className="mt-3 text-red-500 bg-gray-200 px-4 py-2 rounded-md shadow-md">
@@ -245,6 +258,7 @@ const TableManagement = () => {
                   </p>
                 </div>
               )}
+             
             </div>
           );
         })}
